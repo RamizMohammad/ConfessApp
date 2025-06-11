@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ConfessMain</string>
+    <string name="confess">Confess</string>
+    <string name="app_logo">App Logo</string>
+    <string name="illus">illus</string>
+    <string name="share_your_thoughts_without_guilt">Share your thoughts without guilt</string>
+    <string name="because_we_are_not_the_society">Because we are not the society</string>
+    <string name="join_the_world">Join the world</string>
+</resources>
