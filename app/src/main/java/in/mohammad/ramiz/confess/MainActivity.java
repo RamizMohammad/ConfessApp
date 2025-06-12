@@ -1,7 +1,9 @@
 package in.mohammad.ramiz.confess;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -36,30 +38,11 @@ public class MainActivity extends AppCompatActivity {
         frameLayout = findViewById(R.id.collapseButton);
         buttonText = findViewById(R.id.buttonText);
 
-        collapseAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation);
-
-
         frameLayout.setOnClickListener(v -> {
-            buttonText.setVisibility(View.GONE);
-            v.startAnimation(collapseAnimation);
-
-            collapseAnimation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-            });
+            Intent term = new Intent(getApplicationContext()
+            , TermsAndCondition.class);
+            startActivity(term);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
-    }
-
-    protected void buttonAnimation(){
     }
 }

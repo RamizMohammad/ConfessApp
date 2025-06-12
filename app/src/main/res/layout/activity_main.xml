@@ -117,11 +117,6 @@
                 android:textSize="20sp"
                 android:text="@string/join_the_world"/>
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"/>
-
         </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

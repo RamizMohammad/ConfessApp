@@ -1,0 +1,92 @@
+[
+  {
+    "heading": "📋 General Terms",
+    "terms": [
+      "🔞 You must be at least 13 years old to use the app.",
+      "🚫 Do not misuse or abuse the application in any way.",
+      "👤 Do not impersonate others while using the app.",
+      "📵 Do not use the app for illegal activities.",
+      "⛔ We may suspend your access if rules are violated."
+    ]
+  },
+  {
+    "heading": "🔐 Privacy & Data",
+    "terms": [
+      "🕵️ We value your privacy and handle data carefully.",
+      "📁 We do not sell your data to third parties.",
+      "🔐 Data is stored securely using encryption.",
+      "🗑️ You can request deletion of your account anytime.",
+      "📥 App may collect logs to improve service quality."
+    ]
+  },
+  {
+    "heading": "⚖️ Legal & Liability",
+    "terms": [
+      "📝 All content is protected under copyright laws.",
+      "📜 By using this app, you agree to these terms.",
+      "🛑 We are not responsible for user-generated content.",
+      "🧾 Use of the app must comply with your local laws.",
+      "⚖️ Any legal disputes must be handled in local courts."
+    ]
+  },
+  {
+    "heading": "💡 Features & Usage",
+    "terms": [
+      "🔔 Notifications may be sent for updates or messages.",
+      "🔄 Features may change with or without notice.",
+      "🆕 New features may be rolled out gradually.",
+      "🛠️ Bugs can be reported via the Help section.",
+      "🎨 UI/UX may differ across devices and versions."
+    ]
+  },
+  {
+    "heading": "📶 Connectivity",
+    "terms": [
+      "📡 Some features require an active internet connection.",
+      "🌐 We are not liable for network issues.",
+      "📴 Offline mode may have limited functionality.",
+      "📲 Data usage may apply based on your network.",
+      "🛰️ Server maintenance may cause temporary downtime."
+    ]
+  },
+  {
+    "heading": "🤝 User Responsibility",
+    "terms": [
+      "🤬 Abusive language or hate speech is not allowed.",
+      "🧍 You are responsible for your actions on the app.",
+      "📢 Report violations using the in-app report tool.",
+      "🛡️ Do not share confidential or personal data.",
+      "👥 Respect other users' privacy and dignity."
+    ]
+  },
+  {
+    "heading": "🧪 Beta Features",
+    "terms": [
+      "🧬 Some features may be in beta testing phase.",
+      "🐞 Bugs may occur in experimental features.",
+      "🗣️ Feedback is encouraged to improve features.",
+      "🧰 Beta features can be removed at any time.",
+      "🔧 Use beta features at your own discretion."
+    ]
+  },
+  {
+    "heading": "💰 Payments & Subscriptions",
+    "terms": [
+      "💳 Some features may require payment or subscription.",
+      "🧾 Refunds are subject to our refund policy.",
+      "📆 Subscription renews automatically unless canceled.",
+      "⚠️ Failed payments may restrict access.",
+      "📈 Prices are subject to change with prior notice."
+    ]
+  },
+  {
+    "heading": "🚨 Account & Security",
+    "terms": [
+      "🔒 Keep your password secure and confidential.",
+      "🔑 Two-factor authentication is recommended.",
+      "📧 Use a valid email for account recovery.",
+      "🚫 Sharing accounts is strictly prohibited.",
+      "🧹 Inactive accounts may be deleted after long periods."
+    ]
+  }
+]

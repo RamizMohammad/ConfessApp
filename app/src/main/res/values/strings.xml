@@ -6,4 +6,10 @@
     <string name="share_your_thoughts_without_guilt">Share your thoughts without guilt</string>
     <string name="because_we_are_not_the_society">Because we are not the society</string>
     <string name="join_the_world">Join the world</string>
+    <string name="googlelogo">googleLogo</string>
+    <string name="sign_in_with_google">Continue with google</string>
+    <string name="termlogo">termlogo</string>
+    <string name="terms_and_condition">Terms and Condition</string>
+    <string name="check_the_box_to_accept_the_terms_and_condition">Check the box to accept the Terms and Condition</string>
+    <string name="read_carefully_and_accept_these_terms_and_condition_to_begin_with_us">Read carefully and accept these terms and condition to begin with us.</string>
 </resources>
