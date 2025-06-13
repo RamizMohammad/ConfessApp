@@ -1,9 +1,15 @@
 package in.mohammad.ramiz.confess;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -19,12 +25,17 @@ import java.util.ArrayList;
 
 import in.mohammad.ramiz.confess.adapters.TermsListAdapter;
 import in.mohammad.ramiz.confess.entityfiles.ListEntites;
+import in.mohammad.ramiz.confess.popups.OkPopUp;
 
 public class TermsAndCondition extends AppCompatActivity {
 
     private ListView termsListView;
     private ArrayList<ListEntites> termsArrayList;
     private static TermsListAdapter listAdapter;
+    private CheckBox termsCheckBox;
+    private boolean isAccepted = false;
+    private FrameLayout googleButton;
+    private OkPopUp popUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +49,28 @@ public class TermsAndCondition extends AppCompatActivity {
         });
 
         ListView termsListView = findViewById(R.id.listView);
+        termsCheckBox = findViewById(R.id.termAccept);
+        googleButton = findViewById(R.id.GoogleButton);
+
         termsArrayList= new ArrayList<>();
+
+        termsCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull CompoundButton compoundButton, boolean b) {
+                isAccepted = true;
+            }
+        });
+
+        googleButton.setOnClickListener(v -> {
+            if(isAccepted){
+                Intent alaisPage = new Intent(getApplicationContext(), AlaisPage.class);
+                startActivity(alaisPage);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+            else {
+                popUp = new OkPopUp(this, R.drawable.terms_animation, "Terms are not accepted");
+            }
+        });
 
         try {
             String jsonString = loadJSONFromAsset();

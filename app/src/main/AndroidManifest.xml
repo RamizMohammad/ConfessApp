@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ConfessMain">
         <activity
+            android:name=".AlaisPage"
+            android:exported="false" />
+        <activity
             android:name=".TermsAndCondition"
             android:exported="false" />
         <activity
