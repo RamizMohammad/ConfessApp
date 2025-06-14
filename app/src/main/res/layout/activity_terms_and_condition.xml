@@ -27,7 +27,7 @@
                 <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/logo_first"
+                    android:src="@raw/logo_first"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/CircleImage"/>
 

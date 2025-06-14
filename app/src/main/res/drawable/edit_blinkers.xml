@@ -1,0 +1,5 @@
+<!-- res/drawable/white_cursor.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <size android:width="2dp" />
+    <solid android:color="@android:color/white" />
+</shape>

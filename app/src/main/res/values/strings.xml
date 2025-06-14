@@ -12,4 +12,16 @@
     <string name="terms_and_condition">Terms and Condition</string>
     <string name="check_the_box_to_accept_the_terms_and_condition">Check the box to accept the Terms and Condition</string>
     <string name="read_carefully_and_accept_these_terms_and_condition_to_begin_with_us">Read carefully and accept these terms and condition to begin with us.</string>
+    <string name="enter_the_details">Enter the details</string>
+    <string name="enter_the_details_correctly_to_join_the_world">Enter the details correctly to join the world.</string>
+    <string name="create_account">Create Account</string>
+    <string name="enter_the_alias_name">Enter the alias name</string>
+    <string name="alias_name">alias name</string>
+    <string name="lock_icon">lock icon</string>
+    <string name="enter_your_alias_name">Enter your alias name</string>
+    <string name="alias_name_can_t_be_chnaged_once_done">Alias name can\'t be changed once done.</string>
+    <string name="do_you_need_your_account_password_protected">Password protected account?</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="password">password</string>
+    <string name="password_will_be_required_at_each_login">Password will be required at each login</string>
 </resources>

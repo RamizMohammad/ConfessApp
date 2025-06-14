@@ -57,7 +57,7 @@ public class TermsAndCondition extends AppCompatActivity {
         termsCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(@NonNull CompoundButton compoundButton, boolean b) {
-                isAccepted = true;
+                isAccepted = !isAccepted;
             }
         });
 
@@ -68,7 +68,7 @@ public class TermsAndCondition extends AppCompatActivity {
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
             else {
-                popUp = new OkPopUp(this, R.drawable.terms_animation, "Terms are not accepted");
+                popUp = new OkPopUp(this, R.raw.terms_animation, "Accept the Terms and Condition");
             }
         });
 

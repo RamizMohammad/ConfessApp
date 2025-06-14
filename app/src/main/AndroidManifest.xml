@@ -13,10 +13,12 @@
         android:theme="@style/Theme.ConfessMain">
         <activity
             android:name=".AlaisPage"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".TermsAndCondition"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

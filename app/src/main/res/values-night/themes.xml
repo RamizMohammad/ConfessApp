@@ -3,5 +3,12 @@
     <style name="Base.Theme.ConfessMain" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="android:textCursorDrawable">@drawable/edit_blinkers</item>
+    </style>
+
+    <style name="Theme.ConfessMain" parent="Base.Theme.ConfessMain" />
+    <style name="CircleImage" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
 </resources>
