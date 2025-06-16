@@ -37,6 +37,7 @@ import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
 import in.mohammad.ramiz.confess.entities.CheckUserPassResponse;
 import in.mohammad.ramiz.confess.entityfiles.ListEntites;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
+import in.mohammad.ramiz.confess.popups.OnlyLoader;
 import in.mohammad.ramiz.confess.server.Endpoints;
 import in.mohammad.ramiz.confess.server.ServerConfigs;
 import retrofit2.Call;
@@ -55,6 +56,8 @@ public class TermsAndCondition extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private GoogleAuth googleAuth;
     private Endpoints endpoints;
+    private Intent intent;
+    private OnlyLoader onlyLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,21 +155,29 @@ public class TermsAndCondition extends AppCompatActivity {
                 if (account != null){
                     String email = account.getEmail();
 
+                    runOnUiThread(() -> {
+                        onlyLoader = new OnlyLoader(this, R.raw.loading_animation);
+                    });
+
                     checkForUserAndPass(email, this, ((isUser, isPassword) -> {
+
+                        runOnUiThread(() -> {
+                            if(onlyLoader != null){
+                                onlyLoader.dismiss();
+                            }
+                        });
+
                         if(isUser && isPassword){
-                            Intent passwordPageIntent = new Intent(getApplicationContext(), Password_Page.class);
-                            startActivity(passwordPageIntent);
-                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                            intent = new Intent(this, Password_Page.class);
                         } else if (isUser) {
-                            Intent homePageIntent = new Intent(getApplicationContext(), HomePage.class);
-                            startActivity(homePageIntent);
-                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                            intent = new Intent(this, HomePage.class);
                         }
                         else{
-                            Intent aliasPageIntent = new Intent(getApplicationContext(), AlaisPage.class);
-                            startActivity(aliasPageIntent);
-                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                            intent = new Intent(this, AlaisPage.class);
                         }
+
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     }));
                 }
 

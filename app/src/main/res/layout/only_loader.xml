@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="15dp">
+        android:padding="10dp">
 
         <LinearLayout
             android:id="@+id/panel"
@@ -23,8 +23,9 @@
 
             <ImageView
                 android:id="@+id/gifImage"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
                 android:layout_gravity="center"/>
 
         </LinearLayout>
