@@ -192,7 +192,7 @@ public class TermsAndCondition extends AppCompatActivity {
     protected void checkForUserAndPass(String email, Activity activity, UserCheckCallback callback){
 
         CheckUserPassRequest userPassRequest = new CheckUserPassRequest(email);
-        Call<CheckUserPassResponse> call = endpoints.chechUserPass(userPassRequest);
+        Call<CheckUserPassResponse> call = endpoints.checkUserPass(userPassRequest);
 
         call.enqueue(new Callback<CheckUserPassResponse>() {
             @Override

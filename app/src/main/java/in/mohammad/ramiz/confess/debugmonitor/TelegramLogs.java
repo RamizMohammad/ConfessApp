@@ -16,7 +16,7 @@ public class TelegramLogs {
 
         RequestBody formBody = new FormBody.Builder()
                 .add("chat_id", BuildConfig.CHAT_ID)
-                .add("text", "[ConfessBot Error]\n" + message)
+                .add("text", "[ConfessBot Error Android]\n" + message)
                 .build();
 
         Request request = new Request.Builder()

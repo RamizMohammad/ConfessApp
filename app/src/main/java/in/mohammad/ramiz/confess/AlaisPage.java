@@ -1,7 +1,10 @@
 package in.mohammad.ramiz.confess;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,6 +18,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -24,8 +28,23 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
+import in.mohammad.ramiz.confess.entities.AddUserRequest;
+import in.mohammad.ramiz.confess.entities.AddUserResponse;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
+import in.mohammad.ramiz.confess.popups.OnlyLoader;
+import in.mohammad.ramiz.confess.server.Endpoints;
+import in.mohammad.ramiz.confess.server.ServerConfigs;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AlaisPage extends AppCompatActivity {
 
@@ -38,6 +57,10 @@ public class AlaisPage extends AppCompatActivity {
     private FrameLayout joinButton;
     private EditText aliasName, password;
     private OkPopUp popUp;
+    private Endpoints endpoints;
+    private String email = null, token = null;
+    private OnlyLoader loader;
+    private GradientDrawable drawable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +81,46 @@ public class AlaisPage extends AppCompatActivity {
         aliasName = findViewById(R.id.aliasName);
         password = findViewById(R.id.password);
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String date = sdf.format(new Date());
+
+        Drawable background = aliasName.getBackground();
+        if(background instanceof GradientDrawable){
+            drawable = (GradientDrawable) background;
+        }
+
+        int color = ContextCompat.getColor(this, R.color.falseRed);
+
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        endpoints = ServerConfigs.getInstance().create(Endpoints.class);
+
         joinButton.setOnClickListener(v -> {
+            if(account != null){
+                email = account.getEmail();
+                token = account.getIdToken();
+            }
             String userAliasName = aliasName.getText().toString();
+
             if(isPassword){
                 String userPassword = password.getText().toString();
 
                 if(!TextUtils.isEmpty(userAliasName) && !TextUtils.isEmpty(userPassword)){
-                    Log.d("name", ""+userAliasName);
-                    Log.d("pass",""+userPassword);
+
+                    createNewUser(token, email,userAliasName,
+                            date,isPassword,
+                            userPassword,this,
+                            ((isAliasName, isUserCreated) -> {
+                                if(isAliasName){
+                                    drawable.setStroke(2, color);
+                                    aliasName.setText("");
+                                    aliasName.setHint("Alias already taken");
+                                }
+                                else if(isUserCreated){
+                                    Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
+                                    startActivity(welcomePageIntent);
+                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                }
+                            }));
                 }
                 else{
                     popUp = new OkPopUp(this, R.raw.file_not_found, "Some fields are found empty");
@@ -73,7 +128,21 @@ public class AlaisPage extends AppCompatActivity {
                 }
             else{
                 if(!TextUtils.isEmpty(userAliasName)){
-                    Log.d("name",""+userAliasName);
+                    createNewUser(token, email,userAliasName,
+                            date,false,
+                            null,this,
+                            ((isAliasName, isUserCreated) -> {
+                                if(isAliasName){
+                                    drawable.setStroke(2, color);
+                                    aliasName.setText("");
+                                    aliasName.setHint("Alias already taken");
+                                }
+                                else if(isUserCreated){
+                                    Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
+                                    startActivity(welcomePageIntent);
+                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                }
+                            }));
                 }
                 else {
                     popUp = new OkPopUp(this, R.raw.file_not_found, "Some fields are found empty");
@@ -138,5 +207,41 @@ public class AlaisPage extends AppCompatActivity {
                         });
             }
         });
+    }
+
+    protected void createNewUser(String token, String email,
+                                 String aliasName,String date,
+                                 boolean isPassword, String passwordData, Activity activity,
+                                 UserCheckCallback callback){
+
+        AddUserRequest addUserRequestBody = new AddUserRequest(token, email, aliasName, date, isPassword, passwordData);
+        Call<AddUserResponse> call = endpoints.createNewUser(addUserRequestBody);
+
+        call.enqueue(new Callback<AddUserResponse>() {
+            @Override
+            public void onResponse(Call<AddUserResponse> call, Response<AddUserResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+
+                    boolean aliasExistance = response.body().isAliasName();
+                    boolean userCreation = response.body().isUserCreated();
+
+                    callback.onResult(aliasExistance, userCreation);
+                }
+                else{
+                    callback.onResult(false, false);
+                    TelegramLogs.sendTelegramLog("We got an empty response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddUserResponse> call, Throwable throwable) {
+                popUp = new OkPopUp(activity, R.raw.error_animation, "We Encounter the server error");
+                TelegramLogs.sendTelegramLog("Server error encountered\n"+throwable);
+            }
+        });
+    }
+
+    public interface UserCheckCallback {
+        void onResult(boolean isAliasName, boolean isUserCreated);
     }
 }
