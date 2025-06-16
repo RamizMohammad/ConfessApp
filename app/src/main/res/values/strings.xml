@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ConfessMain</string>
+    <string name="app_name">Confess</string>
     <string name="confess">Confess</string>
     <string name="app_logo">App Logo</string>
     <string name="illus">illus</string>
@@ -24,4 +24,5 @@
     <string name="enter_your_password">Enter your password</string>
     <string name="password">password</string>
     <string name="password_will_be_required_at_each_login">Password will be required at each login</string>
+    <string name="enter_your_correct_password_to_proceed_over_the_home_page">Enter your correct password to proceed over the home page.</string>
 </resources>

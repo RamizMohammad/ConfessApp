@@ -1,3 +1,22 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+// Load properties safely
+val secretProperties = Properties()
+val secretPropertiesFile = rootProject.file("secrets.properties")
+
+if (secretPropertiesFile.exists()) {
+    FileInputStream(secretPropertiesFile).use { secretProperties.load(it) }
+} else {
+    println("⚠️ Warning: secrets.properties file not found!")
+}
+
+// Debugging output (shows in Gradle console)
+println("🔹 Loaded WEB_CLIENT_ID: ${secretProperties["WEB_CLIENT_ID"] ?: "NOT FOUND"}")
+println("🔹 Loaded SERVER_URL: ${secretProperties["SERVER_URL"] ?: "NOT FOUND"}")
+println("🔹 Loaded BOT_TOKEN: ${secretProperties["BOT_TOKEN"] ?: "NOT FOUND"}")
+println("🔹 Loaded CHAT_ID: ${secretProperties["CHAT_ID"] ?: "NOT FOUND"}")
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
@@ -15,6 +34,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val webClientId = secretProperties.getProperty("WEB_CLIENT_ID", "")
+        val serverUrl = secretProperties.getProperty("SERVER_URL", "")
+        val botToken = secretProperties.getProperty("BOT_TOKEN", "")
+        val chatId = secretProperties.getProperty("CHAT_ID", "")
+
+        buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
+        buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
+        buildConfigField("String", "BOT_TOKEN", "\"$botToken\"")
+        buildConfigField("String", "CHAT_ID", "\"$chatId\"")
     }
 
     buildTypes {
@@ -25,6 +54,11 @@ android {
                 "proguard-rules.pro"
             )
         }
+        buildFeatures{
+            dataBinding = true
+            buildConfig = true
+            viewBinding = true
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -33,6 +67,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.glide)
