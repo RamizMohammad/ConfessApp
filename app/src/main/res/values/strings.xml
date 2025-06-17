@@ -25,4 +25,5 @@
     <string name="password">password</string>
     <string name="password_will_be_required_at_each_login">Password will be required at each login</string>
     <string name="enter_your_correct_password_to_proceed_over_the_home_page">Enter your correct password to proceed over the home page.</string>
+    <string name="check_password">Check Password</string>
 </resources>

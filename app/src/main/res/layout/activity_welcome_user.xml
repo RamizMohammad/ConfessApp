@@ -61,7 +61,6 @@
             app:layout_constraintTop_toBottomOf="@id/logo_border_container"
             app:layout_constraintBottom_toTopOf="@id/introText"
             android:layout_marginTop="20dp"
-            android:src="@drawable/introclip"
             android:contentDescription="@string/illus"/>
 
         <TextView
@@ -72,27 +71,13 @@
             android:fontFamily="@font/roboto_slab"
             android:textSize="20sp"
             android:textColor="@color/white"
-            android:layout_marginTop="10dp"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="50dp"
             android:textStyle="bold"
             android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bannerImage"
-            app:layout_constraintBottom_toTopOf="@id/introText2"/>
-
-        <TextView
-            android:id="@+id/introText2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/because_we_are_not_the_society"
-            android:fontFamily="@font/roboto_slab"
-            android:textSize="15sp"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:layout_marginBottom="80dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/introText"
             app:layout_constraintBottom_toTopOf="@id/collapseButton"/>
 
         <FrameLayout

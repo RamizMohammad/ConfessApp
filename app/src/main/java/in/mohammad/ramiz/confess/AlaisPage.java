@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +39,7 @@ import java.util.Date;
 import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.entities.AddUserRequest;
 import in.mohammad.ramiz.confess.entities.AddUserResponse;
+import in.mohammad.ramiz.confess.haptics.VibManager;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
 import in.mohammad.ramiz.confess.popups.OnlyLoader;
 import in.mohammad.ramiz.confess.server.Endpoints;
@@ -48,12 +50,12 @@ import retrofit2.Response;
 
 public class AlaisPage extends AppCompatActivity {
 
-    private ImageView lockIcon;
+    private ImageView lockIcon, showPassowrd;
     private boolean isAnimating = false;
     private boolean playNext = true;
     private LinearLayout passwordButton, passwordPanel;
     private int gif = R.raw.lock_animation;
-    private boolean isPassword = false;
+    private boolean isPassword = false, isShowPassword = false;
     private FrameLayout joinButton;
     private EditText aliasName, password;
     private OkPopUp popUp;
@@ -80,6 +82,7 @@ public class AlaisPage extends AppCompatActivity {
         joinButton = findViewById(R.id.createAccountButton);
         aliasName = findViewById(R.id.aliasName);
         password = findViewById(R.id.password);
+        showPassowrd = findViewById(R.id.showButton);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String date = sdf.format(new Date());
@@ -94,7 +97,31 @@ public class AlaisPage extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         endpoints = ServerConfigs.getInstance().create(Endpoints.class);
 
+        aliasName.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                VibManager.vibrateTick(v.getContext());
+            }
+        });
+
+        password.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                VibManager.vibrateTick(v.getContext());
+            }
+        });
+
+        showPassowrd.setOnClickListener(v -> {
+            VibManager.vibrateTick(this);
+            if (!isShowPassword) {
+                password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            } else {
+                password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            }
+            password.setSelection(password.getText().length());
+            isShowPassword = !isShowPassword;
+        });
+
         joinButton.setOnClickListener(v -> {
+            VibManager.vibrateTick(this);
             if(account != null){
                 email = account.getEmail();
                 token = account.getIdToken();
@@ -105,20 +132,26 @@ public class AlaisPage extends AppCompatActivity {
                 String userPassword = password.getText().toString();
 
                 if(!TextUtils.isEmpty(userAliasName) && !TextUtils.isEmpty(userPassword)){
-
+                    loader = new OnlyLoader(this, R.raw.loading_animation);
                     createNewUser(token, email,userAliasName,
                             date,isPassword,
                             userPassword,this,
                             ((isAliasName, isUserCreated) -> {
+
+                                if(loader != null){
+                                    loader.dismiss();
+                                }
+
                                 if(isAliasName){
                                     drawable.setStroke(2, color);
                                     aliasName.setText("");
-                                    aliasName.setHint("Alias already taken");
+                                    aliasName.setHint("alias already taken");
                                 }
                                 else if(isUserCreated){
                                     Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
                                     startActivity(welcomePageIntent);
                                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                    finish();
                                 }
                             }));
                 }
@@ -128,10 +161,16 @@ public class AlaisPage extends AppCompatActivity {
                 }
             else{
                 if(!TextUtils.isEmpty(userAliasName)){
+                    loader = new OnlyLoader(this, R.raw.loading_animation);
                     createNewUser(token, email,userAliasName,
                             date,false,
                             null,this,
                             ((isAliasName, isUserCreated) -> {
+
+                                if(loader != null){
+                                    loader.dismiss();
+                                }
+
                                 if(isAliasName){
                                     drawable.setStroke(2, color);
                                     aliasName.setText("");
@@ -141,6 +180,7 @@ public class AlaisPage extends AppCompatActivity {
                                     Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
                                     startActivity(welcomePageIntent);
                                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                    finish();
                                 }
                             }));
                 }
@@ -157,6 +197,7 @@ public class AlaisPage extends AppCompatActivity {
                 .into(lockIcon);
 
         passwordButton.setOnClickListener(v -> {
+            VibManager.vibrateTick(this);
             if (isAnimating) return;
             isAnimating = true;
 
@@ -230,6 +271,7 @@ public class AlaisPage extends AppCompatActivity {
                 else{
                     callback.onResult(false, false);
                     TelegramLogs.sendTelegramLog("We got an empty response");
+                    popUp = new OkPopUp(activity, R.raw.error_animation, "Got a server error.");
                 }
             }
 

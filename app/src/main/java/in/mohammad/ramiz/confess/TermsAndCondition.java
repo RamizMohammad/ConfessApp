@@ -36,6 +36,7 @@ import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
 import in.mohammad.ramiz.confess.entities.CheckUserPassResponse;
 import in.mohammad.ramiz.confess.entityfiles.ListEntites;
+import in.mohammad.ramiz.confess.haptics.VibManager;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
 import in.mohammad.ramiz.confess.popups.OnlyLoader;
 import in.mohammad.ramiz.confess.server.Endpoints;
@@ -82,10 +83,12 @@ public class TermsAndCondition extends AppCompatActivity {
             @Override
             public void onCheckedChanged(@NonNull CompoundButton compoundButton, boolean b) {
                 isAccepted = !isAccepted;
+                VibManager.vibrateTick(compoundButton.getContext());
             }
         });
 
         googleButton.setOnClickListener(v -> {
+            VibManager.vibrateTick(this);
             if(isAccepted){
                 try{
                     if(googleAuth == null || googleAuth.googleSignInClient() == null){
@@ -178,6 +181,7 @@ public class TermsAndCondition extends AppCompatActivity {
 
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                        finish();
                     }));
                 }
 

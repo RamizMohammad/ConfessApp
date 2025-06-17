@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId = "in.mohammad.ramiz.confess"
-        minSdk = 24
+        minSdk = 31
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
