@@ -256,7 +256,7 @@ public class AlaisPage extends AppCompatActivity {
                                  UserCheckCallback callback){
 
         AddUserRequest addUserRequestBody = new AddUserRequest(token, email, aliasName, date, isPassword, passwordData);
-        Call<AddUserResponse> call = endpoints.createNewUser(addUserRequestBody);
+        Call<AddUserResponse> call = endpoints.createNewUser(BuildConfig.CLIENT_API,addUserRequestBody);
 
         call.enqueue(new Callback<AddUserResponse>() {
             @Override

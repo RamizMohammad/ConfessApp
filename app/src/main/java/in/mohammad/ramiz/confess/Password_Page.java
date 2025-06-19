@@ -146,7 +146,7 @@ public class Password_Page extends AppCompatActivity {
     protected void checkUserPassword(String email, String password, Activity activity, UserCallback callback){
 
         CheckPasswordRequest checkPasswordRequest = new CheckPasswordRequest(email, password);
-        Call<CheckPasswordResponse> call = endpoints.checkUserPassword(checkPasswordRequest);
+        Call<CheckPasswordResponse> call = endpoints.checkUserPassword(BuildConfig.CLIENT_API,checkPasswordRequest);
 
         call.enqueue(new Callback<CheckPasswordResponse>() {
             @Override
@@ -174,7 +174,7 @@ public class Password_Page extends AppCompatActivity {
     protected void forgotUserPassword(String email, Activity activity, UserCallback callback){
 
         ForgotPasswordRequest forgotPasswordRequest = new ForgotPasswordRequest(email);
-        Call<ForgotPasswordResponse> call = endpoints.forgotUserPassword(forgotPasswordRequest);
+        Call<ForgotPasswordResponse> call = endpoints.forgotUserPassword(BuildConfig.CLIENT_API,forgotPasswordRequest);
 
         call.enqueue(new Callback<ForgotPasswordResponse>() {
             @Override

@@ -16,6 +16,7 @@ println("🔹 Loaded WEB_CLIENT_ID: ${secretProperties["WEB_CLIENT_ID"] ?: "NOT 
 println("🔹 Loaded SERVER_URL: ${secretProperties["SERVER_URL"] ?: "NOT FOUND"}")
 println("🔹 Loaded BOT_TOKEN: ${secretProperties["BOT_TOKEN"] ?: "NOT FOUND"}")
 println("🔹 Loaded CHAT_ID: ${secretProperties["CHAT_ID"] ?: "NOT FOUND"}")
+println("🔹 Loaded CLIENT_API: ${secretProperties["CLIENT_API"] ?: "NOT FOUND"}")
 
 plugins {
     alias(libs.plugins.android.application)
@@ -30,8 +31,8 @@ android {
         applicationId = "in.mohammad.ramiz.confess"
         minSdk = 31
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -39,11 +40,13 @@ android {
         val serverUrl = secretProperties.getProperty("SERVER_URL", "")
         val botToken = secretProperties.getProperty("BOT_TOKEN", "")
         val chatId = secretProperties.getProperty("CHAT_ID", "")
+        val clientApi = secretProperties.getProperty("CLIENT_API", "")
 
         buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
         buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
         buildConfigField("String", "BOT_TOKEN", "\"$botToken\"")
         buildConfigField("String", "CHAT_ID", "\"$chatId\"")
+        buildConfigField("String", "CLIENT_API", "\"$clientApi\"")
     }
 
     buildTypes {

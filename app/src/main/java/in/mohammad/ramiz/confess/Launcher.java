@@ -33,6 +33,9 @@ public class Launcher extends AppCompatActivity {
             checkUser(email, (isUser, isPassword) -> {
                 if (isUser && isPassword) {
                     startActivity(new Intent(this, Password_Page.class));
+                }
+                else if(isUser) {
+                    startActivity(new Intent(this, HomePage.class));
                 } else {
                     startActivity(new Intent(this, MainActivity.class));
                 }
@@ -47,7 +50,7 @@ public class Launcher extends AppCompatActivity {
 
     private void checkUser(String email, UserCallback callback) {
         CheckUserPassRequest request = new CheckUserPassRequest(email);
-        Call<CheckUserPassResponse> call = endpoints.checkUserPass(request);
+        Call<CheckUserPassResponse> call = endpoints.checkUserPass(BuildConfig.CLIENT_API,request);
 
         call.enqueue(new Callback<CheckUserPassResponse>() {
             @Override
