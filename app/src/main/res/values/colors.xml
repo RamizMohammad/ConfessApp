@@ -6,4 +6,6 @@
     <color name="buttonGrey">#F5F5F5</color>
     <color name="extraColor">#222831</color>
     <color name="falseRed">#F93827</color>
+    <color name="navColor">#121212</color>
+    <color name="yellow">#FFC107</color>
 </resources>

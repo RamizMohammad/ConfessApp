@@ -26,4 +26,13 @@
     <string name="password_will_be_required_at_each_login">Password will be required at each login</string>
     <string name="enter_your_correct_password_to_proceed_over_the_home_page">Enter your correct password to proceed over the home page.</string>
     <string name="check_password">Check Password</string>
+    <string name="homelogo">homeLogo</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="profilelogo">profileLogo</string>
+    <string name="pick_a_image_from_the_set_of_given_images_which_reflects_your_personality">Pick a image from the set of given images which reflects your personality</string>
+    <string name="add_profile_picture">Add Profile Picture</string>
+    <string name="createPost">Oh so you have something melting you down, Tells us and make your heart lighter 😊</string>
+    <string name="something_melting_you_tell_us">Something melting you, tell us</string>
+    <string name="_0_2000">0/2000</string>
 </resources>

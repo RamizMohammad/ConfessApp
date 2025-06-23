@@ -31,8 +31,8 @@ android {
         applicationId = "in.mohammad.ramiz.confess"
         minSdk = 31
         targetSdk = 36
-        versionCode = 2
-        versionName = "2.0.0"
+        versionCode = 3
+        versionName = "2.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -70,10 +70,13 @@ android {
 }
 
 dependencies {
+    implementation(libs.biometric)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.glide)

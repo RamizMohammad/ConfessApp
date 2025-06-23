@@ -1,8 +1,10 @@
 package in.mohammad.ramiz.confess;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -32,7 +34,9 @@ import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.gson.Gson;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -44,9 +48,13 @@ import in.mohammad.ramiz.confess.popups.OkPopUp;
 import in.mohammad.ramiz.confess.popups.OnlyLoader;
 import in.mohammad.ramiz.confess.server.Endpoints;
 import in.mohammad.ramiz.confess.server.ServerConfigs;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Multipart;
 
 public class AlaisPage extends AppCompatActivity {
 
@@ -60,7 +68,7 @@ public class AlaisPage extends AppCompatActivity {
     private EditText aliasName, password;
     private OkPopUp popUp;
     private Endpoints endpoints;
-    private String email = null, token = null;
+    private String email = null;
     private OnlyLoader loader;
     private GradientDrawable drawable;
 
@@ -86,6 +94,7 @@ public class AlaisPage extends AppCompatActivity {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String date = sdf.format(new Date());
+        String defaultAbout = "Confession makes heart lighter";
 
         Drawable background = aliasName.getBackground();
         if(background instanceof GradientDrawable){
@@ -124,7 +133,6 @@ public class AlaisPage extends AppCompatActivity {
             VibManager.vibrateTick(this);
             if(account != null){
                 email = account.getEmail();
-                token = account.getIdToken();
             }
             String userAliasName = aliasName.getText().toString();
 
@@ -133,7 +141,7 @@ public class AlaisPage extends AppCompatActivity {
 
                 if(!TextUtils.isEmpty(userAliasName) && !TextUtils.isEmpty(userPassword)){
                     loader = new OnlyLoader(this, R.raw.loading_animation);
-                    createNewUser(token, email,userAliasName,
+                    createNewUser(email,userAliasName, defaultAbout,
                             date,isPassword,
                             userPassword,this,
                             ((isAliasName, isUserCreated) -> {
@@ -162,7 +170,7 @@ public class AlaisPage extends AppCompatActivity {
             else{
                 if(!TextUtils.isEmpty(userAliasName)){
                     loader = new OnlyLoader(this, R.raw.loading_animation);
-                    createNewUser(token, email,userAliasName,
+                    createNewUser(email,userAliasName, defaultAbout,
                             date,false,
                             null,this,
                             ((isAliasName, isUserCreated) -> {
@@ -250,13 +258,14 @@ public class AlaisPage extends AppCompatActivity {
         });
     }
 
-    protected void createNewUser(String token, String email,
-                                 String aliasName,String date,
+    protected void createNewUser(String email,
+                                 String aliasName, String about, String date,
                                  boolean isPassword, String passwordData, Activity activity,
                                  UserCheckCallback callback){
 
-        AddUserRequest addUserRequestBody = new AddUserRequest(token, email, aliasName, date, isPassword, passwordData);
-        Call<AddUserResponse> call = endpoints.createNewUser(BuildConfig.CLIENT_API,addUserRequestBody);
+        AddUserRequest addUserRequestBody = new AddUserRequest(email, aliasName, about, date, isPassword, passwordData);
+
+        Call<AddUserResponse> call = endpoints.createNewUser(BuildConfig.CLIENT_API, addUserRequestBody);
 
         call.enqueue(new Callback<AddUserResponse>() {
             @Override
