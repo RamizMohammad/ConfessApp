@@ -1,11 +1,14 @@
 package in.mohammad.ramiz.confess;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,11 +16,30 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
+import in.mohammad.ramiz.confess.entities.CreatePostRequest;
+import in.mohammad.ramiz.confess.entities.CreatePostResponse;
+import in.mohammad.ramiz.confess.haptics.VibManager;
+import in.mohammad.ramiz.confess.popups.OkPopUp;
+import in.mohammad.ramiz.confess.popups.OnlyLoader;
+import in.mohammad.ramiz.confess.server.Endpoints;
+import in.mohammad.ramiz.confess.server.ServerConfigs;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class CreatePost extends AppCompatActivity {
 
     private TextView wordCount;
     private EditText postData;
     private ImageView backButton;
+    private FrameLayout postButton;
+    private Endpoints endpoints;
+    private String email;
+    private OnlyLoader popUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +55,10 @@ public class CreatePost extends AppCompatActivity {
         wordCount = findViewById(R.id.wordCount);
         postData = findViewById(R.id.postText);
         backButton = findViewById(R.id.backButton);
+        postButton = findViewById(R.id.postButton);
+
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        endpoints = ServerConfigs.getInstance().create(Endpoints.class);
 
         postData.addTextChangedListener(new TextWatcher() {
             @Override
@@ -53,7 +79,60 @@ public class CreatePost extends AppCompatActivity {
         });
 
         backButton.setOnClickListener(v -> {
-
+            Intent backIntent = new Intent(this, HomePage.class);
+            startActivity(backIntent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
+
+        postButton.setOnClickListener(v -> {
+            VibManager.vibrateTick(this);
+            if(account != null){
+                email = account.getEmail();
+            }
+            String postText = postData.getText().toString();
+            popUp = new OnlyLoader(this, R.raw.loading_animation);
+            createPost(email, postText, isPosted -> {
+                popUp.dismiss();
+                if(isPosted){
+                    Toast.makeText(this, "Post Added", Toast.LENGTH_SHORT).show();
+                    Intent postingIntent = new Intent(this, HomePage.class);
+                    startActivity(postingIntent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                }
+                else{
+                    Toast.makeText(this, "Error in posting", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
+    private void createPost(String email, String post, UserCallback callback){
+
+        CreatePostRequest postData = new CreatePostRequest(email,post);
+
+        Call<CreatePostResponse> call = endpoints.createPost(BuildConfig.CLIENT_API, postData);
+
+        call.enqueue(new Callback<CreatePostResponse>() {
+            @Override
+            public void onResponse(Call<CreatePostResponse> call, Response<CreatePostResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    boolean res = response.body().isMessage();
+                    callback.onResult(res);
+                }
+                else{
+                    callback.onResult(false);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CreatePostResponse> call, Throwable t) {
+                TelegramLogs.sendTelegramLog("Error in fetching the posts:\n"+t);
+                callback.onResult(false);
+            }
+        });
+    }
+
+    public interface UserCallback{
+        void onResult(boolean isPosted);
     }
 }

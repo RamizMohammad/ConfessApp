@@ -17,6 +17,11 @@ println("🔹 Loaded SERVER_URL: ${secretProperties["SERVER_URL"] ?: "NOT FOUND"
 println("🔹 Loaded BOT_TOKEN: ${secretProperties["BOT_TOKEN"] ?: "NOT FOUND"}")
 println("🔹 Loaded CHAT_ID: ${secretProperties["CHAT_ID"] ?: "NOT FOUND"}")
 println("🔹 Loaded CLIENT_API: ${secretProperties["CLIENT_API"] ?: "NOT FOUND"}")
+println("🔹 Loaded CLIENT_API: ${secretProperties["AES_MODE"] ?: "NOT FOUND"}")
+println("🔹 Loaded CLIENT_API: ${secretProperties["AES_KEY_SIZE"] ?: "NOT FOUND"}")
+println("🔹 Loaded CLIENT_API: ${secretProperties["GCM_IV_LENGTH"] ?: "NOT FOUND"}")
+println("🔹 Loaded CLIENT_API: ${secretProperties["GCM_TAG_LENGTH"] ?: "NOT FOUND"}")
+println("🔹 Loaded CLIENT_API: ${secretProperties["HMAC_ALGO"] ?: "NOT FOUND"}")
 
 plugins {
     alias(libs.plugins.android.application)
@@ -31,8 +36,8 @@ android {
         applicationId = "in.mohammad.ramiz.confess"
         minSdk = 31
         targetSdk = 36
-        versionCode = 3
-        versionName = "2.1.0"
+        versionCode = 4
+        versionName = "2.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -41,12 +46,22 @@ android {
         val botToken = secretProperties.getProperty("BOT_TOKEN", "")
         val chatId = secretProperties.getProperty("CHAT_ID", "")
         val clientApi = secretProperties.getProperty("CLIENT_API", "")
+        val aesMode = secretProperties.getProperty("AES_MODE", "")
+        val aesKeySize = secretProperties.getProperty("AES_KEY_SIZE", "")
+        val gcmIvLength = secretProperties.getProperty("GCM_IV_LENGTH", "")
+        val gcmTagLength = secretProperties.getProperty("GCM_TAG_LENGTH", "")
+        val hmacAlgo = secretProperties.getProperty("HMAC_ALGO", "")
 
         buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
         buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
         buildConfigField("String", "BOT_TOKEN", "\"$botToken\"")
         buildConfigField("String", "CHAT_ID", "\"$chatId\"")
         buildConfigField("String", "CLIENT_API", "\"$clientApi\"")
+        buildConfigField("String", "AES_MODE", "\"$aesMode\"")
+        buildConfigField("int", "AES_KEY_SIZE", "$aesKeySize")
+        buildConfigField("int", "GCM_IV_LENGTH", "$gcmIvLength")
+        buildConfigField("int", "GCM_TAG_LENGTH", "$gcmTagLength")
+        buildConfigField("String", "HMAC_ALGO", "\"$hmacAlgo\"")
     }
 
     buildTypes {
@@ -70,6 +85,14 @@ android {
 }
 
 dependencies {
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
+    implementation(libs.room.ktx)
+    implementation(libs.room.rxjava2)
+    implementation(libs.room.rxjava3)
+    implementation(libs.room.guava)
+    testImplementation(libs.room.testing)
+    implementation(libs.room.paging)
     implementation(libs.biometric)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)

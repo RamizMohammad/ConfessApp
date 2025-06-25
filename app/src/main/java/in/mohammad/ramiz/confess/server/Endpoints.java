@@ -7,6 +7,8 @@ import in.mohammad.ramiz.confess.entities.CheckPasswordRequest;
 import in.mohammad.ramiz.confess.entities.CheckPasswordResponse;
 import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
 import in.mohammad.ramiz.confess.entities.CheckUserPassResponse;
+import in.mohammad.ramiz.confess.entities.CreatePostRequest;
+import in.mohammad.ramiz.confess.entities.CreatePostResponse;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordRequest;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordResponse;
 import okhttp3.MultipartBody;
@@ -41,5 +43,11 @@ public interface Endpoints {
     Call<ForgotPasswordResponse> forgotUserPassword(
             @Header("x-api-key") String apiKey,
             @Body ForgotPasswordRequest forgotPasswordRequest
+    );
+
+    @POST("create-post")
+    Call<CreatePostResponse> createPost(
+            @Header("x-api-key") String apiKey,
+            @Body CreatePostRequest createPostRequest
     );
 }

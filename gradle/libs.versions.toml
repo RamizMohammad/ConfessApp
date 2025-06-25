@@ -15,6 +15,14 @@ okhttp = "4.12.0"
 playServicesAuth = "21.3.0"
 playServicesAuthVersion = "21.3.0"
 retrofit = "3.0.0"
+roomCompiler = "2.7.2"
+roomGuava = "2.7.2"
+roomKtx = "2.7.2"
+roomPaging = "2.7.2"
+roomRuntime = "2.7.2"
+roomRxjava2 = "2.7.2"
+roomRxjava3 = "2.7.2"
+roomTesting = "2.7.2"
 
 [libraries]
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
@@ -36,6 +44,14 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 play-services-auth-v2100 = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuthVersion" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
+room-guava = { module = "androidx.room:room-guava", version.ref = "roomGuava" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
+room-paging = { module = "androidx.room:room-paging", version.ref = "roomPaging" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "roomRxjava2" }
+room-rxjava3 = { module = "androidx.room:room-rxjava3", version.ref = "roomRxjava3" }
+room-testing = { module = "androidx.room:room-testing", version.ref = "roomTesting" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
