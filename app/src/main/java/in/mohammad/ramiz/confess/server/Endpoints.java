@@ -11,6 +11,8 @@ import in.mohammad.ramiz.confess.entities.CreatePostRequest;
 import in.mohammad.ramiz.confess.entities.CreatePostResponse;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordRequest;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordResponse;
+import in.mohammad.ramiz.confess.entities.UpdateAboutRequest;
+import in.mohammad.ramiz.confess.entities.UpdateAboutResponse;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -49,5 +51,11 @@ public interface Endpoints {
     Call<CreatePostResponse> createPost(
             @Header("x-api-key") String apiKey,
             @Body CreatePostRequest createPostRequest
+    );
+
+    @POST("update-about")
+    Call<UpdateAboutResponse> updateAbout(
+            @Header("x-api-key") String apiKey,
+            @Body UpdateAboutRequest updateAboutRequest
     );
 }

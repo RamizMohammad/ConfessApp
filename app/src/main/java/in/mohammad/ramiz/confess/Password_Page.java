@@ -195,6 +195,7 @@ public class Password_Page extends AppCompatActivity {
             public void onFailure(Call<ForgotPasswordResponse> call, Throwable throwable) {
                 TelegramLogs.sendTelegramLog("Caught up an error\n"+throwable);
                 popUp = new OkPopUp(activity, R.raw.error_animation, "Error in fetching detail");
+                callback.onResult(false);
             }
         });
     }
