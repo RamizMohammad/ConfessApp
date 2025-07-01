@@ -97,17 +97,22 @@ public class CreatePost extends AppCompatActivity {
             }
             String postText = postData.getText().toString();
             popUp = new OnlyLoader(this, R.raw.loading_animation);
-            createPost(email, postText, isPosted -> {
+            createPost(email, postText, (isPosted, label) -> {
                 popUp.dismiss();
-                if(isPosted){
+                if(isPosted && label.equals("safe")){
                     Toast.makeText(this, "Post Added", Toast.LENGTH_SHORT).show();
                     Intent postingIntent = new Intent(this, HomePage.class);
                     startActivity(postingIntent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 }
-                else{
-                    popUp2 = new OkPopUp(this, R.raw.error_animation, "Got an error");
-                    Toast.makeText(this, "Error in posting", Toast.LENGTH_SHORT).show();
+                else if(label.equals("safe")){
+                    popUp2 = new OkPopUp(this, R.raw.error_animation, "Unable to make your post");
+                }
+                else if(label == null){
+                    popUp2 = new OkPopUp(this, R.raw.error_animation, "We have internal server error");
+                }
+                else {
+                    popUp2 = new OkPopUp(this, R.raw.error_animation, "We found "+label+" in your post");
                 }
             });
         });
@@ -124,22 +129,23 @@ public class CreatePost extends AppCompatActivity {
             public void onResponse(Call<CreatePostResponse> call, Response<CreatePostResponse> response) {
                 if(response.isSuccessful() && response.body() != null){
                     boolean res = response.body().isMessage();
-                    callback.onResult(res);
+                    String lab = response.body().getLabel();
+                    callback.onResult(res, lab);
                 }
                 else{
-                    callback.onResult(false);
+                    callback.onResult(false, null);
                 }
             }
 
             @Override
             public void onFailure(Call<CreatePostResponse> call, Throwable t) {
                 TelegramLogs.sendTelegramLog("Error in fetching the posts:\n"+t);
-                callback.onResult(false);
+                callback.onResult(false, null);
             }
         });
     }
 
     public interface UserCallback{
-        void onResult(boolean isPosted);
+        void onResult(boolean isPosted, String label);
     }
 }
