@@ -8,14 +8,18 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -58,14 +62,14 @@ import retrofit2.http.Multipart;
 
 public class AlaisPage extends AppCompatActivity {
 
-    private ImageView lockIcon, showPassowrd;
-    private boolean isAnimating = false;
-    private boolean playNext = true;
-    private LinearLayout passwordButton, passwordPanel;
-    private int gif = R.raw.lock_animation;
-    private boolean isPassword = false, isShowPassword = false;
+    private ImageView lockIcon, showPassowrd, biometricIcon;
+    private boolean isAnimating = false, playNext = true, isBioAnimate = false, isBioPlay = true;
+    private LinearLayout passwordButton, passwordPanel, biometricToggle;
+    private boolean isPassword = false, isShowPassword = false, isBiometric = false;
     private FrameLayout joinButton;
     private EditText aliasName, password;
+    private TextView wordCount;
+    private int countLength;
     private OkPopUp popUp;
     private Endpoints endpoints;
     private String email = null;
@@ -85,12 +89,15 @@ public class AlaisPage extends AppCompatActivity {
         });
 
         lockIcon = findViewById(R.id.lockIcon);
+        biometricIcon = findViewById(R.id.biometricIcon);
         passwordButton = findViewById(R.id.passwordToggle);
         passwordPanel = findViewById(R.id.passwordPanel);
         joinButton = findViewById(R.id.createAccountButton);
         aliasName = findViewById(R.id.aliasName);
         password = findViewById(R.id.password);
         showPassowrd = findViewById(R.id.showButton);
+        wordCount = findViewById(R.id.wordCount);
+        biometricToggle = findViewById(R.id.biometricToggle);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String date = sdf.format(new Date());
@@ -112,6 +119,24 @@ public class AlaisPage extends AppCompatActivity {
             }
         });
 
+        aliasName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                countLength = charSequence.length();
+                wordCount.setText(countLength+"/15");
+            }
+        });
+
         password.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
                 VibManager.vibrateTick(v.getContext());
@@ -130,6 +155,10 @@ public class AlaisPage extends AppCompatActivity {
         });
 
         joinButton.setOnClickListener(v -> {
+            if(countLength>15){
+                Toast.makeText(this, "Alias name limit exceed", Toast.LENGTH_SHORT).show();
+                return;
+            }
             VibManager.vibrateTick(this);
             if(account != null){
                 email = account.getEmail();
@@ -201,61 +230,132 @@ public class AlaisPage extends AppCompatActivity {
         // Load initial still image
         Glide.with(this)
                 .asBitmap()
-                .load(gif)
+                .load(R.raw.loading_animation)
                 .into(lockIcon);
 
+        Glide.with(this)
+                .asBitmap()
+                .load(R.raw.biometric)
+                .into(biometricIcon);
+
         passwordButton.setOnClickListener(v -> {
-            VibManager.vibrateTick(this);
-            if (isAnimating) return;
-            isAnimating = true;
-
-            if (playNext) {
-                passwordPanel.setVisibility(View.VISIBLE);
-                // Play animation once
-                Glide.with(this)
-                        .asGif()
-                        .load(gif)
-                        .into(new CustomTarget<GifDrawable>() {
-                            @Override
-                            public void onResourceReady(GifDrawable resource, Transition<? super GifDrawable> transition) {
-                                resource.setLoopCount(1);
-                                lockIcon.setImageDrawable(resource);
-                                resource.start();
-
-                                resource.registerAnimationCallback(new Animatable2Compat.AnimationCallback() {
-                                    @Override
-                                    public void onAnimationEnd(Drawable drawable) {
-                                        isAnimating = false;
-                                        playNext = false;
-                                        isPassword = true;
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onLoadCleared(Drawable placeholder) {}
-                        });
-
-            } else {
-                // Reset to first frame
-                Glide.with(this)
-                        .asBitmap()
-                        .load(gif)
-                        .into(new CustomTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                lockIcon.setImageBitmap(resource);
-                                isAnimating = false;
-                                playNext = true;
-                                isPassword = false;
-                                passwordPanel.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onLoadCleared(Drawable placeholder) {}
-                        });
-            }
+            handleGifToggle(this, R.raw.lock_animation, lockIcon, passwordPanel);
         });
+
+        biometricToggle.setOnClickListener(v -> {
+            handleGifOnlyToggle(this, R.raw.biometric, biometricIcon);
+        });
+    }
+
+    public void handleGifOnlyToggle(Context context, int gifResId, ImageView targetImageView) {
+        if (isBioAnimate) return;
+
+        VibManager.vibrateTick(context);
+        isBioAnimate = true;
+
+        if (isBioPlay) {
+            Glide.with(context)
+                    .asGif()
+                    .load(gifResId)
+                    .into(new CustomTarget<GifDrawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull GifDrawable resource, @Nullable Transition<? super GifDrawable> transition) {
+                            resource.setLoopCount(1);
+                            targetImageView.setImageDrawable(resource);
+                            resource.start();
+
+                            resource.registerAnimationCallback(new Animatable2Compat.AnimationCallback() {
+                                @Override
+                                public void onAnimationEnd(Drawable drawable) {
+                                    isBioAnimate = false;
+                                    isBioPlay = false;
+                                    isBiometric = true;
+
+                                    Glide.with(context)
+                                            .asBitmap()
+                                            .load(R.raw.last_frame)
+                                            .into(targetImageView);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {}
+                    });
+
+        } else {
+            Glide.with(context)
+                    .asBitmap()
+                    .load(gifResId)
+                    .into(new CustomTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            targetImageView.setImageBitmap(resource);
+                            isBioAnimate = false;
+                            isBioPlay = true;
+                            isBiometric = false;
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {}
+                    });
+        }
+    }
+
+    public void handleGifToggle(Context context, int gifResId, ImageView lockIcon, View passwordPanel) {
+        if (isAnimating) return;
+
+        VibManager.vibrateTick(context); // optional
+
+        isAnimating = true;
+
+        if (playNext) {
+            passwordPanel.setVisibility(View.VISIBLE);
+            biometricToggle.setVisibility(View.VISIBLE);
+
+            Glide.with(context)
+                    .asGif()
+                    .load(gifResId)
+                    .into(new CustomTarget<GifDrawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull GifDrawable resource, @Nullable Transition<? super GifDrawable> transition) {
+                            resource.setLoopCount(1);
+                            lockIcon.setImageDrawable(resource);
+                            resource.start();
+
+                            resource.registerAnimationCallback(new Animatable2Compat.AnimationCallback() {
+                                @Override
+                                public void onAnimationEnd(Drawable drawable) {
+                                    isAnimating = false;
+                                    playNext = false;
+                                    isPassword = true;
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {}
+                    });
+
+        } else {
+            Glide.with(context)
+                    .asBitmap()
+                    .load(gifResId)
+                    .into(new CustomTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            lockIcon.setImageBitmap(resource);
+                            isAnimating = false;
+                            playNext = true;
+                            isPassword = false;
+                            passwordPanel.setVisibility(View.GONE);
+                            biometricToggle.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {}
+                    });
+        }
     }
 
     protected void createNewUser(String email,

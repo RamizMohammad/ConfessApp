@@ -94,15 +94,38 @@
                    app:layout_constraintStart_toStartOf="parent"
                    app:layout_constraintEnd_toEndOf="parent">
 
-                   <TextView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:text="@string/enter_the_alias_name"
-                       android:fontFamily="@font/roboto_slab"
-                       android:textStyle="bold"
-                       android:layout_marginBottom="5dp"
-                       android:textColor="@color/white"
-                       android:textSize="15sp"/>
+                   <androidx.constraintlayout.widget.ConstraintLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content">
+
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="@string/enter_the_alias_name"
+                           android:fontFamily="@font/roboto_slab"
+                           android:textStyle="bold"
+                           android:layout_marginBottom="5dp"
+                           android:textColor="@color/white"
+                           android:textSize="15sp"
+                           app:layout_constraintTop_toTopOf="parent"
+                           app:layout_constraintStart_toStartOf="parent"
+                           app:layout_constraintBottom_toBottomOf="parent"/>
+
+                       <TextView
+                           android:id="@+id/wordCount"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:gravity="end"
+                           android:fontFamily="@font/poppins"
+                           android:text="@string/_0_15"
+                           android:textColor="@color/yellow"
+                           android:layout_marginEnd="10dp"
+                           android:textSize="15sp"
+                           app:layout_constraintTop_toTopOf="parent"
+                           app:layout_constraintBottom_toBottomOf="parent"
+                           app:layout_constraintEnd_toEndOf="parent"/>
+
+                   </androidx.constraintlayout.widget.ConstraintLayout>
 
                    <EditText
                        android:id="@+id/aliasName"
@@ -112,6 +135,7 @@
                        android:textSize="15sp"
                        android:padding="10dp"
                        android:textColor="@color/white"
+                       android:maxLength="15"
                        android:fontFamily="@font/droid_serif"
                        android:hint="@string/alias_name"
                        android:textColorHint="@color/grey"/>
@@ -151,6 +175,7 @@
                        android:text="@string/do_you_need_your_account_password_protected"
                        android:fontFamily="@font/roboto_slab"
                        android:textStyle="bold"
+                       android:layout_marginTop="2dp"
                        android:layout_gravity="center"
                        android:layout_marginStart="5dp"
                        android:textColor="@color/white"
@@ -222,6 +247,7 @@
                    </LinearLayout>
 
                    <TextView
+                       android:id="@+id/passwordText"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:text="@string/password_will_be_required_at_each_login"
@@ -229,6 +255,39 @@
                        android:fontFamily="@font/poppins"
                        android:textColor="#FFC107"
                        android:layout_gravity="end"/>
+
+               </LinearLayout>
+
+               <LinearLayout
+                   android:id="@+id/biometricToggle"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:layout_marginTop="15dp"
+                   android:visibility="gone"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintEnd_toEndOf="parent"
+                   app:layout_constraintTop_toBottomOf="@id/passwordPanel">
+
+                   <ImageView
+                       android:id="@+id/biometricIcon"
+                       android:layout_width="40dp"
+                       android:layout_height="40dp"
+                       android:layout_marginTop="3dp"
+                       android:contentDescription="@string/lock_icon"
+                       android:layout_gravity="center"/>
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="@string/enable_fingerprint_login"
+                       android:fontFamily="@font/roboto_slab"
+                       android:textStyle="bold"
+                       android:layout_marginTop="2dp"
+                       android:layout_gravity="center"
+                       android:layout_marginStart="5dp"
+                       android:textColor="@color/white"
+                       android:textSize="15sp"/>
 
                </LinearLayout>
 

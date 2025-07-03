@@ -85,6 +85,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.biometric)
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
     implementation(libs.room.ktx)
