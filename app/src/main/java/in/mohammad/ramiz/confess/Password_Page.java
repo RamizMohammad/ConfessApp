@@ -33,6 +33,7 @@ import in.mohammad.ramiz.confess.entities.ForgotPasswordResponse;
 import in.mohammad.ramiz.confess.haptics.VibManager;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
 import in.mohammad.ramiz.confess.popups.OnlyLoader;
+import in.mohammad.ramiz.confess.security.BiometricLogin;
 import in.mohammad.ramiz.confess.server.Endpoints;
 import in.mohammad.ramiz.confess.server.ServerConfigs;
 import retrofit2.Call;
@@ -52,6 +53,8 @@ public class Password_Page extends AppCompatActivity {
     private GradientDrawable drawable;
     private LinearLayout backgroundDetector;
     private OnlyLoader loader;
+    private final int MAX_ATTEMPT = 3;
+    private int CURRENT_COUNT = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +73,11 @@ public class Password_Page extends AppCompatActivity {
         forgotButton = findViewById(R.id.forgotPasswordButton);
         backgroundDetector = findViewById(R.id.passwordEntryPanel);
 
+        Intent bioIntent = getIntent();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         endpoints = ServerConfigs.getInstance().create(Endpoints.class);
+
+        boolean isBiometric = bioIntent.getBooleanExtra("biometricStatus", false);
 
         Drawable background = backgroundDetector.getBackground();
         if(background instanceof GradientDrawable){
@@ -96,6 +102,10 @@ public class Password_Page extends AppCompatActivity {
             passwordField.setSelection(passwordField.getText().length());
             isPasswordShowing = !isPasswordShowing;
         });
+
+        if(isBiometric){
+            biometricLogin();
+        }
 
         buttonFrame.setOnClickListener(v -> {
             VibManager.vibrateTick(this);
@@ -196,6 +206,39 @@ public class Password_Page extends AppCompatActivity {
                 TelegramLogs.sendTelegramLog("Caught up an error\n"+throwable);
                 popUp = new OkPopUp(activity, R.raw.error_animation, "Error in fetching detail");
                 callback.onResult(false);
+            }
+        });
+    }
+
+    private void biometricLogin(){
+        BiometricLogin.authenticte(this, new BiometricLogin.AuthCallback() {
+            @Override
+            public void onSuccess() {
+                Intent homeActivity = new Intent(Password_Page.this, HomePage.class);
+                startActivity(homeActivity);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+
+            @Override
+            public void onUsePassword() {
+            }
+
+            @Override
+            public void onError(String e) {
+                TelegramLogs.sendTelegramLog("Error in biometric logins"+e);
+                popUp = new OkPopUp(Password_Page.this, R.raw.error_animation, "Got an error");
+            }
+
+            @Override
+            public void onFail() {
+                CURRENT_COUNT++;
+                if(CURRENT_COUNT<=MAX_ATTEMPT){
+                    Toast.makeText(Password_Page.this, "Try again", Toast.LENGTH_SHORT).show();
+                    biometricLogin();
+                }
+                else {
+                    finish();
+                }
             }
         });
     }

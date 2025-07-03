@@ -30,9 +30,11 @@ public class Launcher extends AppCompatActivity {
         if (account != null) {
             String email = account.getEmail();
 
-            checkUser(email, (isUser, isPassword) -> {
+            checkUser(email, (isUser, isPassword, isBiometric) -> {
                 if (isUser && isPassword) {
-                    startActivity(new Intent(this, Password_Page.class));
+                    Intent passwordIntent = new Intent(this, Password_Page.class);
+                    passwordIntent.putExtra("biometricStatus", isBiometric);
+                    startActivity(passwordIntent);
                 }
                 else if(isUser) {
                     startActivity(new Intent(this, HomePage.class));
@@ -56,22 +58,22 @@ public class Launcher extends AppCompatActivity {
             @Override
             public void onResponse(Call<CheckUserPassResponse> call, Response<CheckUserPassResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onResult(response.body().isUser(), response.body().isPassword());
+                    callback.onResult(response.body().isUser(), response.body().isPassword(), response.body().isBiometric());
                 } else {
                     TelegramLogs.sendTelegramLog("Null response body in LauncherActivity");
-                    callback.onResult(false, false);
+                    callback.onResult(false, false, false);
                 }
             }
 
             @Override
             public void onFailure(Call<CheckUserPassResponse> call, Throwable t) {
                 TelegramLogs.sendTelegramLog("LauncherActivity error: " + t.getMessage());
-                callback.onResult(false, false);
+                callback.onResult(false, false, false);
             }
         });
     }
 
     public interface UserCallback{
-        void onResult (boolean isUser,boolean isPassword);
+        void onResult (boolean isUser,boolean isPassword, boolean isBiometric);
     }
 }

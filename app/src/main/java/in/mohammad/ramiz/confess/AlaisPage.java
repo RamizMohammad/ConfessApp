@@ -422,6 +422,11 @@ public class AlaisPage extends AppCompatActivity {
             }
 
             @Override
+            public void onUsePassword() {
+                popUp = new OkPopUp(AlaisPage.this, R.raw.error_animation, "Unable to setup biometric");
+            }
+
+            @Override
             public void onError(String e) {
                 TelegramLogs.sendTelegramLog("We got an error on biometric setup"+e);
                 popUp = new OkPopUp(AlaisPage.this, R.raw.error_animation, "Unable to setup biometric");

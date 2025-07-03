@@ -4,10 +4,12 @@ public class CheckUserPassResponse {
 
     private boolean isUser;
     private boolean isPassword;
+    private boolean isBiometric;
 
-    public CheckUserPassResponse(boolean isUser, boolean isPassword) {
+    public CheckUserPassResponse(boolean isUser, boolean isPassword, boolean isBiometric) {
         this.isUser = isUser;
         this.isPassword = isPassword;
+        this.isBiometric = isBiometric;
     }
 
     public CheckUserPassResponse() {
@@ -27,5 +29,13 @@ public class CheckUserPassResponse {
 
     public void setPassword(boolean password) {
         isPassword = password;
+    }
+
+    public boolean isBiometric() {
+        return isBiometric;
+    }
+
+    public void setBiometric(boolean biometric) {
+        isBiometric = biometric;
     }
 }
