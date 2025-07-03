@@ -50,6 +50,7 @@ import in.mohammad.ramiz.confess.entities.AddUserResponse;
 import in.mohammad.ramiz.confess.haptics.VibManager;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
 import in.mohammad.ramiz.confess.popups.OnlyLoader;
+import in.mohammad.ramiz.confess.security.BiometricLogin;
 import in.mohammad.ramiz.confess.server.Endpoints;
 import in.mohammad.ramiz.confess.server.ServerConfigs;
 import okhttp3.MediaType;
@@ -65,11 +66,11 @@ public class AlaisPage extends AppCompatActivity {
     private ImageView lockIcon, showPassowrd, biometricIcon;
     private boolean isAnimating = false, playNext = true, isBioAnimate = false, isBioPlay = true;
     private LinearLayout passwordButton, passwordPanel, biometricToggle;
-    private boolean isPassword = false, isShowPassword = false, isBiometric = false;
+    private boolean isPassword = false, isShowPassword = false, isBiometric = false, isBiometricSuccess = false;
     private FrameLayout joinButton;
     private EditText aliasName, password;
     private TextView wordCount;
-    private int countLength;
+    private int countLength, MAX_ATTEMPT = 3, CURRENT_COUNT = 0;
     private OkPopUp popUp;
     private Endpoints endpoints;
     private String email = null;
@@ -155,73 +156,91 @@ public class AlaisPage extends AppCompatActivity {
         });
 
         joinButton.setOnClickListener(v -> {
-            if(countLength>15){
-                Toast.makeText(this, "Alias name limit exceed", Toast.LENGTH_SHORT).show();
+            if (countLength > 15) {
+                Toast.makeText(this, "Alias name limit exceeded", Toast.LENGTH_SHORT).show();
                 return;
             }
+
             VibManager.vibrateTick(this);
-            if(account != null){
+
+            if (account != null) {
                 email = account.getEmail();
             }
+
             String userAliasName = aliasName.getText().toString();
+            String userPassword = password.getText().toString();
 
-            if(isPassword){
-                String userPassword = password.getText().toString();
+            if (isPassword && isBiometric) {
+                if (!TextUtils.isEmpty(userAliasName) && !TextUtils.isEmpty(userPassword)) {
+                    startBiometric(() -> {
+                        loader = new OnlyLoader(this, R.raw.loading_animation);
+                        createNewUser(email, userAliasName, defaultAbout,
+                                date, true, isBiometricSuccess,
+                                userPassword, this,
+                                (isAliasName, isUserCreated) -> {
+                                    if (loader != null) loader.dismiss();
 
-                if(!TextUtils.isEmpty(userAliasName) && !TextUtils.isEmpty(userPassword)){
-                    loader = new OnlyLoader(this, R.raw.loading_animation);
-                    createNewUser(email,userAliasName, defaultAbout,
-                            date,isPassword,
-                            userPassword,this,
-                            ((isAliasName, isUserCreated) -> {
-
-                                if(loader != null){
-                                    loader.dismiss();
-                                }
-
-                                if(isAliasName){
-                                    drawable.setStroke(2, color);
-                                    aliasName.setText("");
-                                    aliasName.setHint("alias already taken");
-                                }
-                                else if(isUserCreated){
-                                    Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
-                                    startActivity(welcomePageIntent);
-                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                                    finish();
-                                }
-                            }));
-                }
-                else{
+                                    if (isAliasName) {
+                                        drawable.setStroke(2, color);
+                                        aliasName.setText("");
+                                        password.setText("");
+                                        aliasName.setHint("Alias already taken");
+                                    } else if (isUserCreated) {
+                                        Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
+                                        startActivity(welcomePageIntent);
+                                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                        finish();
+                                    }
+                                });
+                    });
+                } else {
                     popUp = new OkPopUp(this, R.raw.file_not_found, "Some fields are found empty");
-                    }
                 }
-            else{
-                if(!TextUtils.isEmpty(userAliasName)){
+            } else if (isPassword) {
+                if (!TextUtils.isEmpty(userAliasName) && !TextUtils.isEmpty(userPassword)) {
                     loader = new OnlyLoader(this, R.raw.loading_animation);
-                    createNewUser(email,userAliasName, defaultAbout,
-                            date,false,
-                            null,this,
-                            ((isAliasName, isUserCreated) -> {
+                    createNewUser(email, userAliasName, defaultAbout,
+                            date, true, false,
+                            userPassword, this,
+                            (isAliasName, isUserCreated) -> {
+                                if (loader != null) loader.dismiss();
 
-                                if(loader != null){
-                                    loader.dismiss();
-                                }
-
-                                if(isAliasName){
+                                if (isAliasName) {
                                     drawable.setStroke(2, color);
                                     aliasName.setText("");
                                     aliasName.setHint("Alias already taken");
-                                }
-                                else if(isUserCreated){
+                                } else if (isUserCreated) {
                                     Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
                                     startActivity(welcomePageIntent);
                                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                                     finish();
                                 }
-                            }));
+                            });
+                } else {
+                    popUp = new OkPopUp(this, R.raw.file_not_found, "Some fields are found empty");
                 }
-                else {
+
+            } else {
+                if (!TextUtils.isEmpty(userAliasName)) {
+                    loader = new OnlyLoader(this, R.raw.loading_animation);
+                    createNewUser(email, userAliasName, defaultAbout,
+                            date, false, false,
+                            null, this,
+                            (isAliasName, isUserCreated) -> {
+                                if (loader != null) loader.dismiss();
+
+                                if (isAliasName) {
+                                    drawable.setStroke(2, color);
+                                    aliasName.setText("");
+                                    aliasName.setHint("Alias already taken");
+                                } else if (isUserCreated) {
+                                    Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
+                                    startActivity(welcomePageIntent);
+                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                    finish();
+                                }
+                            });
+                } else {
                     popUp = new OkPopUp(this, R.raw.file_not_found, "Some fields are found empty");
                 }
             }
@@ -230,7 +249,7 @@ public class AlaisPage extends AppCompatActivity {
         // Load initial still image
         Glide.with(this)
                 .asBitmap()
-                .load(R.raw.loading_animation)
+                .load(R.raw.lock_animation)
                 .into(lockIcon);
 
         Glide.with(this)
@@ -311,7 +330,9 @@ public class AlaisPage extends AppCompatActivity {
 
         if (playNext) {
             passwordPanel.setVisibility(View.VISIBLE);
-            biometricToggle.setVisibility(View.VISIBLE);
+            if(BiometricLogin.isBiometricThere(this)){
+                biometricToggle.setVisibility(View.VISIBLE);
+            }
 
             Glide.with(context)
                     .asGif()
@@ -360,10 +381,10 @@ public class AlaisPage extends AppCompatActivity {
 
     protected void createNewUser(String email,
                                  String aliasName, String about, String date,
-                                 boolean isPassword, String passwordData, Activity activity,
+                                 boolean isPassword, boolean isBiometric, String passwordData, Activity activity,
                                  UserCheckCallback callback){
 
-        AddUserRequest addUserRequestBody = new AddUserRequest(email, aliasName, about, date, isPassword, passwordData);
+        AddUserRequest addUserRequestBody = new AddUserRequest(email, aliasName, about, date, isPassword,isBiometric, passwordData);
 
         Call<AddUserResponse> call = endpoints.createNewUser(BuildConfig.CLIENT_API, addUserRequestBody);
 
@@ -388,6 +409,36 @@ public class AlaisPage extends AppCompatActivity {
             public void onFailure(Call<AddUserResponse> call, Throwable throwable) {
                 popUp = new OkPopUp(activity, R.raw.error_animation, "We Encounter the server error");
                 TelegramLogs.sendTelegramLog("Server error encountered\n"+throwable);
+            }
+        });
+    }
+
+    private void startBiometric(Runnable runnable){
+        BiometricLogin.authenticte(this, new BiometricLogin.AuthCallback() {
+            @Override
+            public void onSuccess() {
+                isBiometricSuccess = true;
+                runnable.run();
+            }
+
+            @Override
+            public void onError(String e) {
+                TelegramLogs.sendTelegramLog("We got an error on biometric setup"+e);
+                popUp = new OkPopUp(AlaisPage.this, R.raw.error_animation, "Unable to setup biometric");
+            }
+
+            @Override
+            public void onFail() {
+                CURRENT_COUNT++;
+                if(CURRENT_COUNT <= MAX_ATTEMPT){
+                    Toast.makeText(AlaisPage.this,
+                            "Try setting up again",
+                            Toast.LENGTH_SHORT).show();
+                    startBiometric(runnable);
+                }
+                else {
+                    finish();
+                }
             }
         });
     }

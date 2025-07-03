@@ -6,14 +6,16 @@ public class AddUserRequest {
     private String about;
     private String date;
     private boolean isPassword;
+    private boolean isBiometric;
     private String password;
 
-    public AddUserRequest(String email, String aliasName, String about, String date, boolean isPassword, String password) {
+    public AddUserRequest(String email, String aliasName, String about, String date, boolean isPassword, boolean isBiometric, String password) {
         this.email = email;
         this.aliasName = aliasName;
         this.about = about;
         this.date = date;
         this.isPassword = isPassword;
+        this.isBiometric = isBiometric;
         this.password = password;
     }
 
@@ -58,6 +60,14 @@ public class AddUserRequest {
 
     public void setPassword(boolean password) {
         isPassword = password;
+    }
+
+    public boolean isBiometric() {
+        return isBiometric;
+    }
+
+    public void setBiometric(boolean biometric) {
+        isBiometric = biometric;
     }
 
     public String getPassword() {
