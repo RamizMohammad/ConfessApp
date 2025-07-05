@@ -25,6 +25,7 @@ roomRxjava2 = "2.7.2"
 roomRxjava3 = "2.7.2"
 roomTesting = "2.7.2"
 shimmer = "0.5.0"
+swiperefreshlayout = "1.1.0"
 
 [libraries]
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
@@ -56,6 +57,7 @@ room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "roomRxjav
 room-rxjava3 = { module = "androidx.room:room-rxjava3", version.ref = "roomRxjava3" }
 room-testing = { module = "androidx.room:room-testing", version.ref = "roomTesting" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
+swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

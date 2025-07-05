@@ -85,6 +85,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.swiperefreshlayout)
     implementation(libs.shimmer)
     implementation(libs.firebase.messaging)
     implementation(libs.biometric)

@@ -45,4 +45,6 @@
     <string name="enable_fingerprint_login">Enable fingerprint login</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="explore_the_confession_world">Explore the confession world</string>
+    <string name="fun_fact">Fun Fact</string>
 </resources>
