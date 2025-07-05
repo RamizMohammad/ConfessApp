@@ -11,6 +11,8 @@ import in.mohammad.ramiz.confess.entities.CreatePostRequest;
 import in.mohammad.ramiz.confess.entities.CreatePostResponse;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordRequest;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordResponse;
+import in.mohammad.ramiz.confess.entities.GetProfileRequest;
+import in.mohammad.ramiz.confess.entities.GetProfileResponse;
 import in.mohammad.ramiz.confess.entities.UpdateAboutRequest;
 import in.mohammad.ramiz.confess.entities.UpdateAboutResponse;
 import okhttp3.MultipartBody;
@@ -57,5 +59,11 @@ public interface Endpoints {
     Call<UpdateAboutResponse> updateAbout(
             @Header("x-api-key") String apiKey,
             @Body UpdateAboutRequest updateAboutRequest
+    );
+
+    @POST("get-profile")
+    Call<GetProfileResponse> getProfile(
+            @Header("x-api-key") String apiKey,
+            @Body GetProfileRequest getProfileRequest
     );
 }

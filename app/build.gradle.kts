@@ -85,6 +85,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.shimmer)
+    implementation(libs.firebase.messaging)
     implementation(libs.biometric)
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)

@@ -13,6 +13,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import in.mohammad.ramiz.confess.haptics.VibManager;
 
@@ -50,12 +53,14 @@ public class HomePage extends AppCompatActivity {
 
         // Initial tab selection
         applyTabSelection();
+        fragmentOpener(new HomeFragment());
 
         // Set click listeners
         homeButton.setOnClickListener(v -> {
             VibManager.vibrateTick(this);
             selectedTabIndex = 0;
             applyTabSelection();
+            fragmentOpener(new HomeFragment());
         });
 
         addButton.setOnClickListener(v -> {
@@ -71,6 +76,7 @@ public class HomePage extends AppCompatActivity {
             VibManager.vibrateTick(this);
             selectedTabIndex = 2;
             applyTabSelection();
+            fragmentOpener(new ProfileFragment());
         });
     }
 
@@ -101,6 +107,13 @@ public class HomePage extends AppCompatActivity {
                 setSelectedTab(profileLogo, profileText, selectedColor);
                 break;
         }
+    }
+
+    private void fragmentOpener(Fragment fragment){
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.fragment, fragment);
+        ft.commit();
     }
 
     private void setSelectedTab(ImageView icon, TextView text, int color) {

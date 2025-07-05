@@ -43,4 +43,6 @@
     <string name="update_about_btn">Update About</string>
     <string name="_0_15">0/15</string>
     <string name="enable_fingerprint_login">Enable fingerprint login</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

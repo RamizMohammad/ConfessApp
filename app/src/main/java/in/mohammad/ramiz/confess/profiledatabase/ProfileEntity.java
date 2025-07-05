@@ -19,7 +19,7 @@ public class ProfileEntity {
     @ColumnInfo(name = "about")
     private String about;
 
-    public ProfileEntity(@NonNull  String email, String about, String aliasName) {
+    public ProfileEntity(@NonNull String email ,String about, String aliasName) {
         this.email = email;
         this.about = about;
         this.aliasName = aliasName;
@@ -28,12 +28,11 @@ public class ProfileEntity {
     public ProfileEntity() {
     }
 
-    @NonNull
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(@NonNull String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
