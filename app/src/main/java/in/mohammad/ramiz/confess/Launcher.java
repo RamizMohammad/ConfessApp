@@ -10,6 +10,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
 import in.mohammad.ramiz.confess.entities.CheckUserPassResponse;
+import in.mohammad.ramiz.confess.security.BiometricPrefs;
 import in.mohammad.ramiz.confess.server.Endpoints;
 import in.mohammad.ramiz.confess.server.ServerConfigs;
 import retrofit2.Call;
@@ -32,8 +33,8 @@ public class Launcher extends AppCompatActivity {
 
             checkUser(email, (isUser, isPassword, isBiometric) -> {
                 if (isUser && isPassword) {
+                    BiometricPrefs.getInstance(this).setBiometricEnabled(isBiometric);
                     Intent passwordIntent = new Intent(this, Password_Page.class);
-                    passwordIntent.putExtra("biometricStatus", isBiometric);
                     startActivity(passwordIntent);
                 }
                 else if(isUser) {

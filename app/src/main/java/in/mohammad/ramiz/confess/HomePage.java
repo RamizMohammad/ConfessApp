@@ -51,16 +51,12 @@ public class HomePage extends AppCompatActivity {
         addButton = findViewById(R.id.addButton);
         profileButton = findViewById(R.id.profileButton);
 
-        // Initial tab selection
-        applyTabSelection();
-        fragmentOpener(new HomeFragment());
-
         // Set click listeners
         homeButton.setOnClickListener(v -> {
             VibManager.vibrateTick(this);
             selectedTabIndex = 0;
             applyTabSelection();
-            fragmentOpener(new HomeFragment());
+            fragmentOpener(new HomeFragment(), "HomeFragment");
         });
 
         addButton.setOnClickListener(v -> {
@@ -76,14 +72,27 @@ public class HomePage extends AppCompatActivity {
             VibManager.vibrateTick(this);
             selectedTabIndex = 2;
             applyTabSelection();
-            fragmentOpener(new ProfileFragment());
+            fragmentOpener(new ProfileFragment(), "ProfileFragment");
         });
+
+        // Load selected fragment only once when activity is created
+        if (savedInstanceState == null) {
+            applyTabSelection();
+            switch (selectedTabIndex) {
+                case 0:
+                    fragmentOpener(new HomeFragment(), "HomeFragment");
+                    break;
+                case 2:
+                    fragmentOpener(new ProfileFragment(), "ProfileFragment");
+                    break;
+            }
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        applyTabSelection(); // Reapply selection when coming back from another activity
+        applyTabSelection();
     }
 
     private void applyTabSelection() {
@@ -109,10 +118,23 @@ public class HomePage extends AppCompatActivity {
         }
     }
 
-    private void fragmentOpener(Fragment fragment){
+    private void fragmentOpener(Fragment fragment, String tag) {
         FragmentManager fm = getSupportFragmentManager();
+        Fragment currentFragment = fm.findFragmentById(R.id.fragment);
+        Fragment existingFragment = fm.findFragmentByTag(tag);
+
+        if (existingFragment != null && existingFragment == currentFragment) {
+            return;
+        }
+
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fragment, fragment);
+
+        if (existingFragment == null) {
+            ft.replace(R.id.fragment, fragment, tag);
+        } else {
+            ft.replace(R.id.fragment, existingFragment, tag);
+        }
+
         ft.commit();
     }
 

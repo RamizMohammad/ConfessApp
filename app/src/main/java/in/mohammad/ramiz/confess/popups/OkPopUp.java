@@ -21,13 +21,10 @@ public class OkPopUp {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.gof_pop_layout);
 
-        // ✅ Allow dismiss via back button
         dialog.setCancelable(true);
 
-        // ✅ Allow dismiss by tapping outside the dialog box
         dialog.setCanceledOnTouchOutside(true);
 
-        // ✅ Make background transparent
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }

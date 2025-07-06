@@ -85,6 +85,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.datastore.preferences)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
     implementation(libs.swiperefreshlayout)
     implementation(libs.shimmer)
     implementation(libs.firebase.messaging)

@@ -67,6 +67,7 @@ public class WelcomeUser extends AppCompatActivity {
             Intent homeIntent = new Intent(WelcomeUser.this, HomePage.class);
             startActivity(homeIntent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         });
     }
 }

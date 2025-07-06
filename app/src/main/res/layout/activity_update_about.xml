@@ -121,7 +121,6 @@
                                 android:textSize="15sp"
                                 android:padding="10dp"
                                 android:background="@drawable/filed_eraser"
-                                android:inputType="textPassword"
                                 android:textColor="@color/white"
                                 android:fontFamily="@font/droid_serif"
                                 android:maxLength="50"

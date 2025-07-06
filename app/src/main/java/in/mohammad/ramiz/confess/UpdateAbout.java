@@ -61,14 +61,9 @@ public class UpdateAbout extends AppCompatActivity {
 
         aboutField.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-
+            public void afterTextChanged(Editable editable) {}
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 currentLength = charSequence.length();
@@ -83,15 +78,19 @@ public class UpdateAbout extends AppCompatActivity {
                 email = account.getEmail();
             }
             String about = aboutField.getText().toString();
-            updateAbout(email, about, isUpdated -> {
-                loader.dismiss();
-                if(isUpdated){
-                    Toast.makeText(this, "About Updated", Toast.LENGTH_SHORT).show();
+            updateAbout(email, about, ((isUpdated, label) -> {
+                if(isUpdated && label.equals("safe")){
+                    Toast.makeText(UpdateAbout.this, "About Updated", Toast.LENGTH_SHORT).show();
+                    Intent homeIntent = new Intent(UpdateAbout.this, HomePage.class);
+                    startActivity(homeIntent);
+                    finish();
+                } else if(label == null){
+                    new OkPopUp(UpdateAbout.this, R.raw.error_animation, "We got some error");
                 }
                 else {
-                    popUp = new OkPopUp(this, R.raw.error_animation, "Error in updating");
+                    new OkPopUp(UpdateAbout.this, R.raw.error_animation, "We found "+label+" in your post");
                 }
-            });
+            }));
         });
     }
 
@@ -105,23 +104,24 @@ public class UpdateAbout extends AppCompatActivity {
             public void onResponse(Call<UpdateAboutResponse> call, Response<UpdateAboutResponse> response) {
                 if(response.isSuccessful() && response.body() != null){
                     boolean callResponse = response.body().isMessage();
-                    callback.onResult(callResponse);
+                    String label = response.body().getLabel();
+                    callback.onResult(callResponse,label);
                 }
                 else{
                     TelegramLogs.sendTelegramLog("There is error in fetching the response.");
-                    callback.onResult(false);
+                    callback.onResult(false, null);
                 }
             }
 
             @Override
             public void onFailure(Call<UpdateAboutResponse> call, Throwable t) {
                 TelegramLogs.sendTelegramLog("Caught internal error");
-                callback.onResult(false);
+                callback.onResult(false, null);
             }
         });
     }
 
     private interface UserCallback{
-        void onResult(boolean isUpdated);
+        void onResult(boolean isUpdated, String label);
     }
 }

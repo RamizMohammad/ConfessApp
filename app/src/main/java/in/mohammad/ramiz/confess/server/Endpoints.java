@@ -3,6 +3,8 @@ package in.mohammad.ramiz.confess.server;
 import in.mohammad.ramiz.confess.BuildConfig;
 import in.mohammad.ramiz.confess.entities.AddUserRequest;
 import in.mohammad.ramiz.confess.entities.AddUserResponse;
+import in.mohammad.ramiz.confess.entities.BiometricRequest;
+import in.mohammad.ramiz.confess.entities.BiometricResponse;
 import in.mohammad.ramiz.confess.entities.CheckPasswordRequest;
 import in.mohammad.ramiz.confess.entities.CheckPasswordResponse;
 import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
@@ -65,5 +67,11 @@ public interface Endpoints {
     Call<GetProfileResponse> getProfile(
             @Header("x-api-key") String apiKey,
             @Body GetProfileRequest getProfileRequest
+    );
+
+    @POST("biometric")
+    Call<BiometricResponse> updateBiometric(
+            @Header("x-api-key") String apiKey,
+            @Body BiometricRequest biometricRequest
     );
 }

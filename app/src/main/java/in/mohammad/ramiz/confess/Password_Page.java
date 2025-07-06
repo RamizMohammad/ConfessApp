@@ -34,6 +34,7 @@ import in.mohammad.ramiz.confess.haptics.VibManager;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
 import in.mohammad.ramiz.confess.popups.OnlyLoader;
 import in.mohammad.ramiz.confess.security.BiometricLogin;
+import in.mohammad.ramiz.confess.security.BiometricPrefs;
 import in.mohammad.ramiz.confess.server.Endpoints;
 import in.mohammad.ramiz.confess.server.ServerConfigs;
 import retrofit2.Call;
@@ -73,11 +74,10 @@ public class Password_Page extends AppCompatActivity {
         forgotButton = findViewById(R.id.forgotPasswordButton);
         backgroundDetector = findViewById(R.id.passwordEntryPanel);
 
-        Intent bioIntent = getIntent();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         endpoints = ServerConfigs.getInstance().create(Endpoints.class);
 
-        boolean isBiometric = bioIntent.getBooleanExtra("biometricStatus", false);
+        boolean isBiometric = BiometricPrefs.getInstance(this).isBiometricEnabled();
 
         Drawable background = backgroundDetector.getBackground();
         if(background instanceof GradientDrawable){

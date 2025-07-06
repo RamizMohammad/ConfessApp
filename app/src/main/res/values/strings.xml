@@ -47,4 +47,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="explore_the_confession_world">Explore the confession world</string>
     <string name="fun_fact">Fun Fact</string>
+    <string name="your_confessions">Your Confessions</string>
+    <string name="change_your_about">Change your about</string>
+    <string name="biometric_login">Biometric login</string>
+    <string name="edit_about">Edit about</string>
+    <string name="rate_us">Rate us</string>
+    <string name="developer_rights">Developer Rights</string>
+    <string name="delete_account">Delete account</string>
+    <string name="all_rights_reserver_mohammad_ramiz">All rights reserved | Mohammad Ramiz</string>
 </resources>
