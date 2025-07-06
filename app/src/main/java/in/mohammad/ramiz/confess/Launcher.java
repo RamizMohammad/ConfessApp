@@ -12,6 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
 import in.mohammad.ramiz.confess.entities.CheckUserPassResponse;
+import in.mohammad.ramiz.confess.popups.OnlyLoader;
 import in.mohammad.ramiz.confess.security.BiometricPrefs;
 import in.mohammad.ramiz.confess.server.Endpoints;
 import in.mohammad.ramiz.confess.server.ServerConfigs;
@@ -22,7 +23,7 @@ import retrofit2.Response;
 public class Launcher extends AppCompatActivity {
 
     private Endpoints endpoints;
-
+    private OnlyLoader loader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,8 +33,9 @@ public class Launcher extends AppCompatActivity {
 
         if (account != null) {
             String email = account.getEmail();
-
+            loader = new OnlyLoader(this, R.raw.loading_animation);
             checkUser(email, (isUser, isPassword, isBiometric) -> {
+                loader.dismiss();
                 if (isUser && isPassword) {
                     BiometricPrefs.getInstance(this).setBiometricEnabled(isBiometric);
                     Intent passwordIntent = new Intent(this, Password_Page.class);
@@ -48,6 +50,7 @@ public class Launcher extends AppCompatActivity {
             });
 
         } else {
+            loader.dismiss();
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }

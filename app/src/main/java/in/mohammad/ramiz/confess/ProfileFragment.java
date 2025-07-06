@@ -1,9 +1,11 @@
 package in.mohammad.ramiz.confess;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -180,6 +182,16 @@ public class ProfileFragment extends Fragment {
                     }
                 });
             }
+        });
+
+        button4.setOnClickListener(v -> {
+            VibManager.vibrateTick(requireContext());
+            ratePlaystore(requireContext());
+        });
+
+        button5.setOnClickListener(v -> {
+            VibManager.vibrateTick(requireContext());
+            developerProfile();
         });
 
         button6.setOnClickListener(v -> {
@@ -380,6 +392,27 @@ public class ProfileFragment extends Fragment {
                     Intent signout = new Intent(requireContext(), TermsAndCondition.class);
                     startActivity(signout);
                 });
+    }
+
+    private void ratePlaystore(Context context){
+        try{
+            context.startActivity(
+                    new Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("market://details?id=" + context.getPackageName())
+                    )
+            );
+        } catch (Exception e){
+            context.startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=" + context.getPackageName())));
+        }
+    }
+
+    private void developerProfile(){
+        String url = "https://www.mohammadramiz.in";
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
     }
 
     private void stopLoadingAndShowData() {

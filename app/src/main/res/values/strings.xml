@@ -52,7 +52,7 @@
     <string name="biometric_login">Biometric login</string>
     <string name="edit_about">Edit about</string>
     <string name="rate_us">Rate us</string>
-    <string name="developer_rights">Developer Rights</string>
+    <string name="developer_rights">Developer profile</string>
     <string name="delete_account">Delete account</string>
     <string name="all_rights_reserver_mohammad_ramiz">All rights reserved | Mohammad Ramiz</string>
 </resources>

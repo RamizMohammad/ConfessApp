@@ -51,6 +51,7 @@ import in.mohammad.ramiz.confess.haptics.VibManager;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
 import in.mohammad.ramiz.confess.popups.OnlyLoader;
 import in.mohammad.ramiz.confess.security.BiometricLogin;
+import in.mohammad.ramiz.confess.security.BiometricPrefs;
 import in.mohammad.ramiz.confess.server.Endpoints;
 import in.mohammad.ramiz.confess.server.ServerConfigs;
 import okhttp3.MediaType;
@@ -148,8 +149,10 @@ public class AlaisPage extends AppCompatActivity {
             VibManager.vibrateTick(this);
             if (!isShowPassword) {
                 password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                showPassowrd.setImageResource(R.drawable.hide);
             } else {
                 password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                showPassowrd.setImageResource(R.drawable.show);
             }
             password.setSelection(password.getText().length());
             isShowPassword = !isShowPassword;
@@ -186,6 +189,7 @@ public class AlaisPage extends AppCompatActivity {
                                         password.setText("");
                                         aliasName.setHint("Alias already taken");
                                     } else if (isUserCreated) {
+                                        BiometricPrefs.getInstance(this).setBiometricEnabled(true);
                                         Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
                                         startActivity(welcomePageIntent);
                                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

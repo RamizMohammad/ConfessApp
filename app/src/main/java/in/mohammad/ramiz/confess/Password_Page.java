@@ -1,9 +1,11 @@
 package in.mohammad.ramiz.confess;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -23,6 +25,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import java.net.URI;
 
 import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.entities.CheckPasswordRequest;
@@ -96,8 +100,10 @@ public class Password_Page extends AppCompatActivity {
             VibManager.vibrateTick(this);
             if (!isPasswordShowing) {
                 passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                showButton.setImageResource(R.drawable.hide);
             } else {
                 passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                showButton.setImageResource(R.drawable.show);
             }
             passwordField.setSelection(passwordField.getText().length());
             isPasswordShowing = !isPasswordShowing;
