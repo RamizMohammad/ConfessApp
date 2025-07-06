@@ -10,6 +10,7 @@
     android:background="@color/black"
     tools:context=".HomePage">
 
+    <!-- Main app content -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -18,11 +19,12 @@
             android:id="@+id/fragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/bottomNav"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/bottomNav"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Bottom navigation -->
         <LinearLayout
             android:id="@+id/bottomNav"
             android:layout_width="match_parent"
@@ -69,7 +71,6 @@
                         android:textStyle="bold"
                         android:textSize="16sp"
                         android:fontFamily="@font/roboto_slab" />
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -90,7 +91,6 @@
                         android:src="@drawable/add"
                         android:layout_gravity="center"
                         android:contentDescription="@string/homelogo"/>
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -122,13 +122,32 @@
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:fontFamily="@font/roboto_slab" />
-
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </LinearLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/secureOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:background="#CC000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="10dp"
+        android:fitsSystemWindows="true"
+        android:importantForAccessibility="no">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@mipmap/ic_launcher_round"
+            android:contentDescription="Secure Logo"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
 
 </FrameLayout>

@@ -28,6 +28,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.material.snackbar.Snackbar;
 
 import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.entities.BiometricRequest;
@@ -104,7 +105,9 @@ public class ProfileFragment extends Fragment {
             });
         });
 
-        button1.setOnClickListener(v -> VibManager.vibrateTick(requireContext()));
+        button1.setOnClickListener(v -> {
+            VibManager.vibrateTick(requireContext());
+        });
 
         button2.setOnClickListener(v -> {
             VibManager.vibrateTick(requireContext());

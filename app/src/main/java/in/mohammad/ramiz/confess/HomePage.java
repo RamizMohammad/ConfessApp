@@ -3,6 +3,9 @@ package in.mohammad.ramiz.confess;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -11,7 +14,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -24,6 +26,7 @@ public class HomePage extends AppCompatActivity {
     private ImageView homeLogo, addLogo, profileLogo;
     private TextView homeText, profileText;
     private LinearLayout homeButton, addButton, profileButton;
+    private FrameLayout screenHide;
 
     // Persistent selection even when returning from other activities
     public static int selectedTabIndex = 0; // 0 = Home, 1 = Add, 2 = Profile
@@ -33,6 +36,7 @@ public class HomePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_page);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
         // Apply bottom navigation padding for gesture nav bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -50,6 +54,7 @@ public class HomePage extends AppCompatActivity {
         homeButton = findViewById(R.id.homeButton);
         addButton = findViewById(R.id.addButton);
         profileButton = findViewById(R.id.profileButton);
+        screenHide = findViewById(R.id.secureOverlay);
 
         // Set click listeners
         homeButton.setOnClickListener(v -> {
@@ -136,6 +141,23 @@ public class HomePage extends AppCompatActivity {
         }
 
         ft.commit();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        screenHide.setAlpha(0f);
+        screenHide.setVisibility(View.VISIBLE);
+        screenHide.animate().alpha(1f).setDuration(200).start();
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Intent reLogin = new Intent(this, Password_Page.class);
+        startActivity(reLogin);
+        finish();
     }
 
     private void setSelectedTab(ImageView icon, TextView text, int color) {
