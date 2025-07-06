@@ -74,4 +74,10 @@ public interface Endpoints {
             @Header("x-api-key") String apiKey,
             @Body BiometricRequest biometricRequest
     );
+
+    @POST("delete-user")
+    Call<BiometricResponse> deleteUser(
+        @Header("x-api-key") String apiKey,
+        @Body BiometricRequest biometricRequest
+    );
 }
