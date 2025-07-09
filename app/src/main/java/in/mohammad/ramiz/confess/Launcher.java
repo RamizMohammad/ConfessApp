@@ -2,6 +2,8 @@ package in.mohammad.ramiz.confess;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -35,9 +37,12 @@ public class Launcher extends AppCompatActivity {
             String email = account.getEmail();
             loader = new OnlyLoader(this, R.raw.loading_animation);
             checkUser(email, (isUser, isPassword, isBiometric) -> {
-                loader.dismiss();
+                if(loader != null){
+                    loader.dismiss();
+                }
                 if (isUser && isPassword) {
                     BiometricPrefs.getInstance(this).setBiometricEnabled(isBiometric);
+                    BiometricPrefs.getInstance(this).setBiometricLogin(true);
                     Intent passwordIntent = new Intent(this, Password_Page.class);
                     startActivity(passwordIntent);
                 }
@@ -50,7 +55,9 @@ public class Launcher extends AppCompatActivity {
             });
 
         } else {
-            loader.dismiss();
+            if(loader != null){
+                loader.dismiss();
+            }
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }

@@ -355,6 +355,7 @@ public class AlaisPage extends AppCompatActivity {
                                     isAnimating = false;
                                     playNext = false;
                                     isPassword = true;
+                                    BiometricPrefs.getInstance(context).setPasswordStatus(true);
                                 }
                             });
                         }
@@ -374,6 +375,7 @@ public class AlaisPage extends AppCompatActivity {
                             isAnimating = false;
                             playNext = true;
                             isPassword = false;
+                            BiometricPrefs.getInstance(context).setPasswordStatus(false);
                             passwordPanel.setVisibility(View.GONE);
                             biometricToggle.setVisibility(View.GONE);
                         }

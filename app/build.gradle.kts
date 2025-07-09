@@ -11,18 +11,6 @@ if (secretPropertiesFile.exists()) {
     println("⚠️ Warning: secrets.properties file not found!")
 }
 
-// Debugging output (shows in Gradle console)
-println("🔹 Loaded WEB_CLIENT_ID: ${secretProperties["WEB_CLIENT_ID"] ?: "NOT FOUND"}")
-println("🔹 Loaded SERVER_URL: ${secretProperties["SERVER_URL"] ?: "NOT FOUND"}")
-println("🔹 Loaded BOT_TOKEN: ${secretProperties["BOT_TOKEN"] ?: "NOT FOUND"}")
-println("🔹 Loaded CHAT_ID: ${secretProperties["CHAT_ID"] ?: "NOT FOUND"}")
-println("🔹 Loaded CLIENT_API: ${secretProperties["CLIENT_API"] ?: "NOT FOUND"}")
-println("🔹 Loaded CLIENT_API: ${secretProperties["AES_MODE"] ?: "NOT FOUND"}")
-println("🔹 Loaded CLIENT_API: ${secretProperties["AES_KEY_SIZE"] ?: "NOT FOUND"}")
-println("🔹 Loaded CLIENT_API: ${secretProperties["GCM_IV_LENGTH"] ?: "NOT FOUND"}")
-println("🔹 Loaded CLIENT_API: ${secretProperties["GCM_TAG_LENGTH"] ?: "NOT FOUND"}")
-println("🔹 Loaded CLIENT_API: ${secretProperties["HMAC_ALGO"] ?: "NOT FOUND"}")
-
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
@@ -36,8 +24,8 @@ android {
         applicationId = "in.mohammad.ramiz.confess"
         minSdk = 31
         targetSdk = 36
-        versionCode = 7
-        versionName = "3.0"
+        versionCode = 11
+        versionName = "3.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -91,7 +79,6 @@ dependencies {
     implementation(libs.swiperefreshlayout)
     implementation(libs.shimmer)
     implementation(libs.firebase.messaging)
-    implementation(libs.biometric)
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
     implementation(libs.room.ktx)

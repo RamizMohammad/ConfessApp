@@ -27,6 +27,8 @@ public class HomePage extends AppCompatActivity {
     private TextView homeText, profileText;
     private LinearLayout homeButton, addButton, profileButton;
     private FrameLayout screenHide;
+    private static final long SESSION_TIME = 60*1000;
+    private static long CURRENT_SESSION = 0;
 
     // Persistent selection even when returning from other activities
     public static int selectedTabIndex = 0; // 0 = Home, 1 = Add, 2 = Profile
@@ -100,6 +102,26 @@ public class HomePage extends AppCompatActivity {
         applyTabSelection();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        CURRENT_SESSION = System.currentTimeMillis();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(CURRENT_SESSION>0){
+            long timeOuts= System.currentTimeMillis() - CURRENT_SESSION;
+            CURRENT_SESSION = 0;
+            if(timeOuts >= SESSION_TIME){
+                Intent reLogin = new Intent(this, Password_Page.class);
+                startActivity(reLogin);
+                finish();
+            }
+        }
+    }
+
     private void applyTabSelection() {
         int selectedColor = getResources().getColor(R.color.yellow, getTheme());
         int unselectedColor = getResources().getColor(R.color.white, getTheme());
@@ -141,23 +163,6 @@ public class HomePage extends AppCompatActivity {
         }
 
         ft.commit();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        screenHide.setAlpha(0f);
-        screenHide.setVisibility(View.VISIBLE);
-        screenHide.animate().alpha(1f).setDuration(200).start();
-    }
-
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Intent reLogin = new Intent(this, Password_Page.class);
-        startActivity(reLogin);
-        finish();
     }
 
     private void setSelectedTab(ImageView icon, TextView text, int color) {

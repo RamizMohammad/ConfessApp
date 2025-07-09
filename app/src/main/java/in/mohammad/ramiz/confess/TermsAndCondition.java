@@ -39,6 +39,7 @@ import in.mohammad.ramiz.confess.entityfiles.ListEntites;
 import in.mohammad.ramiz.confess.haptics.VibManager;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
 import in.mohammad.ramiz.confess.popups.OnlyLoader;
+import in.mohammad.ramiz.confess.security.BiometricPrefs;
 import in.mohammad.ramiz.confess.server.Endpoints;
 import in.mohammad.ramiz.confess.server.ServerConfigs;
 import retrofit2.Call;
@@ -162,7 +163,7 @@ public class TermsAndCondition extends AppCompatActivity {
                         onlyLoader = new OnlyLoader(this, R.raw.loading_animation);
                     });
 
-                    checkForUserAndPass(email, this, ((isUser, isPassword) -> {
+                    checkForUserAndPass(email, this, ((isUser, isPassword, isBiometric) -> {
 
                         runOnUiThread(() -> {
                             if(onlyLoader != null){
@@ -171,6 +172,8 @@ public class TermsAndCondition extends AppCompatActivity {
                         });
 
                         if(isUser && isPassword){
+                            BiometricPrefs.getInstance(this).setBiometricEnabled(isBiometric);
+                            BiometricPrefs.getInstance(this).setBiometricLogin(false);
                             intent = new Intent(this, Password_Page.class);
                         } else if (isUser) {
                             intent = new Intent(this, HomePage.class);
@@ -205,11 +208,12 @@ public class TermsAndCondition extends AppCompatActivity {
 
                     boolean isUser = response.body().isUser();
                     boolean isPassword = response.body().isPassword();
+                    boolean isBio = response.body().isBiometric();
 
-                    callback.onResult(isUser, isPassword);
+                    callback.onResult(isUser, isPassword, isBio);
                 }
                 else{
-                    callback.onResult(false, false);
+                    callback.onResult(false, false, false);
                 }
             }
 
@@ -222,6 +226,6 @@ public class TermsAndCondition extends AppCompatActivity {
     }
 
     public interface UserCheckCallback {
-        void onResult(boolean isUser, boolean isPassword);
+        void onResult(boolean isUser, boolean isPassword, boolean isBiometric);
     }
 }

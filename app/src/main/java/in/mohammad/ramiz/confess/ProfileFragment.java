@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,8 @@ public class ProfileFragment extends Fragment {
     private SwipeRefreshLayout refreshLayout;
     private Endpoints endpoints;
     private OnlyLoader loader;
-    private boolean biometricInfo;
+    private boolean biometricInfo, isPassword;
+    private ButtonLoader buttonLoader;
     private LinearLayout button1, button2, button3, button4, button5, button6;
 
     @Override
@@ -92,7 +94,21 @@ public class ProfileFragment extends Fragment {
         viewmodel = new ViewModelProvider(this).get(ProfileViewmodel.class);
 
         biometricInfo = BiometricPrefs.getInstance(requireContext()).isBiometricEnabled();
-        changeButtonDesign();
+        isPassword = BiometricPrefs.getInstance(requireContext()).getPasswordStatus();
+        Log.d("bioInfo", ""+biometricInfo);
+
+        if(BiometricLogin.isBiometricThere(requireContext())){
+            if(biometricInfo && isPassword){
+                changeButtonDesign();
+            } else if (isPassword) {
+                bioText.setText("Enable Biometric");
+            } else {
+                bioText.setText("Set Password");
+            }
+        } else{
+            bioText.setText("No hardware");
+            bioIcon.setImageResource(R.drawable.nobiometrics);
+        }
 
         signOut.setOnClickListener(v -> {
             new ButtonLoader(requireActivity(), R.drawable.logout,
@@ -117,73 +133,102 @@ public class ProfileFragment extends Fragment {
 
         button3.setOnClickListener(v ->{
             VibManager.vibrateTick(requireContext());
-            if(biometricInfo){
-                new ButtonLoader(getActivity(), R.drawable.biometric,
-                        "Do you want to disable biometric login",
-                        new ButtonLoader.onUserOkClick() {
-                            @Override
-                            public void onOk() {
-                                if(account != null){
-                                    String email = account.getEmail();
-                                    loader = new OnlyLoader(getActivity(), R.raw.loading_animation);
-                                    changeBiometricStatus(email, new ServerCallback() {
-                                        @Override
-                                        public void onSuccess(boolean isChanged) {
-                                            if(isChanged){
-                                                loader.dismiss();
-                                                BiometricPrefs.getInstance(getContext()).setBiometricEnabled(false);
-                                                Toast.makeText(getContext(), "Biometric status updated", Toast.LENGTH_SHORT).show();
-                                                Intent loginIntent = new Intent(requireContext(), Password_Page.class);
-                                                startActivity(loginIntent);
-                                                requireActivity().finish();
-                                            }
-                                            else{
-                                                loader.dismiss();
-                                                new OkPopUp(requireActivity(), R.raw.error_animation, "Ahh, we got some error");
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure() {
-                                            loader.dismiss();
-                                            new OkPopUp(requireActivity(), R.raw.error_animation, "We got server error");
-                                        }
-                                    });
-                                }
-                            }
-                        });
-            }
-            else {
-                startBiometric(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(account != null){
-                            loader = new OnlyLoader(requireActivity(), R.raw.loading_animation);
-                            String email = account.getEmail();
-                            changeBiometricStatus(email, new ServerCallback() {
+            if(BiometricLogin.isBiometricThere(requireContext())){
+                if(biometricInfo && isPassword){
+                    new ButtonLoader(getActivity(), R.drawable.biometric,
+                            "Do you want to disable biometric login but your password will not be disabled",
+                            new ButtonLoader.onUserOkClick() {
                                 @Override
-                                public void onSuccess(boolean isChanged) {
-                                    if(isChanged){
-                                        loader.dismiss();
-                                        BiometricPrefs.getInstance(requireContext()).setBiometricEnabled(true);
-                                        biometricInfo = true;
-                                        changeButtonDesign();
-                                    }
-                                    else{
-                                        loader.dismiss();
-                                        new OkPopUp(requireActivity(), R.raw.error_animation, "We got some error");
-                                    }
-                                }
+                                public void onOk() {
+                                    if(account != null){
+                                        String email = account.getEmail();
+                                        loader = new OnlyLoader(getActivity(), R.raw.loading_animation);
+                                        changeBiometricStatus(email, new ServerCallback() {
+                                            @Override
+                                            public void onSuccess(boolean isChanged) {
+                                                if(isChanged){
+                                                    loader.dismiss();
+                                                    BiometricPrefs.getInstance(getContext()).setBiometricEnabled(false);
+                                                    Toast.makeText(getContext(), "Biometric status updated", Toast.LENGTH_SHORT).show();
+                                                    Intent loginIntent = new Intent(requireContext(), Password_Page.class);
+                                                    startActivity(loginIntent);
+                                                    requireActivity().finish();
+                                                }
+                                                else{
+                                                    loader.dismiss();
+                                                    new OkPopUp(requireActivity(), R.raw.error_animation, "Ahh, we got some error");
+                                                }
+                                            }
 
-                                @Override
-                                public void onFailure() {
-                                    loader.dismiss();
-                                    new OkPopUp(requireActivity(), R.raw.error_animation, "We got server error");
+                                            @Override
+                                            public void onFailure() {
+                                                loader.dismiss();
+                                                new OkPopUp(requireActivity(), R.raw.error_animation, "We got server error");
+                                            }
+                                        });
+                                    }
                                 }
                             });
+                }
+                else if(isPassword){
+                    startBiometric(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(account != null){
+                                loader = new OnlyLoader(requireActivity(), R.raw.loading_animation);
+                                String email = account.getEmail();
+                                changeBiometricStatus(email, new ServerCallback() {
+                                    @Override
+                                    public void onSuccess(boolean isChanged) {
+                                        if(isChanged){
+                                            loader.dismiss();
+                                            BiometricPrefs.getInstance(requireContext()).setBiometricEnabled(true);
+                                            biometricInfo = true;
+                                            changeButtonDesign();
+                                        }
+                                        else{
+                                            loader.dismiss();
+                                            new OkPopUp(requireActivity(), R.raw.error_animation, "We got some error");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure() {
+                                        loader.dismiss();
+                                        new OkPopUp(requireActivity(), R.raw.error_animation, "We got server error");
+                                    }
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                } else{
+                    new ButtonLoader(requireActivity(), R.drawable.biometric,
+                            "Set a password first to use biometric login",
+                            new ButtonLoader.onUserOkClick() {
+                                @Override
+                                public void onOk() {
+                                    Intent updatePassword = new Intent(requireContext(), UpdatePassBio.class);
+                                    startActivity(updatePassword);
+                                }
+                            });
+                }
+            }
+            else{
+                BiometricPrefs prefs = BiometricPrefs.getInstance(requireContext());
+                prefs.setCurrentCount(prefs.getCurrentCount() + 1);
+                if(prefs.getCurrentCount() < prefs.getMaxAttempt()) {
+                    Toast.makeText(requireContext(), "No hardware available", Toast.LENGTH_SHORT).show();
+                } else {
+                    buttonLoader = new ButtonLoader(requireActivity(), R.drawable.nobiometrics,
+                            "Bro taping again and again do not add hardware in device",
+                            new ButtonLoader.onUserOkClick() {
+                                @Override
+                                public void onOk() {
+                                    new OnlyLoader(requireActivity(), R.raw.laugh);
+                                    buttonLoader.dismisser();
+                                }
+                            });
+                }
             }
         });
 
@@ -373,6 +418,7 @@ public class ProfileFragment extends Fragment {
             bioIcon.setImageTintList(ContextCompat.getColorStateList(requireContext(), android.R.color.black));
             buttonDrawable.setColor(Color.WHITE);
         } else {
+            bioText.setText("Enable Biometric");
             bioText.setTextColor(Color.WHITE);
             bioIcon.setImageTintList(ContextCompat.getColorStateList(requireContext(), android.R.color.white));
             buttonDrawable.setColor(ContextCompat.getColor(requireContext(), R.color.extraColor));

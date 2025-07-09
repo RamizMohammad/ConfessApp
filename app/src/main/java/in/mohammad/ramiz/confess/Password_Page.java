@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -84,6 +85,7 @@ public class Password_Page extends AppCompatActivity {
         endpoints = ServerConfigs.getInstance().create(Endpoints.class);
 
         boolean isBiometric = BiometricPrefs.getInstance(this).isBiometricEnabled();
+        boolean isLoginStatus = BiometricPrefs.getInstance(this).isBiometricLogin();
 
         Drawable background = backgroundDetector.getBackground();
         if(background instanceof GradientDrawable){
@@ -111,7 +113,7 @@ public class Password_Page extends AppCompatActivity {
             isPasswordShowing = !isPasswordShowing;
         });
 
-        if(isBiometric){
+        if(isBiometric && isLoginStatus){
             biometricLogin();
         }
 

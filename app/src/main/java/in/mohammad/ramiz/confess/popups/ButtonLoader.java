@@ -54,6 +54,12 @@ public class ButtonLoader {
         dialog.show();
     }
 
+    public void dismisser(){
+        if(dialog != null && dialog.isShowing()){
+            dialog.dismiss();
+        }
+    }
+
     public interface onUserOkClick{
         void onOk();
     }
