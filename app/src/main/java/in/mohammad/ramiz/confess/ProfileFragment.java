@@ -34,6 +34,8 @@ import com.google.android.material.snackbar.Snackbar;
 import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.entities.BiometricRequest;
 import in.mohammad.ramiz.confess.entities.BiometricResponse;
+import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
+import in.mohammad.ramiz.confess.entities.CheckUserPassResponse;
 import in.mohammad.ramiz.confess.haptics.VibManager;
 import in.mohammad.ramiz.confess.popups.ButtonLoader;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
@@ -51,8 +53,8 @@ import retrofit2.Response;
 public class ProfileFragment extends Fragment {
 
     private ProfileViewmodel viewmodel;
-    private TextView aliasName, about, bioText;
-    private ImageView bioIcon;
+    private TextView aliasName, about, bioText, pinText;
+    private ImageView bioIcon, pinIcon;
     private ShimmerFrameLayout skelitonUi;
     private LinearLayout realUi, signOut;
     private GoogleSignInAccount account;
@@ -61,7 +63,7 @@ public class ProfileFragment extends Fragment {
     private OnlyLoader loader;
     private boolean biometricInfo, isPassword;
     private ButtonLoader buttonLoader;
-    private LinearLayout button1, button2, button3, button4, button5, button6;
+    private LinearLayout button1, button2, button3, button4, button5, button6, button7, button8;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -81,12 +83,19 @@ public class ProfileFragment extends Fragment {
         signOut = view.findViewById(R.id.signOutButton);
         bioText = view.findViewById(R.id.bioText);
         bioIcon = view.findViewById(R.id.bioIcon);
+        pinIcon = view.findViewById(R.id.pinButton);
+        pinText = view.findViewById(R.id.pinText);
+
+        // Button layouts
         button1 = view.findViewById(R.id.button1);
         button2 = view.findViewById(R.id.button2);
         button3 = view.findViewById(R.id.button3);
         button4 = view.findViewById(R.id.button4);
         button5 = view.findViewById(R.id.button5);
         button6 = view.findViewById(R.id.button6);
+        button7 = view.findViewById(R.id.button7);
+        button8 = view.findViewById(R.id.button8);
+
         refreshLayout.setProgressViewOffset(true, 100, 150);
 
         account = GoogleSignIn.getLastSignedInAccount(requireContext());
@@ -101,13 +110,24 @@ public class ProfileFragment extends Fragment {
             if(biometricInfo && isPassword){
                 changeButtonDesign();
             } else if (isPassword) {
+                bioIcon.setImageResource(R.drawable.biometric);
                 bioText.setText("Enable Biometric");
             } else {
+                bioIcon.setImageResource(R.drawable.password);
                 bioText.setText("Set Password");
             }
         } else{
             bioText.setText("No hardware");
             bioIcon.setImageResource(R.drawable.nobiometrics);
+        }
+
+        if(BiometricPrefs.getInstance(getContext()).getPasswordStatus()){
+            pinIcon.setImageResource(R.drawable.change_pins);
+            pinText.setText("Change password");
+        }
+        else{
+            pinIcon.setImageResource(R.drawable.slash_pin);
+            pinText.setText("No password");
         }
 
         signOut.setOnClickListener(v -> {
@@ -129,6 +149,7 @@ public class ProfileFragment extends Fragment {
             VibManager.vibrateTick(requireContext());
             Intent updateIntent = new Intent(getContext(), UpdateAbout.class);
             startActivity(updateIntent);
+            requireActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
 
         button3.setOnClickListener(v ->{
@@ -234,15 +255,29 @@ public class ProfileFragment extends Fragment {
 
         button4.setOnClickListener(v -> {
             VibManager.vibrateTick(requireContext());
-            ratePlaystore(requireContext());
+            if(BiometricPrefs.getInstance(requireContext()).getPasswordStatus()){
+
+            }
+            else {
+                new OkPopUp(requireActivity(), R.raw.lock_animation, "Bro, set a password first");
+            }
         });
 
         button5.setOnClickListener(v -> {
             VibManager.vibrateTick(requireContext());
-            developerProfile();
         });
 
         button6.setOnClickListener(v -> {
+            VibManager.vibrateTick(requireContext());
+            ratePlaystore(requireContext());
+        });
+
+        button7.setOnClickListener(v -> {
+            VibManager.vibrateTick(requireContext());
+            developerProfile();
+        });
+
+        button8.setOnClickListener(v -> {
             VibManager.vibrateTick(requireContext());
             new ButtonLoader(requireActivity(), R.drawable.block_user,
                     "You are going to delete your account this process can not be reversed and all the data will be cleared",
@@ -415,6 +450,7 @@ public class ProfileFragment extends Fragment {
 
         if (biometricInfo) {
             bioText.setTextColor(Color.BLACK);
+            bioText.setText("Disable Biometric");
             bioIcon.setImageTintList(ContextCompat.getColorStateList(requireContext(), android.R.color.black));
             buttonDrawable.setColor(Color.WHITE);
         } else {
@@ -440,6 +476,7 @@ public class ProfileFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     Intent signout = new Intent(requireContext(), TermsAndCondition.class);
                     startActivity(signout);
+                    requireActivity().finish();
                 });
     }
 

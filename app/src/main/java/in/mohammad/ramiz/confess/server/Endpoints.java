@@ -17,6 +17,8 @@ import in.mohammad.ramiz.confess.entities.GetProfileRequest;
 import in.mohammad.ramiz.confess.entities.GetProfileResponse;
 import in.mohammad.ramiz.confess.entities.UpdateAboutRequest;
 import in.mohammad.ramiz.confess.entities.UpdateAboutResponse;
+import in.mohammad.ramiz.confess.entities.UpdatePasswordStateRequest;
+import in.mohammad.ramiz.confess.entities.UpdatePasswordStateResponse;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -79,5 +81,17 @@ public interface Endpoints {
     Call<BiometricResponse> deleteUser(
         @Header("x-api-key") String apiKey,
         @Body BiometricRequest biometricRequest
+    );
+
+    @POST("add-password")
+    Call<UpdatePasswordStateResponse> addPassword(
+            @Header("x-api-key") String apiKey,
+            @Body UpdatePasswordStateRequest passwordStateRequest
+    );
+
+    @POST("check-status")
+    Call<CheckUserPassResponse> isStatus(
+        @Header("x-api-key") String apiKey,
+        @Body CheckUserPassRequest userPassRequest
     );
 }

@@ -41,12 +41,20 @@ public class Launcher extends AppCompatActivity {
                     loader.dismiss();
                 }
                 if (isUser && isPassword) {
-                    BiometricPrefs.getInstance(this).setBiometricEnabled(isBiometric);
-                    BiometricPrefs.getInstance(this).setBiometricLogin(true);
+                    BiometricPrefs.getInstance(this).setPasswordStatus(true);
+                    if(isBiometric){
+                        BiometricPrefs.getInstance(this).setBiometricEnabled(true);
+                        BiometricPrefs.getInstance(this).setBiometricLogin(true);
+                    }
+                    else{
+                        BiometricPrefs.getInstance(this).setBiometricEnabled(false);
+                        BiometricPrefs.getInstance(this).setBiometricLogin(false);
+                    }
                     Intent passwordIntent = new Intent(this, Password_Page.class);
                     startActivity(passwordIntent);
                 }
                 else if(isUser) {
+                    BiometricPrefs.getInstance(this).setPasswordStatus(false);
                     startActivity(new Intent(this, HomePage.class));
                 } else {
                     startActivity(new Intent(this, MainActivity.class));

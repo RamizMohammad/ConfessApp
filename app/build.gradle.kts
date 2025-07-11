@@ -39,6 +39,7 @@ android {
         val gcmIvLength = secretProperties.getProperty("GCM_IV_LENGTH", "")
         val gcmTagLength = secretProperties.getProperty("GCM_TAG_LENGTH", "")
         val hmacAlgo = secretProperties.getProperty("HMAC_ALGO", "")
+        val razerKeyId = secretProperties.getProperty("RAZER_KEY_ID", "")
 
         buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
         buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
@@ -50,6 +51,7 @@ android {
         buildConfigField("int", "GCM_IV_LENGTH", "$gcmIvLength")
         buildConfigField("int", "GCM_TAG_LENGTH", "$gcmTagLength")
         buildConfigField("String", "HMAC_ALGO", "\"$hmacAlgo\"")
+        buildConfigField("String", "RAZER_KEY_ID", "\"$razerKeyId\"")
     }
 
     buildTypes {
@@ -67,12 +69,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_19
+        targetCompatibility = JavaVersion.VERSION_19
     }
 }
 
 dependencies {
+    implementation(libs.checkout)
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)

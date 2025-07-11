@@ -196,6 +196,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="15sp"
+                            android:maxLines="3"
                             android:textColor="@color/white"
                             android:fontFamily="@font/roboto_slab"/>
                     </LinearLayout>
@@ -272,7 +273,7 @@
                         <ImageView
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-                            android:src="@drawable/pencil" />
+                            android:src="@drawable/edit" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -360,14 +361,16 @@
                         app:layout_constraintEnd_toEndOf="parent">
 
                         <ImageView
+                            android:id="@+id/pinButton"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-                            android:src="@drawable/rating" />
+                            android:src="@drawable/change_pins" />
 
                         <TextView
+                            android:id="@+id/pinText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/rate_us"
+                            android:text="Change password"
                             android:fontFamily="@font/roboto_slab"
                             android:textStyle="bold"
                             android:textColor="@color/white"
@@ -413,10 +416,33 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/button6">
 
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/developer" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="8dp"
+                            android:background="@drawable/proborder">
+
+                            <com.google.android.material.imageview.ShapeableImageView
+                                android:layout_width="23dp"
+                                android:layout_height="23dp"
+                                android:layout_gravity="center"
+                                android:src="@raw/logo_first"
+                                app:shapeAppearanceOverlay="@style/CircleImage"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/aclonica"
+                                android:letterSpacing="0.1"
+                                android:text="PRO"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:textColor="@color/yellow"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -450,6 +476,94 @@
                         <ImageView
                             android:layout_width="40dp"
                             android:layout_height="40dp"
+                            android:src="@drawable/rating" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/rate_us"
+                            android:fontFamily="@font/roboto_slab"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:layout_marginTop="10dp" />
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/line4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/line3">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+
+                    <!-- Button 1 -->
+                    <LinearLayout
+                        android:id="@+id/button7"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/profle_buttons"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/button8">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/developer" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/developer_rights"
+                            android:fontFamily="@font/roboto_slab"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:layout_marginTop="10dp" />
+                    </LinearLayout>
+
+                    <!-- Button 2 -->
+                    <LinearLayout
+                        android:id="@+id/button8"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/profle_buttons"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/button7"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:src="@drawable/block_user" />
 
                         <TextView
@@ -478,6 +592,7 @@
                 android:text="@string/all_rights_reserver_mohammad_ramiz"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginBottom="5dp"/>
 

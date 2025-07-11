@@ -65,7 +65,7 @@ import retrofit2.http.Multipart;
 
 public class AlaisPage extends AppCompatActivity {
 
-    private ImageView lockIcon, showPassowrd, biometricIcon;
+    private ImageView lockIcon, showPassword, biometricIcon;
     private boolean isAnimating = false, playNext = true, isBioAnimate = false, isBioPlay = true;
     private LinearLayout passwordButton, passwordPanel, biometricToggle;
     private boolean isPassword = false, isShowPassword = false, isBiometric = false, isBiometricSuccess = false;
@@ -98,7 +98,7 @@ public class AlaisPage extends AppCompatActivity {
         joinButton = findViewById(R.id.createAccountButton);
         aliasName = findViewById(R.id.aliasName);
         password = findViewById(R.id.password);
-        showPassowrd = findViewById(R.id.showButton);
+        showPassword = findViewById(R.id.showButton);
         wordCount = findViewById(R.id.wordCount);
         biometricToggle = findViewById(R.id.biometricToggle);
 
@@ -146,14 +146,14 @@ public class AlaisPage extends AppCompatActivity {
             }
         });
 
-        showPassowrd.setOnClickListener(v -> {
+        showPassword.setOnClickListener(v -> {
             VibManager.vibrateTick(this);
             if (!isShowPassword) {
                 password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                showPassowrd.setImageResource(R.drawable.hide);
+                showPassword.setImageResource(R.drawable.hide);
             } else {
                 password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                showPassowrd.setImageResource(R.drawable.show);
+                showPassword.setImageResource(R.drawable.show);
             }
             password.setSelection(password.getText().length());
             isShowPassword = !isShowPassword;
@@ -179,7 +179,7 @@ public class AlaisPage extends AppCompatActivity {
                     startBiometric(() -> {
                         loader = new OnlyLoader(this, R.raw.loading_animation);
                         createNewUser(email, userAliasName, defaultAbout,
-                                date, true, isBiometricSuccess,
+                                date, true, isBiometricSuccess, false,
                                 userPassword, this,
                                 (isAliasName, isUserCreated) -> {
                                     if (loader != null) loader.dismiss();
@@ -191,6 +191,7 @@ public class AlaisPage extends AppCompatActivity {
                                         aliasName.setHint("Alias already taken");
                                     } else if (isUserCreated) {
                                         BiometricPrefs.getInstance(this).setBiometricEnabled(true);
+                                        BiometricPrefs.getInstance(this).setPasswordStatus(true);
                                         Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
                                         startActivity(welcomePageIntent);
                                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -205,7 +206,7 @@ public class AlaisPage extends AppCompatActivity {
                 if (!TextUtils.isEmpty(userAliasName) && !TextUtils.isEmpty(userPassword)) {
                     loader = new OnlyLoader(this, R.raw.loading_animation);
                     createNewUser(email, userAliasName, defaultAbout,
-                            date, true, false,
+                            date, true, false, false,
                             userPassword, this,
                             (isAliasName, isUserCreated) -> {
                                 if (loader != null) loader.dismiss();
@@ -215,6 +216,8 @@ public class AlaisPage extends AppCompatActivity {
                                     aliasName.setText("");
                                     aliasName.setHint("Alias already taken");
                                 } else if (isUserCreated) {
+                                    BiometricPrefs.getInstance(this).setBiometricEnabled(false);
+                                    BiometricPrefs.getInstance(this).setPasswordStatus(true);
                                     Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
                                     startActivity(welcomePageIntent);
                                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -229,7 +232,7 @@ public class AlaisPage extends AppCompatActivity {
                 if (!TextUtils.isEmpty(userAliasName)) {
                     loader = new OnlyLoader(this, R.raw.loading_animation);
                     createNewUser(email, userAliasName, defaultAbout,
-                            date, false, false,
+                            date, false, false, false,
                             null, this,
                             (isAliasName, isUserCreated) -> {
                                 if (loader != null) loader.dismiss();
@@ -239,6 +242,8 @@ public class AlaisPage extends AppCompatActivity {
                                     aliasName.setText("");
                                     aliasName.setHint("Alias already taken");
                                 } else if (isUserCreated) {
+                                    BiometricPrefs.getInstance(this).setBiometricEnabled(false);
+                                    BiometricPrefs.getInstance(this).setPasswordStatus(false);
                                     Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
                                     startActivity(welcomePageIntent);
                                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -388,10 +393,10 @@ public class AlaisPage extends AppCompatActivity {
 
     protected void createNewUser(String email,
                                  String aliasName, String about, String date,
-                                 boolean isPassword, boolean isBiometric, String passwordData, Activity activity,
+                                 boolean isPassword, boolean isBiometric, boolean isPro, String passwordData, Activity activity,
                                  UserCheckCallback callback){
 
-        AddUserRequest addUserRequestBody = new AddUserRequest(email, aliasName, about, date, isPassword,isBiometric, passwordData);
+        AddUserRequest addUserRequestBody = new AddUserRequest(email, aliasName, about, date, isPassword,isBiometric, isPro, passwordData);
 
         Call<AddUserResponse> call = endpoints.createNewUser(BuildConfig.CLIENT_API, addUserRequestBody);
 

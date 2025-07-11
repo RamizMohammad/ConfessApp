@@ -20,6 +20,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import in.mohammad.ramiz.confess.haptics.VibManager;
+import in.mohammad.ramiz.confess.popups.ButtonLoader;
+import in.mohammad.ramiz.confess.popups.OkPopUp;
 
 public class HomePage extends AppCompatActivity {
 

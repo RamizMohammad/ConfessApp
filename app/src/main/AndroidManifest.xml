@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ConfessMain">
         <activity
+            android:name=".RazorGateway"
+            android:exported="false" />
+        <activity
             android:name=".UpdatePassBio"
             android:exported="false" />
         <activity
@@ -35,7 +38,7 @@
         <activity
             android:name=".HomePage"
             android:exported="false"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".WelcomeUser"
             android:exported="false"

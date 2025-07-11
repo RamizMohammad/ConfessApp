@@ -172,10 +172,18 @@ public class TermsAndCondition extends AppCompatActivity {
                         });
 
                         if(isUser && isPassword){
-                            BiometricPrefs.getInstance(this).setBiometricEnabled(isBiometric);
-                            BiometricPrefs.getInstance(this).setBiometricLogin(false);
+                            if(isBiometric){
+                                BiometricPrefs.getInstance(this).setBiometricEnabled(true);
+                                BiometricPrefs.getInstance(this).setPasswordStatus(true);
+                            }
+                            else{
+                                BiometricPrefs.getInstance(this).setBiometricEnabled(false);
+                                BiometricPrefs.getInstance(this).setPasswordStatus(false);
+                            }
                             intent = new Intent(this, Password_Page.class);
                         } else if (isUser) {
+                            BiometricPrefs.getInstance(this).setBiometricEnabled(false);
+                            BiometricPrefs.getInstance(this).setPasswordStatus(false);
                             intent = new Intent(this, HomePage.class);
                         }
                         else{
