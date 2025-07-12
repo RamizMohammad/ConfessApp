@@ -120,25 +120,30 @@ public class Password_Page extends AppCompatActivity {
         buttonFrame.setOnClickListener(v -> {
             VibManager.vibrateTick(this);
             loader = new OnlyLoader(this, R.raw.loading_animation);
-            String password = passwordField.getText().toString();
-            if(account != null && !TextUtils.isEmpty(password)){
-                email = account.getEmail();
-                checkUserPassword(email, password,this, isCorrect -> {
-                    if(loader!=null){
-                        loader.dismiss();
-                    }
-                    if(isCorrect){
-                        Intent homePage = new Intent(this, HomePage.class);
-                        startActivity(homePage);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                        finish();
-                    }
-                    else {
-                        drawable.setStroke(2, color);
-                        passwordField.setText("");
-                        passwordField.setHint("wrong password");
-                    }
-                });
+            if(account != null){
+                if(!TextUtils.isEmpty(passwordField.getText())){
+                    String password = passwordField.getText().toString();
+                    email = account.getEmail();
+                    checkUserPassword(email, password,this, isCorrect -> {
+                        if(loader!=null){
+                            loader.dismiss();
+                        }
+                        if(isCorrect){
+                            Intent homePage = new Intent(this, HomePage.class);
+                            startActivity(homePage);
+                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                            finish();
+                        }
+                        else {
+                            drawable.setStroke(2, color);
+                            passwordField.setText("");
+                            passwordField.setHint("wrong password");
+                        }
+                    });
+                }
+                else {
+                    new OkPopUp(this, R.raw.file_not_found, "Password feild is empty");
+                }
             }
         });
 

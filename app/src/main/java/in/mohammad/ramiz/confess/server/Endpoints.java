@@ -5,6 +5,8 @@ import in.mohammad.ramiz.confess.entities.AddUserRequest;
 import in.mohammad.ramiz.confess.entities.AddUserResponse;
 import in.mohammad.ramiz.confess.entities.BiometricRequest;
 import in.mohammad.ramiz.confess.entities.BiometricResponse;
+import in.mohammad.ramiz.confess.entities.ChangePasswordRequest;
+import in.mohammad.ramiz.confess.entities.ChangePasswordResponse;
 import in.mohammad.ramiz.confess.entities.CheckPasswordRequest;
 import in.mohammad.ramiz.confess.entities.CheckPasswordResponse;
 import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
@@ -93,5 +95,11 @@ public interface Endpoints {
     Call<CheckUserPassResponse> isStatus(
         @Header("x-api-key") String apiKey,
         @Body CheckUserPassRequest userPassRequest
+    );
+
+    @POST("change-password")
+    Call<ChangePasswordResponse> changesPassword(
+            @Header("x-api-key") String apiKey,
+            @Body ChangePasswordRequest changePasswordRequest
     );
 }

@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ConfessMain">
         <activity
+            android:name=".ChangePassword"
+            android:exported="false" />
+        <activity
             android:name=".RazorGateway"
             android:exported="false" />
         <activity

@@ -55,4 +55,10 @@
     <string name="developer_rights">Developer profile</string>
     <string name="delete_account">Delete account</string>
     <string name="all_rights_reserver_mohammad_ramiz">All rights reserved | Mohammad Ramiz</string>
+    <string name="enter_your_new_password">Enter your new password</string>
+    <string name="enter_your_old_password">Enter your old password</string>
+    <string name="old_password">old password</string>
+    <string name="new_password">new password</string>
+    <string name="change_password">Change Password</string>
+    <string name="enter_the_new_account_password">Enter the new account password.</string>
 </resources>

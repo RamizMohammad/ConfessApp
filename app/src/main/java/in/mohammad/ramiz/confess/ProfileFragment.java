@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -29,13 +28,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.material.snackbar.Snackbar;
 
 import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.entities.BiometricRequest;
 import in.mohammad.ramiz.confess.entities.BiometricResponse;
-import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
-import in.mohammad.ramiz.confess.entities.CheckUserPassResponse;
 import in.mohammad.ramiz.confess.haptics.VibManager;
 import in.mohammad.ramiz.confess.popups.ButtonLoader;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
@@ -256,7 +252,8 @@ public class ProfileFragment extends Fragment {
         button4.setOnClickListener(v -> {
             VibManager.vibrateTick(requireContext());
             if(BiometricPrefs.getInstance(requireContext()).getPasswordStatus()){
-
+                Intent passwordUpdate = new Intent(getContext(), ChangePassword.class);
+                startActivity(passwordUpdate);
             }
             else {
                 new OkPopUp(requireActivity(), R.raw.lock_animation, "Bro, set a password first");
@@ -291,6 +288,7 @@ public class ProfileFragment extends Fragment {
                                     @Override
                                     public void onSuccess(boolean isChanged) {
                                         if(isChanged){
+                                            signOut();
                                             Toast.makeText(requireContext(), "Account deleted", Toast.LENGTH_SHORT).show();
                                             Intent mainIntnet = new Intent(requireContext(), MainActivity.class);
                                             startActivity(mainIntnet);

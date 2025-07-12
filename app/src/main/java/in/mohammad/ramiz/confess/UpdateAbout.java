@@ -80,14 +80,17 @@ public class UpdateAbout extends AppCompatActivity {
             String about = aboutField.getText().toString();
             updateAbout(email, about, ((isUpdated, label) -> {
                 if(isUpdated && label.equals("safe")){
+                    loader.dismiss();
                     Toast.makeText(UpdateAbout.this, "About Updated", Toast.LENGTH_SHORT).show();
                     Intent homeIntent = new Intent(UpdateAbout.this, HomePage.class);
                     startActivity(homeIntent);
                     finish();
                 } else if(label == null){
+                    loader.dismiss();
                     new OkPopUp(UpdateAbout.this, R.raw.error_animation, "We got some error");
                 }
                 else {
+                    loader.dismiss();
                     new OkPopUp(UpdateAbout.this, R.raw.error_animation, "We found "+label+" in your post");
                 }
             }));
@@ -115,7 +118,7 @@ public class UpdateAbout extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<UpdateAboutResponse> call, Throwable t) {
-                TelegramLogs.sendTelegramLog("Caught internal error");
+                TelegramLogs.sendTelegramLog("Caught internal error"+t.getMessage());
                 callback.onResult(false, null);
             }
         });

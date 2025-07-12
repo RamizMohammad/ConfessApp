@@ -40,6 +40,7 @@ android {
         val gcmTagLength = secretProperties.getProperty("GCM_TAG_LENGTH", "")
         val hmacAlgo = secretProperties.getProperty("HMAC_ALGO", "")
         val razerKeyId = secretProperties.getProperty("RAZER_KEY_ID", "")
+        val captchaKey = secretProperties.getProperty("CAPTCHA_KEY", "")
 
         buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
         buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
@@ -52,6 +53,7 @@ android {
         buildConfigField("int", "GCM_TAG_LENGTH", "$gcmTagLength")
         buildConfigField("String", "HMAC_ALGO", "\"$hmacAlgo\"")
         buildConfigField("String", "RAZER_KEY_ID", "\"$razerKeyId\"")
+        buildConfigField("String", "CAPTCHA_KEY", "\"$captchaKey\"")
     }
 
     buildTypes {
@@ -75,6 +77,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.play.services.safetynet)
     implementation(libs.checkout)
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.coroutines.core)
