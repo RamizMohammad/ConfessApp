@@ -61,4 +61,6 @@
     <string name="new_password">new password</string>
     <string name="change_password">Change Password</string>
     <string name="enter_the_new_account_password">Enter the new account password.</string>
+    <string name="you_are_all_caught_up">You are all caught up</string>
+    <string name="no_posts_found">No Posts Found</string>
 </resources>

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -16,6 +18,7 @@ import java.util.List;
 
 import in.mohammad.ramiz.confess.adapters.PostAdapter;
 import in.mohammad.ramiz.confess.adapters.ShimmerAdapter;
+import in.mohammad.ramiz.confess.popups.OkPopUp;
 import in.mohammad.ramiz.confess.postdatabase.PostViewmodel;
 import in.mohammad.ramiz.confess.postdatabase.PostsData;
 
@@ -26,6 +29,8 @@ public class HomeFragment extends Fragment {
     private ShimmerAdapter shimmerAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayoutManager layoutManager;
+    private TextView allDone;
+    private LinearLayout empty;
     private boolean isLoadingNextPage = false;
 
     @Override
@@ -36,6 +41,8 @@ public class HomeFragment extends Fragment {
 
         swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         RecyclerView recyclerView = view.findViewById(R.id.recycleView);
+        allDone = view.findViewById(R.id.completeText);
+        empty = view.findViewById(R.id.empty);
 
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -43,23 +50,41 @@ public class HomeFragment extends Fragment {
         postAdapter = new PostAdapter();
         shimmerAdapter = new ShimmerAdapter();
 
-        recyclerView.setAdapter(shimmerAdapter);
+        recyclerView.setAdapter(shimmerAdapter); // Show shimmer on initial load
 
         viewmodel = new ViewModelProvider(this).get(PostViewmodel.class);
 
         // Observe cached posts
         viewmodel.getSavedPosts().observe(getViewLifecycleOwner(), postsData -> {
-            if (postsData != null) {
+            if (postsData != null && !postsData.isEmpty()) {
                 recyclerView.setAdapter(postAdapter);
                 postAdapter.submitList(postsData); // DiffUtil handles updates
+                empty.setVisibility(View.GONE);
+            } else {
+                empty.setVisibility(View.VISIBLE);
             }
         });
 
         // Swipe-to-refresh
         swipeRefreshLayout.setOnRefreshListener(() -> {
             recyclerView.setAdapter(shimmerAdapter);
-            viewmodel.refreshTopPosts();
-            swipeRefreshLayout.setRefreshing(false);
+            viewmodel.refreshTopPosts(new PostViewmodel.ViewmodelRefreshCallback() {
+                @Override
+                public void onSuccess() {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+
+                @Override
+                public void onFail() {
+                    swipeRefreshLayout.setRefreshing(false);
+                    new OkPopUp(getActivity(), R.raw.error_animation, "Fetching of posts failed");
+                }
+
+                @Override
+                public void onEmpty() {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            });
         });
 
         // Pagination logic
@@ -77,7 +102,24 @@ public class HomeFragment extends Fragment {
                         if (lastVisibleItemPosition >= totalItemCount - 3) {
                             isLoadingNextPage = true;
                             String lastDate = currentList.get(currentList.size() - 1).getDate();
-                            viewmodel.fetchNextPosts(lastDate);
+                            viewmodel.fetchNextPosts(lastDate, new PostViewmodel.ViewmodelNextCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    isLoadingNextPage = false;
+                                }
+
+                                @Override
+                                public void onFail() {
+                                    isLoadingNextPage = false;
+                                    new OkPopUp(getActivity(), R.raw.error_animation, "There is an error");
+                                }
+
+                                @Override
+                                public void onEmpty() {
+                                    isLoadingNextPage = false;
+                                    allDone.setVisibility(View.VISIBLE);
+                                }
+                            });
                         }
                     }
                 }
@@ -89,10 +131,25 @@ public class HomeFragment extends Fragment {
             if (nextPosts != null && !nextPosts.isEmpty()) {
                 postAdapter.addMorePosts(nextPosts);
             }
-            isLoadingNextPage = false; // Reset loading flag
         });
 
-        viewmodel.refreshTopPosts();
+        // Initial fetch (with shimmer)
+        viewmodel.refreshTopPosts(new PostViewmodel.ViewmodelRefreshCallback() {
+            @Override
+            public void onSuccess() {
+                recyclerView.setAdapter(postAdapter);
+            }
+
+            @Override
+            public void onFail() {
+                new OkPopUp(getActivity(), R.raw.error_animation, "Fetching of post is failed");
+            }
+
+            @Override
+            public void onEmpty() {
+                empty.setVisibility(View.VISIBLE);
+            }
+        });
         return view;
     }
 }
