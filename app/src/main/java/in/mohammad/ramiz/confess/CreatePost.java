@@ -104,6 +104,7 @@ public class CreatePost extends AppCompatActivity {
                     Intent postingIntent = new Intent(this, HomePage.class);
                     startActivity(postingIntent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    finish();
                 }
                 else if(label.equals("safe")){
                     popUp2 = new OkPopUp(this, R.raw.error_animation, "Unable to make your post");

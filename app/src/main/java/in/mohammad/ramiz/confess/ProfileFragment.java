@@ -262,6 +262,7 @@ public class ProfileFragment extends Fragment {
 
         button5.setOnClickListener(v -> {
             VibManager.vibrateTick(requireContext());
+            Toast.makeText(requireContext(), "Feature available soon", Toast.LENGTH_SHORT).show();
         });
 
         button6.setOnClickListener(v -> {

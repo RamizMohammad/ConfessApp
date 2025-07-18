@@ -8,4 +8,6 @@
     <color name="falseRed">#F93827</color>
     <color name="navColor">#121212</color>
     <color name="yellow">#FFC107</color>
+    <color name="postBg">#0B0B0B</color>
+    <color name="dateColor">#3E3E3E</color>
 </resources>

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,8 +19,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import in.mohammad.ramiz.confess.haptics.VibManager;
-import in.mohammad.ramiz.confess.popups.ButtonLoader;
-import in.mohammad.ramiz.confess.popups.OkPopUp;
 
 public class HomePage extends AppCompatActivity {
 
@@ -29,18 +26,18 @@ public class HomePage extends AppCompatActivity {
     private TextView homeText, profileText;
     private LinearLayout homeButton, addButton, profileButton;
     private FrameLayout screenHide;
-    private static final long SESSION_TIME = 60*1000;
+    private static final long SESSION_TIME = 60 * 1000;
     private static long CURRENT_SESSION = 0;
 
     // Persistent selection even when returning from other activities
-    public static int selectedTabIndex = 0; // 0 = Home, 1 = Add, 2 = Profile
+    public static int selectedTabIndex = 0; // 0 = Home, 2 = Profile
+    private int previousTabIndex = 0; // Used for Add button restore
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_page);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
         // Apply bottom navigation padding for gesture nav bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -60,7 +57,7 @@ public class HomePage extends AppCompatActivity {
         profileButton = findViewById(R.id.profileButton);
         screenHide = findViewById(R.id.secureOverlay);
 
-        // Set click listeners
+        // Click listeners for navigation
         homeButton.setOnClickListener(v -> {
             VibManager.vibrateTick(this);
             selectedTabIndex = 0;
@@ -70,8 +67,10 @@ public class HomePage extends AppCompatActivity {
 
         addButton.setOnClickListener(v -> {
             VibManager.vibrateTick(this);
-            selectedTabIndex = 1;
+            previousTabIndex = selectedTabIndex; // Save previous tab
+            selectedTabIndex = 1; // Temporarily highlight Add button
             applyTabSelection();
+
             Intent addIntent = new Intent(this, CreatePost.class);
             startActivity(addIntent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -84,7 +83,7 @@ public class HomePage extends AppCompatActivity {
             fragmentOpener(new ProfileFragment(), "ProfileFragment");
         });
 
-        // Load selected fragment only once when activity is created
+        // Load the correct fragment initially
         if (savedInstanceState == null) {
             applyTabSelection();
             switch (selectedTabIndex) {
@@ -101,7 +100,23 @@ public class HomePage extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // If Add activity was opened, revert to previous tab
+        if (selectedTabIndex == 1) {
+            selectedTabIndex = previousTabIndex;
+        }
+
         applyTabSelection();
+
+        // Ensure fragment is visible after returning
+        switch (selectedTabIndex) {
+            case 0:
+                fragmentOpener(new HomeFragment(), "HomeFragment");
+                break;
+            case 2:
+                fragmentOpener(new ProfileFragment(), "ProfileFragment");
+                break;
+        }
     }
 
     @Override
@@ -113,10 +128,10 @@ public class HomePage extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(CURRENT_SESSION>0){
-            long timeOuts= System.currentTimeMillis() - CURRENT_SESSION;
+        if (CURRENT_SESSION > 0) {
+            long timeOuts = System.currentTimeMillis() - CURRENT_SESSION;
             CURRENT_SESSION = 0;
-            if(timeOuts >= SESSION_TIME){
+            if (timeOuts >= SESSION_TIME) {
                 Intent reLogin = new Intent(this, Password_Page.class);
                 startActivity(reLogin);
                 finish();
@@ -124,22 +139,25 @@ public class HomePage extends AppCompatActivity {
         }
     }
 
+    /**
+     * Highlights selected tab and updates UI colors
+     */
     private void applyTabSelection() {
         int selectedColor = getResources().getColor(R.color.yellow, getTheme());
         int unselectedColor = getResources().getColor(R.color.white, getTheme());
 
         switch (selectedTabIndex) {
-            case 0:
+            case 0: // Home
                 setSelectedTab(homeLogo, homeText, selectedColor);
                 setUnselectedTab(addLogo, null, unselectedColor);
                 setUnselectedTab(profileLogo, profileText, unselectedColor);
                 break;
-            case 1:
+            case 1: // Add (temporary)
                 setUnselectedTab(homeLogo, homeText, unselectedColor);
                 setSelectedTab(addLogo, null, selectedColor);
                 setUnselectedTab(profileLogo, profileText, unselectedColor);
                 break;
-            case 2:
+            case 2: // Profile
                 setUnselectedTab(homeLogo, homeText, unselectedColor);
                 setUnselectedTab(addLogo, null, unselectedColor);
                 setSelectedTab(profileLogo, profileText, selectedColor);
@@ -147,21 +165,24 @@ public class HomePage extends AppCompatActivity {
         }
     }
 
+    /**
+     * Opens a fragment, keeps others in memory using add/show/hide
+     */
     private void fragmentOpener(Fragment fragment, String tag) {
         FragmentManager fm = getSupportFragmentManager();
-        Fragment currentFragment = fm.findFragmentById(R.id.fragment);
-        Fragment existingFragment = fm.findFragmentByTag(tag);
-
-        if (existingFragment != null && existingFragment == currentFragment) {
-            return;
-        }
-
         FragmentTransaction ft = fm.beginTransaction();
 
+        // Hide all current fragments
+        for (Fragment frag : fm.getFragments()) {
+            ft.hide(frag);
+        }
+
+        Fragment existingFragment = fm.findFragmentByTag(tag);
+
         if (existingFragment == null) {
-            ft.replace(R.id.fragment, fragment, tag);
+            ft.add(R.id.fragment, fragment, tag);
         } else {
-            ft.replace(R.id.fragment, existingFragment, tag);
+            ft.show(existingFragment);
         }
 
         ft.commit();

@@ -1,64 +1,98 @@
 package in.mohammad.ramiz.confess;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import java.util.List;
+
+import in.mohammad.ramiz.confess.adapters.PostAdapter;
+import in.mohammad.ramiz.confess.adapters.ShimmerAdapter;
+import in.mohammad.ramiz.confess.postdatabase.PostViewmodel;
+import in.mohammad.ramiz.confess.postdatabase.PostsData;
+
 public class HomeFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public HomeFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private PostViewmodel viewmodel;
+    private PostAdapter postAdapter;
+    private ShimmerAdapter shimmerAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private LinearLayoutManager layoutManager;
+    private boolean isLoadingNextPage = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
+        RecyclerView recyclerView = view.findViewById(R.id.recycleView);
+
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+
+        postAdapter = new PostAdapter();
+        shimmerAdapter = new ShimmerAdapter();
+
+        recyclerView.setAdapter(shimmerAdapter);
+
+        viewmodel = new ViewModelProvider(this).get(PostViewmodel.class);
+
+        // Observe cached posts
+        viewmodel.getSavedPosts().observe(getViewLifecycleOwner(), postsData -> {
+            if (postsData != null) {
+                recyclerView.setAdapter(postAdapter);
+                postAdapter.submitList(postsData); // DiffUtil handles updates
+            }
+        });
+
+        // Swipe-to-refresh
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            recyclerView.setAdapter(shimmerAdapter);
+            viewmodel.refreshTopPosts();
+            swipeRefreshLayout.setRefreshing(false);
+        });
+
+        // Pagination logic
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0 && !isLoadingNextPage) {
+                    List<PostsData> currentList = postAdapter.getCurrentList();
+                    if (!currentList.isEmpty()) {
+                        int totalItemCount = layoutManager.getItemCount();
+                        int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+
+                        if (lastVisibleItemPosition >= totalItemCount - 3) {
+                            isLoadingNextPage = true;
+                            String lastDate = currentList.get(currentList.size() - 1).getDate();
+                            viewmodel.fetchNextPosts(lastDate);
+                        }
+                    }
+                }
+            }
+        });
+
+        // Observe next page posts
+        viewmodel.nextPosts.observe(getViewLifecycleOwner(), nextPosts -> {
+            if (nextPosts != null && !nextPosts.isEmpty()) {
+                postAdapter.addMorePosts(nextPosts);
+            }
+            isLoadingNextPage = false; // Reset loading flag
+        });
+
+        viewmodel.refreshTopPosts();
+        return view;
     }
 }

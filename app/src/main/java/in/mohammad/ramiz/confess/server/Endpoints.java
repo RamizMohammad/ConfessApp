@@ -1,6 +1,5 @@
 package in.mohammad.ramiz.confess.server;
 
-import in.mohammad.ramiz.confess.BuildConfig;
 import in.mohammad.ramiz.confess.entities.AddUserRequest;
 import in.mohammad.ramiz.confess.entities.AddUserResponse;
 import in.mohammad.ramiz.confess.entities.BiometricRequest;
@@ -17,18 +16,16 @@ import in.mohammad.ramiz.confess.entities.ForgotPasswordRequest;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordResponse;
 import in.mohammad.ramiz.confess.entities.GetProfileRequest;
 import in.mohammad.ramiz.confess.entities.GetProfileResponse;
+import in.mohammad.ramiz.confess.postdatabase.PostRequest;
+import in.mohammad.ramiz.confess.postdatabase.PostResponse;
 import in.mohammad.ramiz.confess.entities.UpdateAboutRequest;
 import in.mohammad.ramiz.confess.entities.UpdateAboutResponse;
 import in.mohammad.ramiz.confess.entities.UpdatePasswordStateRequest;
 import in.mohammad.ramiz.confess.entities.UpdatePasswordStateResponse;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
-import retrofit2.http.Multipart;
 import retrofit2.http.POST;
-import retrofit2.http.Part;
 
 public interface Endpoints {
 
@@ -101,5 +98,11 @@ public interface Endpoints {
     Call<ChangePasswordResponse> changesPassword(
             @Header("x-api-key") String apiKey,
             @Body ChangePasswordRequest changePasswordRequest
+    );
+
+    @POST("fetch-allPosts")
+    Call<PostResponse> getAllPosts(
+            @Header("x-api-key") String apiKey,
+            @Body PostRequest postRequest
     );
 }
