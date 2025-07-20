@@ -31,13 +31,20 @@ public class PostsData {
     @ColumnInfo(name = "formatDate")
     private String formatDate;
 
-    public PostsData(@NonNull String postId, String aliasName, String email, String post, String date, String formatDate) {
+    @SerializedName("profileLink")
+    @ColumnInfo(name = "profileLink")
+    private String profileLink;
+
+    public PostsData(@NonNull String postId, String aliasName,
+                     String email, String post,
+                     String date, String formatDate, String profileLink) {
         this.postId = postId;
         this.aliasName = aliasName;
         this.email = email;
         this.post = post;
         this.date = date;
         this.formatDate = formatDate;
+        this.profileLink = profileLink;
     }
 
     @NonNull
@@ -80,12 +87,16 @@ public class PostsData {
     public void setDate(String date) {
         this.date = date;
     }
-
     public String getFormatDate() {
         return formatDate;
     }
-
     public void setFormatDate(String formatDate) {
         this.formatDate = formatDate;
+    }
+    public String getProfileLink() {
+        return profileLink;
+    }
+    public void setProfileLink(String profileLink) {
+        this.profileLink = profileLink;
     }
 }

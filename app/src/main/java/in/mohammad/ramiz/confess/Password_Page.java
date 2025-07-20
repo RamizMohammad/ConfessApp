@@ -232,6 +232,7 @@ public class Password_Page extends AppCompatActivity {
                 Intent homeActivity = new Intent(Password_Page.this, HomePage.class);
                 startActivity(homeActivity);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
             }
 
             @Override

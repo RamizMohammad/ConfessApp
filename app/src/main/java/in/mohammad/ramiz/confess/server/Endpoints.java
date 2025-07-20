@@ -16,6 +16,8 @@ import in.mohammad.ramiz.confess.entities.ForgotPasswordRequest;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordResponse;
 import in.mohammad.ramiz.confess.entities.GetProfileRequest;
 import in.mohammad.ramiz.confess.entities.GetProfileResponse;
+import in.mohammad.ramiz.confess.entities.UpdateProfilePictureRequest;
+import in.mohammad.ramiz.confess.entities.UpdateProfilePictureResponse;
 import in.mohammad.ramiz.confess.postdatabase.PostRequest;
 import in.mohammad.ramiz.confess.postdatabase.PostResponse;
 import in.mohammad.ramiz.confess.entities.UpdateAboutRequest;
@@ -104,5 +106,11 @@ public interface Endpoints {
     Call<PostResponse> getAllPosts(
             @Header("x-api-key") String apiKey,
             @Body PostRequest postRequest
+    );
+
+    @POST("update-profile")
+    Call<UpdateProfilePictureResponse> updateProfilePicture(
+            @Header("x-api-key") String apiKey,
+            @Body UpdateProfilePictureRequest updateProfilePictureRequest
     );
 }

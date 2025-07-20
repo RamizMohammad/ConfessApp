@@ -19,6 +19,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
+import java.time.Instant;
+
 import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.entities.CreatePostRequest;
 import in.mohammad.ramiz.confess.entities.CreatePostResponse;
@@ -121,7 +123,8 @@ public class CreatePost extends AppCompatActivity {
 
     private void createPost(String email, String post, UserCallback callback){
 
-        CreatePostRequest postData = new CreatePostRequest(email,post);
+        String isoDate = Instant.now().toString();
+        CreatePostRequest postData = new CreatePostRequest(email,post,isoDate);
 
         Call<CreatePostResponse> call = endpoints.createPost(BuildConfig.CLIENT_API, postData);
 

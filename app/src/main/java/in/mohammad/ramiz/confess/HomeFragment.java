@@ -72,6 +72,8 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onSuccess() {
                     swipeRefreshLayout.setRefreshing(false);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    empty.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -83,6 +85,9 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onEmpty() {
                     swipeRefreshLayout.setRefreshing(false);
+                    viewmodel.eraseAll();
+                    recyclerView.setVisibility(View.GONE);
+                    empty.setVisibility(View.VISIBLE);
                 }
             });
         });
@@ -138,6 +143,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onSuccess() {
                 recyclerView.setAdapter(postAdapter);
+                recyclerView.setVisibility(View.VISIBLE);
+                empty.setVisibility(View.GONE);
             }
 
             @Override
@@ -147,6 +154,8 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onEmpty() {
+                viewmodel.eraseAll();
+                recyclerView.setVisibility(View.GONE);
                 empty.setVisibility(View.VISIBLE);
             }
         });

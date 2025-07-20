@@ -126,25 +126,49 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <!-- Shimmer for Profile Image -->
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer_profile_image"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:background="@drawable/shimmer_design_circle"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:shimmer_auto_start="true"
+                        app:shimmer_duration="1200">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/shimmer_design_circle"
+                            android:layout_gravity="center"
+                            android:clipToOutline="true"/>
+
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <!-- Actual Profile Image (Initially Hidden) -->
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/profilePhoto"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
                         android:src="@raw/avatar2"
+                        android:background="@color/white"
+                        android:visibility="gone"
                         app:shapeAppearanceOverlay="@style/CircleImage"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
 
-                    <!-- Shimmer Layout -->
+                    <!-- Shimmer Layout for Text -->
                     <com.facebook.shimmer.ShimmerFrameLayout
                         android:id="@+id/shimmer_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        app:layout_constraintTop_toTopOf="@id/profilePhoto"
-                        app:layout_constraintBottom_toBottomOf="@id/profilePhoto"
-                        app:layout_constraintStart_toEndOf="@id/profilePhoto"
+                        app:layout_constraintTop_toTopOf="@id/shimmer_profile_image"
+                        app:layout_constraintBottom_toBottomOf="@id/shimmer_profile_image"
+                        app:layout_constraintStart_toEndOf="@id/shimmer_profile_image"
                         app:shimmer_auto_start="true"
                         app:shimmer_duration="1200">
 

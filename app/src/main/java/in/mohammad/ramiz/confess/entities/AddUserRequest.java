@@ -8,9 +8,13 @@ public class AddUserRequest {
     private boolean isPassword;
     private boolean isBiometric;
     private boolean isPro;
+    private String profileLink;
     private String password;
 
-    public AddUserRequest(String email, String aliasName, String about, String date, boolean isPassword, boolean isBiometric, boolean isPro, String password) {
+    public AddUserRequest(String email, String aliasName,
+                          String about, String date,
+                          boolean isPassword, boolean isBiometric,
+                          boolean isPro, String profileLink, String password) {
         this.email = email;
         this.aliasName = aliasName;
         this.about = about;
@@ -18,6 +22,7 @@ public class AddUserRequest {
         this.isPassword = isPassword;
         this.isBiometric = isBiometric;
         this.isPro = isPro;
+        this.profileLink = profileLink;
         this.password = password;
     }
 
@@ -78,6 +83,14 @@ public class AddUserRequest {
 
     public void setPro(boolean pro) {
         isPro = pro;
+    }
+
+    public String getProfileLink() {
+        return profileLink;
+    }
+
+    public void setProfileLink(String profileLink) {
+        this.profileLink = profileLink;
     }
 
     public String getPassword() {

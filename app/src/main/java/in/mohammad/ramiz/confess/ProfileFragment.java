@@ -23,11 +23,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+
+import java.util.concurrent.Executors;
 
 import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.entities.BiometricRequest;
@@ -50,8 +54,8 @@ public class ProfileFragment extends Fragment {
 
     private ProfileViewmodel viewmodel;
     private TextView aliasName, about, bioText, pinText;
-    private ImageView bioIcon, pinIcon;
-    private ShimmerFrameLayout skelitonUi;
+    private ImageView bioIcon, pinIcon, profile;
+    private ShimmerFrameLayout skelitonUi, shimmerProfile;
     private LinearLayout realUi, signOut;
     private GoogleSignInAccount account;
     private SwipeRefreshLayout refreshLayout;
@@ -74,7 +78,9 @@ public class ProfileFragment extends Fragment {
         aliasName = view.findViewById(R.id.aliasName);
         about = view.findViewById(R.id.about);
         skelitonUi = view.findViewById(R.id.shimmer_layout);
+        shimmerProfile = view.findViewById(R.id.shimmer_profile_image);
         realUi = view.findViewById(R.id.real_text_container);
+        profile = view.findViewById(R.id.profilePhoto);
         refreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         signOut = view.findViewById(R.id.signOutButton);
         bioText = view.findViewById(R.id.bioText);
@@ -139,6 +145,9 @@ public class ProfileFragment extends Fragment {
 
         button1.setOnClickListener(v -> {
             VibManager.vibrateTick(requireContext());
+            Intent yourConfession = new Intent(getContext(), YourConfession.class);
+            startActivity(yourConfession);
+            requireActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
 
         button2.setOnClickListener(v -> {
@@ -310,14 +319,23 @@ public class ProfileFragment extends Fragment {
                     });
         });
 
+        profile.setOnClickListener(v -> {
+            Intent profileChange = new Intent(requireContext(), ProfilePage.class);
+            profileChange.putExtra("Calling", "Home");
+            startActivity(profileChange);
+        });
+
         if (account == null) {
             refreshLayout.setEnabled(false);
             return;
         }
 
         skelitonUi.startShimmer();
+        shimmerProfile.startShimmer();
         skelitonUi.setVisibility(View.VISIBLE);
+        shimmerProfile.setVisibility(View.VISIBLE);
         realUi.setVisibility(View.GONE);
+        profile.setVisibility(View.GONE);
 
         String email = account.getEmail();
         setExistingData(email);
@@ -325,8 +343,11 @@ public class ProfileFragment extends Fragment {
         refreshLayout.setOnRefreshListener(() -> {
             VibManager.vibrateTick(requireContext());
             skelitonUi.startShimmer();
+            shimmerProfile.startShimmer();
             skelitonUi.setVisibility(View.VISIBLE);
+            shimmerProfile.setVisibility(View.VISIBLE);
             realUi.setVisibility(View.GONE);
+            profile.setVisibility(View.GONE);
 
             viewmodel.serverSync(email, new ProfileRepo.onAnyError() {
                 @Override
@@ -353,6 +374,7 @@ public class ProfileFragment extends Fragment {
     private void setExistingData(String email) {
         viewmodel.getProfile(email).observe(getViewLifecycleOwner(), profileEntity -> {
             if (profileEntity != null) {
+                loadProfileData(requireContext(), profileEntity.getProfileLink());
                 if (!about.getText().toString().equals(profileEntity.getAbout())) {
                     aliasName.setText(profileEntity.getAliasName());
                     about.setText(profileEntity.getAbout());
@@ -503,7 +525,17 @@ public class ProfileFragment extends Fragment {
     private void stopLoadingAndShowData() {
         refreshLayout.setRefreshing(false);
         skelitonUi.stopShimmer();
+        shimmerProfile.stopShimmer();
         skelitonUi.setVisibility(View.GONE);
+        shimmerProfile.setVisibility(View.GONE);
         realUi.setVisibility(View.VISIBLE);
+        profile.setVisibility(View.VISIBLE);
+    }
+
+    private void loadProfileData(Context context, String url){
+        Glide.with(context)
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(profile);
     }
 }

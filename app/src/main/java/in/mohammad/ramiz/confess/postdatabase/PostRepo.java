@@ -32,8 +32,14 @@ public class PostRepo {
         return dao.getAllPosts();
     }
 
+    public void eraseAll(){
+        Executors.newSingleThreadExecutor().execute(() -> {
+            dao.deleteAll();
+        });
+    }
+
     public void refreshPosts(RepoCallback callback) {
-        PostRequest request = new PostRequest("empty", false, false);
+        PostRequest request = new PostRequest("empty");
         Call<PostResponse> call = endpoints.getAllPosts(BuildConfig.CLIENT_API, request);
 
         call.enqueue(new Callback<PostResponse>() {
@@ -61,7 +67,7 @@ public class PostRepo {
     }
 
     public void loadNextPosts(String lastDate, Callback<PostResponse> callback) {
-        PostRequest request = new PostRequest(lastDate, true, false);
+        PostRequest request = new PostRequest(lastDate);
         endpoints.getAllPosts(BuildConfig.CLIENT_API, request).enqueue(callback);
     }
 

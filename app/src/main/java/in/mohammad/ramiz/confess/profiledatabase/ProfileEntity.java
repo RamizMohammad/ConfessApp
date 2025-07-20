@@ -19,10 +19,14 @@ public class ProfileEntity {
     @ColumnInfo(name = "about")
     private String about;
 
-    public ProfileEntity(@NonNull String email ,String about, String aliasName) {
+    @ColumnInfo(name = "profileLink")
+    private String profileLink;
+
+    public ProfileEntity(@NonNull String email ,String about, String aliasName, String profileLink) {
         this.email = email;
         this.about = about;
         this.aliasName = aliasName;
+        this.profileLink = profileLink;
     }
 
     public ProfileEntity() {
@@ -50,5 +54,13 @@ public class ProfileEntity {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public String getProfileLink() {
+        return profileLink;
+    }
+
+    public void setProfileLink(String profileLink) {
+        this.profileLink = profileLink;
     }
 }

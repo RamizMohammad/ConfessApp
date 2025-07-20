@@ -30,6 +30,10 @@ public class PostViewmodel extends AndroidViewModel {
         return savedPosts;
     }
 
+    public void eraseAll(){
+        repo.eraseAll();
+    }
+
     public void refreshTopPosts(ViewmodelRefreshCallback callback) {
         isLoading.setValue(true);
         repo.refreshPosts(new PostRepo.RepoCallback() {

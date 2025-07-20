@@ -1,7 +1,8 @@
 [versions]
-agp = "8.11.0"
+agp = "8.12.0-rc01"
 biometric = "1.1.0"
 checkout = "1.6.41"
+cloudinaryAndroid = "3.0.2"
 datastorePreferences = "1.1.7"
 firebaseBom = "33.15.0"
 firebaseAuth = "23.2.1"
@@ -35,8 +36,10 @@ swiperefreshlayout = "1.1.0"
 [libraries]
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 checkout = { module = "com.razorpay:checkout", version.ref = "checkout" }
+cloudinary-android = { module = "com.cloudinary:cloudinary-android", version.ref = "cloudinaryAndroid" }
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebaseMessaging" }
+firebase-storage = { module = "com.google.firebase:firebase-storage" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }

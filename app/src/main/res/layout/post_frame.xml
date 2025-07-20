@@ -33,6 +33,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:src="@raw/avatar2"
+                    android:background="@color/white"
                     app:shapeAppearanceOverlay="@style/CircleImage"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"/>

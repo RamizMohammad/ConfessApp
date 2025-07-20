@@ -63,4 +63,6 @@
     <string name="enter_the_new_account_password">Enter the new account password.</string>
     <string name="you_are_all_caught_up">You are all caught up</string>
     <string name="no_posts_found">No Posts Found</string>
+    <string name="enter_a_secure_password_by_which_you_can_secure_your_account_and_data">Enter a secure password by which you can secure your account and data.</string>
+    <string name="update_password">Update password</string>
 </resources>

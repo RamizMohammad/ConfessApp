@@ -49,7 +49,7 @@
             android:id="@+id/introText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Update password"
+            android:text="@string/update_password"
             android:fontFamily="@font/roboto_slab"
             android:textSize="25sp"
             android:textColor="@color/white"
@@ -63,7 +63,7 @@
             android:id="@+id/introText2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter a secure password by which you can secure your account and data."
+            android:text="@string/enter_a_secure_password_by_which_you_can_secure_your_account_and_data"
             android:textSize="15sp"
             android:textColor="#F4E7E1"
             android:gravity="start"
@@ -78,7 +78,7 @@
             app:layout_constraintTop_toBottomOf="@id/introText2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/checkPasswordButton">
+            app:layout_constraintBottom_toTopOf="@id/updatePasswordButton">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

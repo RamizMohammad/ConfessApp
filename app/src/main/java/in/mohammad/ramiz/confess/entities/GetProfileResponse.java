@@ -6,12 +6,14 @@ public class GetProfileResponse {
     private String email;
     private String aliasName;
     private String about;
+    private String profileLink;
 
-    public GetProfileResponse(boolean message, String email, String aliasName, String about) {
+    public GetProfileResponse(boolean message, String email, String aliasName, String about, String profileLink) {
         this.message = message;
         this.email = email;
         this.aliasName = aliasName;
         this.about = about;
+        this.profileLink = profileLink;
     }
 
     public boolean isMessage() {
@@ -44,5 +46,13 @@ public class GetProfileResponse {
 
     public void setAliasName(String aliasName) {
         this.aliasName = aliasName;
+    }
+
+    public String getProfileLink() {
+        return profileLink;
+    }
+
+    public void setProfileLink(String profileLink) {
+        this.profileLink = profileLink;
     }
 }

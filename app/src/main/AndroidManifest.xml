@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ConfessMain">
         <activity
+            android:name=".YourConfession"
+            android:exported="false" />
+        <activity
             android:name=".ChangePassword"
             android:exported="false" />
         <activity
@@ -37,7 +40,8 @@
         <activity
             android:name=".ProfilePage"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".HomePage"
             android:exported="false"

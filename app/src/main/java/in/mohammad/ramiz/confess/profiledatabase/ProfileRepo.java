@@ -51,6 +51,7 @@ public class ProfileRepo {
                         profileEntity.setEmail(response.body().getEmail());
                         profileEntity.setAliasName(response.body().getAliasName());
                         profileEntity.setAbout(response.body().getAbout());
+                        profileEntity.setProfileLink(response.body().getProfileLink());
 
                         try{
                             Executors.newSingleThreadExecutor().execute(() -> {

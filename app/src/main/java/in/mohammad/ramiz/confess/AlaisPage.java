@@ -192,7 +192,8 @@ public class AlaisPage extends AppCompatActivity {
                                     } else if (isUserCreated) {
                                         BiometricPrefs.getInstance(this).setBiometricEnabled(true);
                                         BiometricPrefs.getInstance(this).setPasswordStatus(true);
-                                        Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
+                                        Intent welcomePageIntent = new Intent(this, ProfilePage.class);
+                                        welcomePageIntent.putExtra("Calling", "Main");
                                         startActivity(welcomePageIntent);
                                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                                         finish();
@@ -218,7 +219,8 @@ public class AlaisPage extends AppCompatActivity {
                                 } else if (isUserCreated) {
                                     BiometricPrefs.getInstance(this).setBiometricEnabled(false);
                                     BiometricPrefs.getInstance(this).setPasswordStatus(true);
-                                    Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
+                                    Intent welcomePageIntent = new Intent(this, ProfilePage.class);
+                                    welcomePageIntent.putExtra("Calling", "Main");
                                     startActivity(welcomePageIntent);
                                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                                     finish();
@@ -244,7 +246,8 @@ public class AlaisPage extends AppCompatActivity {
                                 } else if (isUserCreated) {
                                     BiometricPrefs.getInstance(this).setBiometricEnabled(false);
                                     BiometricPrefs.getInstance(this).setPasswordStatus(false);
-                                    Intent welcomePageIntent = new Intent(this, WelcomeUser.class);
+                                    Intent welcomePageIntent = new Intent(this, ProfilePage.class);
+                                    welcomePageIntent.putExtra("Calling", "Main");
                                     startActivity(welcomePageIntent);
                                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                                     finish();
@@ -396,7 +399,10 @@ public class AlaisPage extends AppCompatActivity {
                                  boolean isPassword, boolean isBiometric, boolean isPro, String passwordData, Activity activity,
                                  UserCheckCallback callback){
 
-        AddUserRequest addUserRequestBody = new AddUserRequest(email, aliasName, about, date, isPassword,isBiometric, isPro, passwordData);
+        AddUserRequest addUserRequestBody = new AddUserRequest(email, aliasName,
+                about, date,
+                isPassword,isBiometric,
+                isPro, "Not given", passwordData);
 
         Call<AddUserResponse> call = endpoints.createNewUser(BuildConfig.CLIENT_API, addUserRequestBody);
 

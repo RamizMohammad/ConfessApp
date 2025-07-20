@@ -41,6 +41,9 @@ android {
         val hmacAlgo = secretProperties.getProperty("HMAC_ALGO", "")
         val razerKeyId = secretProperties.getProperty("RAZER_KEY_ID", "")
         val captchaKey = secretProperties.getProperty("CAPTCHA_KEY", "")
+        val cloudSaveApi = secretProperties.getProperty("CLOUD_SAVE_API", "")
+        val cloudSaveKey = secretProperties.getProperty("CLOUD_SAVE_KEY", "")
+        val cloudSaveName = secretProperties.getProperty("CLOUD_SAVE_NAME", "")
 
         buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
         buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
@@ -54,6 +57,9 @@ android {
         buildConfigField("String", "HMAC_ALGO", "\"$hmacAlgo\"")
         buildConfigField("String", "RAZER_KEY_ID", "\"$razerKeyId\"")
         buildConfigField("String", "CAPTCHA_KEY", "\"$captchaKey\"")
+        buildConfigField("String", "CLOUD_SAVE_API", "\"$cloudSaveApi\"")
+        buildConfigField("String", "CLOUD_SAVE_KEY", "\"$cloudSaveKey\"")
+        buildConfigField("String", "CLOUD_SAVE_NAME", "\"$cloudSaveName\"")
     }
 
     buildTypes {
@@ -77,6 +83,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.cloudinary.android)
+    implementation(libs.firebase.storage)
     implementation(libs.play.services.safetynet)
     implementation(libs.checkout)
     implementation(libs.datastore.preferences)
