@@ -24,6 +24,8 @@ import in.mohammad.ramiz.confess.entities.UpdateAboutRequest;
 import in.mohammad.ramiz.confess.entities.UpdateAboutResponse;
 import in.mohammad.ramiz.confess.entities.UpdatePasswordStateRequest;
 import in.mohammad.ramiz.confess.entities.UpdatePasswordStateResponse;
+import in.mohammad.ramiz.confess.yourconfessiondatabase.MyPostsRequest;
+import in.mohammad.ramiz.confess.yourconfessiondatabase.MyPostsResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
@@ -106,6 +108,12 @@ public interface Endpoints {
     Call<PostResponse> getAllPosts(
             @Header("x-api-key") String apiKey,
             @Body PostRequest postRequest
+    );
+
+    @POST("fetch-myPosts")
+    Call<MyPostsResponse> getMyPosts(
+            @Header("x-api-key") String apiKey,
+            @Body MyPostsRequest myPostsRequest
     );
 
     @POST("update-profile")

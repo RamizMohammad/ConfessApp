@@ -1,5 +1,6 @@
 package in.mohammad.ramiz.confess.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,35 +14,36 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.signature.ObjectKey;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import in.mohammad.ramiz.confess.R;
-import in.mohammad.ramiz.confess.postdatabase.PostsData;
+import in.mohammad.ramiz.confess.yourconfessiondatabase.MyPostsData;
 
-public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder> {
+public class MyPostAdapter extends ListAdapter<MyPostsData, RecyclerView.ViewHolder> {
 
-    private static final int TYPE_ITEM = 0;
-    private static final int TYPE_SHIMMER = 1;
-    private static final int TYPE_FOOTER = 2;
+    private static final int VIEW_TYPE_POST = 0;
+    private static final int VIEW_TYPE_SHIMMER = 1;
+    private static final int VIEW_TYPE_FOOTER = 2;
 
     private boolean showShimmer = false;
     private boolean showFooter = false;
 
-    public PostAdapter() {
+    public MyPostAdapter() {
         super(DIFF_CALLBACK);
     }
 
-    private static final DiffUtil.ItemCallback<PostsData> DIFF_CALLBACK = new DiffUtil.ItemCallback<PostsData>() {
+    private static final DiffUtil.ItemCallback<MyPostsData> DIFF_CALLBACK = new DiffUtil.ItemCallback<MyPostsData>() {
         @Override
-        public boolean areItemsTheSame(@NonNull PostsData oldItem, @NonNull PostsData newItem) {
+        public boolean areItemsTheSame(@NonNull MyPostsData oldItem, @NonNull MyPostsData newItem) {
             return Objects.equals(oldItem.getPostId(), newItem.getPostId());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull PostsData oldItem, @NonNull PostsData newItem) {
+        public boolean areContentsTheSame(@NonNull MyPostsData oldItem, @NonNull MyPostsData newItem) {
             return Objects.equals(oldItem.getPost(), newItem.getPost()) &&
                     Objects.equals(oldItem.getAliasName(), newItem.getAliasName()) &&
                     Objects.equals(oldItem.getProfileLink(), newItem.getProfileLink()) &&
@@ -51,31 +53,25 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        if (showShimmer && position == getCurrentList().size()) {
-            return TYPE_SHIMMER;
-        } else if (showFooter && position == getCurrentList().size()) {
-            return TYPE_FOOTER;
-        }
-        return TYPE_ITEM;
-    }
-
-    @Override
-    public int getItemCount() {
-        return getCurrentList().size() + ((showShimmer || showFooter) ? 1 : 0);
+        if (showShimmer && position == getItemCount() - 1) return VIEW_TYPE_SHIMMER;
+        if (showFooter && position == getItemCount() - 1) return VIEW_TYPE_FOOTER;
+        return VIEW_TYPE_POST;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if (viewType == TYPE_SHIMMER) {
-            View view = inflater.inflate(R.layout.next_page_frame, parent, false);
+        if (viewType == VIEW_TYPE_SHIMMER) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.next_page_frame, parent, false);
             return new ShimmerViewHolder(view);
-        } else if (viewType == TYPE_FOOTER) {
-            View view = inflater.inflate(R.layout.post_item_footer, parent, false);
+        } else if (viewType == VIEW_TYPE_FOOTER) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.post_item_footer, parent, false);
             return new FooterViewHolder(view);
         } else {
-            View view = inflater.inflate(R.layout.post_frame, parent, false);
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.post_frame, parent, false);
             return new PostViewHolder(view);
         }
     }
@@ -83,39 +79,54 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof PostViewHolder) {
-            PostsData post = getItem(position);
+            MyPostsData post = getItem(position);
             PostViewHolder postHolder = (PostViewHolder) holder;
 
             postHolder.aliasName.setText(post.getAliasName() != null ? post.getAliasName() : "Anonymous");
             postHolder.date.setText(post.getFormatDate());
             postHolder.post.setText(post.getPost());
 
-            Glide.with(postHolder.itemView.getContext())
-                    .load(post.getProfileLink())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(postHolder.profilePhoto);
+            String profileUrl = post.getProfileLink();
+            Log.d("MyPostAdapter", "Loading profile URL: " + profileUrl);
+
+            if (profileUrl == null || profileUrl.trim().isEmpty()) {
+                postHolder.profilePhoto.setImageResource(R.drawable.post_profile);
+            } else {
+                Glide.with(holder.itemView.getContext())
+                        .load(profileUrl)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .signature(new ObjectKey(profileUrl + "_" + System.currentTimeMillis()))
+                        .into(postHolder.profilePhoto);
+            }
         }
     }
 
-    public void addMorePosts(List<PostsData> morePost) {
-        List<PostsData> newList = new ArrayList<>(getCurrentList());
-        newList.addAll(morePost);
-        submitList(newList);
+    @Override
+    public int getItemCount() {
+        int baseCount = super.getItemCount();
+        if (showShimmer || showFooter) return baseCount + 1;
+        return baseCount;
     }
 
+    // Public helpers
     public void showShimmer(boolean show) {
         this.showShimmer = show;
-        this.showFooter = false;
         notifyDataSetChanged();
     }
 
     public void showFooter(boolean show) {
         this.showFooter = show;
-        this.showShimmer = false;
         notifyDataSetChanged();
     }
 
-    static class PostViewHolder extends RecyclerView.ViewHolder {
+    public void addMorePosts(List<MyPostsData> morePosts) {
+        List<MyPostsData> newList = new ArrayList<>(getCurrentList());
+        newList.addAll(morePosts);
+        submitList(newList);
+    }
+
+    // ViewHolders
+    public static class PostViewHolder extends RecyclerView.ViewHolder {
         TextView aliasName, date, post;
         ImageView profilePhoto;
 
@@ -128,13 +139,13 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
         }
     }
 
-    static class ShimmerViewHolder extends RecyclerView.ViewHolder {
+    public static class ShimmerViewHolder extends RecyclerView.ViewHolder {
         ShimmerViewHolder(View itemView) {
             super(itemView);
         }
     }
 
-    static class FooterViewHolder extends RecyclerView.ViewHolder {
+    public static class FooterViewHolder extends RecyclerView.ViewHolder {
         FooterViewHolder(View itemView) {
             super(itemView);
         }

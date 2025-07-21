@@ -1,4 +1,4 @@
-package in.mohammad.ramiz.confess.postdatabase;
+package in.mohammad.ramiz.confess.yourconfessiondatabase;
 
 import android.app.Application;
 
@@ -13,20 +13,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PostViewmodel extends AndroidViewModel {
+public class MyPostViewmodel extends AndroidViewModel {
 
-    private final PostRepo repo;
-    private final LiveData<List<PostsData>> savedPosts;
-    public MutableLiveData<List<PostsData>> nextPosts = new MutableLiveData<>();
+    private final MyPostRepo repo;
+    private final LiveData<List<MyPostsData>> savedPosts;
+    public MutableLiveData<List<MyPostsData>> nextPosts = new MutableLiveData<>();
     public MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
 
-    public PostViewmodel(@NonNull Application application) {
+    public MyPostViewmodel(@NonNull Application application){
         super(application);
-        repo = new PostRepo(application);
-        savedPosts = repo.getSavedPosts();
+        repo = new MyPostRepo(application);
+        savedPosts = repo.getSavedData();
     }
 
-    public LiveData<List<PostsData>> getSavedPosts() {
+    public LiveData<List<MyPostsData>> getSavedPosts(){
         return savedPosts;
     }
 
@@ -34,34 +34,34 @@ public class PostViewmodel extends AndroidViewModel {
         repo.eraseAll();
     }
 
-    public void refreshTopPosts(ViewmodelRefreshCallback callback) {
+    public void refreshTopPosts(String email, ViewmodelRefreshCallback callback){
         isLoading.setValue(true);
-        repo.refreshPosts(new PostRepo.RepoCallback() {
+        repo.refreshPosts(email, new MyPostRepo.MyRepoCallback() {
             @Override
-            public void onRepoSuccess() {
+            public void onMyRepoSuccess() {
                 callback.onSuccess();
                 isLoading.setValue(false);
             }
 
             @Override
-            public void onRepoFailure() {
+            public void onMyRepoFail() {
                 callback.onFail();
                 isLoading.setValue(false);
             }
 
             @Override
-            public void onEmptyPostResponse() {
+            public void onEmptyData() {
                 callback.onEmpty();
                 isLoading.setValue(false);
             }
         });
     }
 
-    public void fetchNextPosts(String lastDate, ViewmodelNextCallback callback) {
+    public void fetchNextPosts(String email, String lastDate, ViewmodelNextCallback callback){
         isLoading.setValue(true);
-        repo.loadNextPosts(lastDate, new Callback<PostResponse>() {
+        repo.loadNextPosts(email, lastDate, new Callback<MyPostsResponse>() {
             @Override
-            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+            public void onResponse(Call<MyPostsResponse> call, Response<MyPostsResponse> response) {
                 if (response.isSuccessful() && (response.body().getStatus()).equals("done")) {
                     nextPosts.postValue(response.body().getPosts());
                     callback.onSuccess();
@@ -75,7 +75,7 @@ public class PostViewmodel extends AndroidViewModel {
             }
 
             @Override
-            public void onFailure(Call<PostResponse> call, Throwable t) {
+            public void onFailure(Call<MyPostsResponse> call, Throwable t) {
                 isLoading.setValue(false);
                 callback.onFail();
             }

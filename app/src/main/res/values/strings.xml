@@ -65,4 +65,6 @@
     <string name="no_posts_found">No Posts Found</string>
     <string name="enter_a_secure_password_by_which_you_can_secure_your_account_and_data">Enter a secure password by which you can secure your account and data.</string>
     <string name="update_password">Update password</string>
+    <string name="your_posts">Your Posts</string>
+    <string name="get_a_visuals_over_all_the_confessions_u_have_made_till_now">Get a visuals over all the confessions you have made till now.</string>
 </resources>

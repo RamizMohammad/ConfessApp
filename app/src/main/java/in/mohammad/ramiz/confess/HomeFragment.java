@@ -29,7 +29,6 @@ public class HomeFragment extends Fragment {
     private ShimmerAdapter shimmerAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayoutManager layoutManager;
-    private TextView allDone;
     private LinearLayout empty;
     private boolean isLoadingNextPage = false;
 
@@ -41,7 +40,6 @@ public class HomeFragment extends Fragment {
 
         swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         RecyclerView recyclerView = view.findViewById(R.id.recycleView);
-        allDone = view.findViewById(R.id.completeText);
         empty = view.findViewById(R.id.empty);
 
         layoutManager = new LinearLayoutManager(getContext());
@@ -106,11 +104,13 @@ public class HomeFragment extends Fragment {
 
                         if (lastVisibleItemPosition >= totalItemCount - 3) {
                             isLoadingNextPage = true;
+                            postAdapter.showShimmer(true);
                             String lastDate = currentList.get(currentList.size() - 1).getDate();
                             viewmodel.fetchNextPosts(lastDate, new PostViewmodel.ViewmodelNextCallback() {
                                 @Override
                                 public void onSuccess() {
                                     isLoadingNextPage = false;
+                                    postAdapter.showShimmer(false);
                                 }
 
                                 @Override
@@ -122,7 +122,8 @@ public class HomeFragment extends Fragment {
                                 @Override
                                 public void onEmpty() {
                                     isLoadingNextPage = false;
-                                    allDone.setVisibility(View.VISIBLE);
+                                    postAdapter.showShimmer(false);
+                                    postAdapter.showFooter(true);
                                 }
                             });
                         }

@@ -1,0 +1,10 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/footerText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="All posts are finished"
+    android:gravity="center"
+    android:padding="15dp"
+    android:textColor="@color/white"
+    android:textSize="16sp"
+    android:fontFamily="@font/roboto_slab"/>
