@@ -24,8 +24,8 @@ android {
         applicationId = "in.mohammad.ramiz.confess"
         minSdk = 31
         targetSdk = 36
-        versionCode = 11
-        versionName = "3.3.0"
+        versionCode = 12
+        versionName = "3.4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

@@ -12,6 +12,8 @@ import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
 import in.mohammad.ramiz.confess.entities.CheckUserPassResponse;
 import in.mohammad.ramiz.confess.entities.CreatePostRequest;
 import in.mohammad.ramiz.confess.entities.CreatePostResponse;
+import in.mohammad.ramiz.confess.entities.FcmTokenRequest;
+import in.mohammad.ramiz.confess.entities.FcmTokenResponse;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordRequest;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordResponse;
 import in.mohammad.ramiz.confess.entities.GetProfileRequest;
@@ -120,5 +122,11 @@ public interface Endpoints {
     Call<UpdateProfilePictureResponse> updateProfilePicture(
             @Header("x-api-key") String apiKey,
             @Body UpdateProfilePictureRequest updateProfilePictureRequest
+    );
+
+    @POST("fcm-token")
+    Call<FcmTokenResponse> fcm(
+            @Header("x-api-key") String apiKey,
+            @Body FcmTokenRequest fcmTokenRequest
     );
 }

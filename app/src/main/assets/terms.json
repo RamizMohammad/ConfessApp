@@ -1,92 +1,111 @@
 [
   {
-    "heading": "📋 General Terms",
+    "heading": "📖 Introduction",
     "terms": [
-      "🔞 You must be at least 13 years old to use the app.",
-      "🚫 Do not misuse or abuse the application in any way.",
-      "👤 Do not impersonate others while using the app.",
-      "📵 Do not use the app for illegal activities.",
-      "⛔ We may suspend your access if rules are violated."
+      "🌅 Confess (\"App\") is an anonymous social platform designed for free expression using alias identities (\"aliasName\").",
+      "🗣️ The platform allows users to share thoughts, feelings, and opinions openly, without fear of judgment.",
+      "⚖️ This freedom, however, comes with responsibilities. By using Confess, you agree to comply with all guidelines, laws, and regulations stated here.",
+      "🔐 The Developer of Confess is dedicated to ensuring user privacy, safety, national security, and legal compliance.",
+      "📅 This Disclaimer is effective from 20th July 2025 and will be legally binding for all Users who install or use the App."
     ]
   },
   {
-    "heading": "🔐 Privacy & Data",
+    "heading": "🌐 Nature of the Platform",
     "terms": [
-      "🕵️ We value your privacy and handle data carefully.",
-      "📁 We do not sell your data to third parties.",
-      "🔐 Data is stored securely using encryption.",
-      "🗑️ You can request deletion of your account anytime.",
-      "📥 App may collect logs to improve service quality."
+      "🆔 Confess is a platform for self-expression where alias identities are allowed for anonymity.",
+      "🚫 Anonymity does not absolve users of accountability. Misuse of the platform is strictly prohibited.",
+      "📝 All content is user-generated, and the Developer does not endorse any user content.",
+      "☮️ Hate speech, terrorism propaganda, or abusive remarks targeting religion, caste, race, nationality, or gender are forbidden.",
+      "⚠️ Users violating these rules risk immediate suspension or permanent account termination."
     ]
   },
   {
-    "heading": "⚖️ Legal & Liability",
+    "heading": "⚖️ Legal Compliance & National Interest",
     "terms": [
-      "📝 All content is protected under copyright laws.",
-      "📜 By using this app, you agree to these terms.",
-      "🛑 We are not responsible for user-generated content.",
-      "🧾 Use of the app must comply with your local laws.",
-      "⚖️ Any legal disputes must be handled in local courts."
+      "🔍 The Developer reserves full rights to monitor, review, and report any unlawful use of the App.",
+      "🔒 Confess implements end-to-end encryption (E2E), but in cases of national threats, data may be decrypted for legal authorities.",
+      "💣 Violations include terrorism propaganda, religious hate, threats to national leaders, or incitement of violence.",
+      "📡 User data such as IP addresses, login logs, and metadata may be shared with law enforcement when required by law."
     ]
   },
   {
-    "heading": "💡 Features & Usage",
+    "heading": "📝 Content Ownership & User Responsibility",
     "terms": [
-      "🔔 Notifications may be sent for updates or messages.",
-      "🔄 Features may change with or without notice.",
-      "🆕 New features may be rolled out gradually.",
-      "🛠️ Bugs can be reported via the Help section.",
-      "🎨 UI/UX may differ across devices and versions."
+      "🧑‍💻 Users are solely responsible for the content they post on Confess.",
+      "✅ By posting, you confirm you have the rights over your content.",
+      "🚫 You agree not to share defamatory, pornographic, hateful, or illegal material.",
+      "👮 The Developer is not liable for user-generated content but may remove flagged content immediately.",
+      "⛔ Repeated violations will result in permanent account termination."
     ]
   },
   {
-    "heading": "📶 Connectivity",
+    "heading": "🔐 Privacy & Data Protection",
     "terms": [
-      "📡 Some features require an active internet connection.",
-      "🌐 We are not liable for network issues.",
-      "📴 Offline mode may have limited functionality.",
-      "📲 Data usage may apply based on your network.",
-      "🛰️ Server maintenance may cause temporary downtime."
+      "🔏 Confess prioritizes user privacy with advanced encryption.",
+      "📵 We do not sell or trade personal or alias information with third parties.",
+      "🔑 E2E encryption ensures no unauthorized party, including the Developer, can read messages.",
+      "🗑️ Users can request complete account and data deletion at any time.",
+      "📂 Metadata may be retained temporarily for law enforcement compliance."
     ]
   },
   {
-    "heading": "🤝 User Responsibility",
+    "heading": "⚠️ Limitations of Liability",
     "terms": [
-      "🤬 Abusive language or hate speech is not allowed.",
-      "🧍 You are responsible for your actions on the app.",
-      "📢 Report violations using the in-app report tool.",
-      "🛡️ Do not share confidential or personal data.",
-      "👥 Respect other users' privacy and dignity."
+      "⚙️ The App is provided on an \"as is\" basis, with no warranties of any kind.",
+      "📉 The Developer is not liable for downtime, glitches, or data loss due to unauthorized access.",
+      "🛑 Confess is not responsible for harmful or offensive user-generated content.",
+      "🌪️ Force majeure events or device failures are beyond our control."
     ]
   },
   {
-    "heading": "🧪 Beta Features",
+    "heading": "👁️ Monitoring & Enforcement",
     "terms": [
-      "🧬 Some features may be in beta testing phase.",
-      "🐞 Bugs may occur in experimental features.",
-      "🗣️ Feedback is encouraged to improve features.",
-      "🧰 Beta features can be removed at any time.",
-      "🔧 Use beta features at your own discretion."
+      "🔎 Confess uses AI moderation and community reporting for harmful content.",
+      "🚨 Reported content will be reviewed, and necessary action will be taken immediately.",
+      "🤝 In case of serious violations, we will cooperate fully with authorities.",
+      "🔒 Repeat violators will face permanent account suspension or bans."
     ]
   },
   {
-    "heading": "💰 Payments & Subscriptions",
+    "heading": "💼 Intellectual Property",
     "terms": [
-      "💳 Some features may require payment or subscription.",
-      "🧾 Refunds are subject to our refund policy.",
-      "📆 Subscription renews automatically unless canceled.",
-      "⚠️ Failed payments may restrict access.",
-      "📈 Prices are subject to change with prior notice."
+      "🖼️ The Confess name, logo, and UI are protected by copyright and trademark laws.",
+      "✋ Users cannot copy, reverse-engineer, or redistribute the App without permission.",
+      "⚖️ Unauthorized use of Confess assets may lead to legal action."
     ]
   },
   {
-    "heading": "🚨 Account & Security",
+    "heading": "🤝 User Conduct",
     "terms": [
-      "🔒 Keep your password secure and confidential.",
-      "🔑 Two-factor authentication is recommended.",
-      "📧 Use a valid email for account recovery.",
-      "🚫 Sharing accounts is strictly prohibited.",
-      "🧹 Inactive accounts may be deleted after long periods."
+      "🤬 Harassment, hate speech, or threats of any kind are not tolerated.",
+      "🚷 Spreading misinformation, fake news, or harmful rumors is prohibited.",
+      "🧾 Users must ensure their content complies with all laws.",
+      "📢 All reports of abuse will be investigated thoroughly."
+    ]
+  },
+  {
+    "heading": "⚖️ Legal Jurisdiction",
+    "terms": [
+      "🇮🇳 All legal disputes will be governed by the laws of India.",
+      "🏛️ Legal cases must be filed in the courts of the Developer’s jurisdiction.",
+      "🌍 International users must also comply with their local laws."
+    ]
+  },
+  {
+    "heading": "🔄 Amendments to Disclaimer",
+    "terms": [
+      "🔔 The Developer can update this Disclaimer at any time without prior notice.",
+      "📧 Users will be notified of major changes via in-app alerts or emails.",
+      "✔️ Continued use of Confess after updates means acceptance of the changes."
+    ]
+  },
+  {
+    "heading": "🔚 Final Statement",
+    "terms": [
+      "🕊️ Confess is committed to providing a safe, anonymous platform for open communication.",
+      "🚫 Any activity threatening religion, society, or national security will lead to immediate termination.",
+      "🚓 Severe violations will result in cooperation with law enforcement agencies.",
+      "🤝 By using Confess, you agree to these terms and pledge to act responsibly."
     ]
   }
 ]

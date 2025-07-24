@@ -17,17 +17,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ConfessMain">
         <activity
-            android:name=".YourConfession"
+            android:name=".NotificationPage"
             android:exported="false" />
+        <activity
+            android:name=".YourConfession"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ChangePassword"
-            android:exported="false" />
-        <activity
-            android:name=".RazorGateway"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".UpdatePassBio"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".UpdateAbout"
             android:exported="false"
@@ -40,8 +43,7 @@
         <activity
             android:name=".ProfilePage"
             android:exported="false"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".HomePage"
             android:exported="false"

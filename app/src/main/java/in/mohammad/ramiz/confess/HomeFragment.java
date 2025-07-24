@@ -1,9 +1,11 @@
 package in.mohammad.ramiz.confess;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,6 +20,7 @@ import java.util.List;
 
 import in.mohammad.ramiz.confess.adapters.PostAdapter;
 import in.mohammad.ramiz.confess.adapters.ShimmerAdapter;
+import in.mohammad.ramiz.confess.haptics.VibManager;
 import in.mohammad.ramiz.confess.popups.OkPopUp;
 import in.mohammad.ramiz.confess.postdatabase.PostViewmodel;
 import in.mohammad.ramiz.confess.postdatabase.PostsData;
@@ -30,6 +33,7 @@ public class HomeFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayoutManager layoutManager;
     private LinearLayout empty;
+    private ImageView notificationButton;
     private boolean isLoadingNextPage = false;
 
     @Override
@@ -41,6 +45,7 @@ public class HomeFragment extends Fragment {
         swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         RecyclerView recyclerView = view.findViewById(R.id.recycleView);
         empty = view.findViewById(R.id.empty);
+        notificationButton = view.findViewById(R.id.notification);
 
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -61,6 +66,13 @@ public class HomeFragment extends Fragment {
             } else {
                 empty.setVisibility(View.VISIBLE);
             }
+        });
+
+        notificationButton.setOnClickListener(v -> {
+            VibManager.vibrateTick(requireContext());
+            Intent notificationIntent = new Intent(requireContext(), NotificationPage.class);
+            startActivity(notificationIntent);
+            requireActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
 
         // Swipe-to-refresh

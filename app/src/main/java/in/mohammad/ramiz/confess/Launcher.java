@@ -10,6 +10,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.concurrent.Executors;
 
 import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
@@ -32,6 +35,10 @@ public class Launcher extends AppCompatActivity {
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         endpoints = ServerConfigs.getInstance().create(Endpoints.class);
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            fetchFcm();
+        });
 
         if (account != null) {
             String email = account.getEmail();
@@ -96,5 +103,18 @@ public class Launcher extends AppCompatActivity {
 
     public interface UserCallback{
         void onResult (boolean isUser,boolean isPassword, boolean isBiometric);
+    }
+
+    private void fetchFcm(){
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        BiometricPrefs.getInstance(this).setFcmKey(true);
+                        BiometricPrefs.getInstance(this).setFcmValue(task.getResult());
+                    }
+                    else {
+                        TelegramLogs.sendTelegramLog("FCM token fetch failed");
+                    }
+                });
     }
 }

@@ -9,6 +9,8 @@ public class BiometricPrefs {
     private static final String BIOMETRIC_KEY = "is_biometric_enabled";
     private static final String LOGIN_KEY = "is_biometric_login";
     private static final String PASSWORD_KEY = "is_password_enable";
+    private static final String FCM_KEY = "is_fcm_change";
+    private static final String FCM_VALUE = "fcm_value";
     private static final String MAX_KEY = "max_key";
     private static final String COUNT_KEY = "count_key";
 
@@ -64,6 +66,26 @@ public class BiometricPrefs {
     public void setMaxAttempt(int attempt){
         sharedPreferences.edit()
                 .putInt(MAX_KEY, attempt)
+                .apply();
+    }
+
+    public boolean getFcmStatus(){
+        return sharedPreferences.getBoolean(FCM_KEY, false);
+    }
+
+    public void setFcmKey(boolean key){
+        sharedPreferences.edit()
+                .putBoolean(FCM_KEY, key)
+                .apply();
+    }
+
+    public String getFcmValue(){
+        return sharedPreferences.getString(FCM_VALUE, "Empty");
+    }
+
+    public void setFcmValue(String key){
+        sharedPreferences.edit()
+                .putString(FCM_VALUE, key)
                 .apply();
     }
 

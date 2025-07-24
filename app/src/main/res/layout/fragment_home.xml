@@ -68,6 +68,7 @@
                 </FrameLayout>
 
                 <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/notification"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:src="@drawable/notification"

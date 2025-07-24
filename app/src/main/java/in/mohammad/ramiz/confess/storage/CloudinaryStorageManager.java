@@ -1,18 +1,20 @@
 package in.mohammad.ramiz.confess.storage;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 
-import com.cloudinary.android.MediaManager;
-import com.cloudinary.android.callback.ErrorInfo;
-import com.cloudinary.android.callback.UploadCallback;
+import androidx.annotation.RawRes;
+
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,96 +22,98 @@ import in.mohammad.ramiz.confess.BuildConfig;
 
 public class CloudinaryStorageManager {
 
-    private static boolean isInitialized = false;
+    private static Cloudinary cloudinaryInstance;
 
-    // Initialize Cloudinary only once
-    public static void init(Context context) {
-        if (isInitialized) return;
-
-        Map<String, Object> config = new HashMap<>();
-        config.put("cloud_name", BuildConfig.CLOUD_SAVE_NAME);
-        config.put("api_key", BuildConfig.CLOUD_SAVE_API);
-        config.put("api_secret", BuildConfig.CLOUD_SAVE_KEY);
-
-        try {
-            MediaManager.init(context, config);
-            isInitialized = true;
-        } catch (Exception e) {
-            Log.e("CloudinaryInit", "Cloudinary init failed: " + e.getMessage());
+    // Initialize Cloudinary once
+    public static void init() {
+        if (cloudinaryInstance == null) {
+            cloudinaryInstance = new Cloudinary(ObjectUtils.asMap(
+                    "cloud_name", BuildConfig.CLOUD_SAVE_NAME,
+                    "api_key", BuildConfig.CLOUD_SAVE_API,
+                    "api_secret", BuildConfig.CLOUD_SAVE_KEY
+            ));
         }
     }
 
-    // Upload from drawable/raw resource
-    public static void uploadResourceAndGetUrl(Context context, int resId, UploadResultCallback callback) {
-        try {
-            File tempFile = new File(context.getCacheDir(), "temp_avatar.jpg");
-            try (
-                    InputStream inputStream = context.getResources().openRawResource(resId);
-                    OutputStream outputStream = new FileOutputStream(tempFile)
-            ) {
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = inputStream.read(buffer)) > 0) {
-                    outputStream.write(buffer, 0, length);
-                }
-            }
-
-            Uri fileUri = Uri.fromFile(tempFile);
-            uploadImage(context, fileUri, callback);
-
-        } catch (Exception e) {
-            callback.onFailure("Failed to process resource: " + e.getMessage());
-        }
-    }
-
-    // Upload an image to Cloudinary and get the URL
+    // Upload image using Uri
     public static void uploadImage(Context context, Uri imageUri, UploadResultCallback callback) {
-        init(context);
+        init();
+
+        if (cloudinaryInstance == null) {
+            callback.onFailure("Cloudinary not initialized");
+            return;
+        }
 
         if (imageUri == null) {
             callback.onFailure("Image URI is null");
             return;
         }
 
-        String folderId = UUID.randomUUID().toString();  // Folder name
-        String publicId = folderId + "/" + UUID.randomUUID().toString(); // File ID
+        new AsyncTask<Void, Void, String>() {
+            Exception exception;
 
-        MediaManager.get().upload(imageUri)
-                .option("public_id", publicId)
-                .option("folder", folderId)
-                .callback(new UploadCallback() {
-                    @Override
-                    public void onStart(String requestId) {
-                        Log.d("Cloudinary", "Upload started: " + requestId);
-                    }
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    File file = createTempFileFromUri(context, imageUri);
+                    String folderId = UUID.randomUUID().toString();
+                    String publicId = UUID.randomUUID().toString();
 
-                    @Override
-                    public void onProgress(String requestId, long bytes, long totalBytes) {
-                        Log.d("Cloudinary", "Upload progress: " + bytes + "/" + totalBytes);
-                    }
+                    Map uploadResult = cloudinaryInstance.uploader().upload(file, ObjectUtils.asMap(
+                            "folder", folderId,
+                            "public_id", publicId,
+                            "resource_type", "image"
+                    ));
+                    return (String) uploadResult.get("secure_url");
 
-                    @Override
-                    public void onSuccess(String requestId, Map resultData) {
-                        String url = resultData.get("secure_url").toString();
-                        Log.d("Cloudinary", "Upload success: " + url);
-                        callback.onSuccess(url);
-                    }
+                } catch (Exception e) {
+                    exception = e;
+                    return null;
+                }
+            }
 
-                    @Override
-                    public void onError(String requestId, ErrorInfo error) {
-                        Log.e("Cloudinary", "Upload error: " + error.getDescription());
-                        callback.onFailure(error.getDescription());
-                    }
-
-                    @Override
-                    public void onReschedule(String requestId, ErrorInfo error) {
-                        Log.e("Cloudinary", "Upload rescheduled: " + error.getDescription());
-                        callback.onFailure("Rescheduled: " + error.getDescription());
-                    }
-                }).dispatch();
+            @Override
+            protected void onPostExecute(String resultUrl) {
+                if (exception != null) {
+                    callback.onFailure("Upload failed: " + exception.getMessage());
+                } else {
+                    callback.onSuccess(resultUrl);
+                }
+            }
+        }.execute();
     }
 
-    // Callback interface
+    // Upload image using resource ID
+    public static void uploadResourceAndGetUrl(Context context, @RawRes int resId, UploadResultCallback callback) {
+        Uri uri = getUriFromResId(context, resId);
+        uploadImage(context, uri, callback);
+    }
+
+    // Convert resId to Uri
+    public static Uri getUriFromResId(Context context, @RawRes int resId) {
+        return Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
+    }
+
+    // Helper: convert Uri to File
+    private static File createTempFileFromUri(Context context, Uri uri) throws Exception {
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+        String fileName = "upload_" + System.currentTimeMillis() + ".jpg";
+        File tempFile = new File(context.getCacheDir(), fileName);
+        OutputStream outputStream = new FileOutputStream(tempFile);
+
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+
+        outputStream.close();
+        inputStream.close();
+        return tempFile;
+    }
+
+    // Upload callback interface
     public interface UploadResultCallback {
         void onSuccess(String downloadUrl);
         void onFailure(String message);

@@ -2,6 +2,7 @@ package in.mohammad.ramiz.confess;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
@@ -94,7 +95,8 @@ public class ProfilePage extends AppCompatActivity {
         profileButton.setOnClickListener(v -> {
             VibManager.vibrateTick(this);
             loader = new OnlyLoader(this, R.raw.loading_animation);
-            CloudinaryStorageManager.uploadResourceAndGetUrl(this, selectedAvatar, new CloudinaryStorageManager.UploadResultCallback() {
+            Uri uri = CloudinaryStorageManager.getUriFromResId(this, selectedAvatar);
+            CloudinaryStorageManager.uploadImage(this, uri, new CloudinaryStorageManager.UploadResultCallback() {
                 @Override
                 public void onSuccess(String downloadUrl) {
                     if(account != null){
@@ -135,6 +137,7 @@ public class ProfilePage extends AppCompatActivity {
                 @Override
                 public void onFailure(String message) {
                     loader.dismiss();
+                    TelegramLogs.sendTelegramLog(message);
                     new OkPopUp(ProfilePage.this, R.raw.error_animation, "Server Error");
                 }
             });

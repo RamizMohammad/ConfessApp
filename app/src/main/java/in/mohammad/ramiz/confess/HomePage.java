@@ -18,7 +18,20 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import java.util.concurrent.Executors;
+
+import in.mohammad.ramiz.confess.entities.FcmTokenRequest;
+import in.mohammad.ramiz.confess.entities.FcmTokenResponse;
 import in.mohammad.ramiz.confess.haptics.VibManager;
+import in.mohammad.ramiz.confess.security.BiometricPrefs;
+import in.mohammad.ramiz.confess.server.Endpoints;
+import in.mohammad.ramiz.confess.server.ServerConfigs;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomePage extends AppCompatActivity {
 
@@ -26,6 +39,7 @@ public class HomePage extends AppCompatActivity {
     private TextView homeText, profileText;
     private LinearLayout homeButton, addButton, profileButton;
     private FrameLayout screenHide;
+    private Endpoints endpoints;
     private static final long SESSION_TIME = 60 * 1000;
     private static long CURRENT_SESSION = 0;
 
@@ -56,6 +70,15 @@ public class HomePage extends AppCompatActivity {
         addButton = findViewById(R.id.addButton);
         profileButton = findViewById(R.id.profileButton);
         screenHide = findViewById(R.id.secureOverlay);
+
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        endpoints = ServerConfigs.getInstance().create(Endpoints.class);
+        if(account != null){
+            String email = account.getEmail();
+            Executors.newSingleThreadExecutor().execute(() -> {
+                sendFcmToServer(email);
+            });
+        }
 
         // Click listeners for navigation
         homeButton.setOnClickListener(v -> {
@@ -132,9 +155,11 @@ public class HomePage extends AppCompatActivity {
             long timeOuts = System.currentTimeMillis() - CURRENT_SESSION;
             CURRENT_SESSION = 0;
             if (timeOuts >= SESSION_TIME) {
-                Intent reLogin = new Intent(this, Password_Page.class);
-                startActivity(reLogin);
-                finish();
+                if(BiometricPrefs.getInstance(this).getPasswordStatus()){
+                    Intent reLogin = new Intent(this, Password_Page.class);
+                    startActivity(reLogin);
+                    finish();
+                }
             }
         }
     }
@@ -196,5 +221,23 @@ public class HomePage extends AppCompatActivity {
     private void setUnselectedTab(ImageView icon, TextView text, int color) {
         icon.setImageTintList(ColorStateList.valueOf(color));
         if (text != null) text.setTextColor(color);
+    }
+
+    private void sendFcmToServer(String email){
+        BiometricPrefs pref = BiometricPrefs.getInstance(this);
+        FcmTokenRequest request = new FcmTokenRequest(email, pref.getFcmValue(), "active");
+
+        Call<FcmTokenResponse> call = endpoints.fcm(BuildConfig.CLIENT_API, request);
+
+        call.enqueue(new Callback<FcmTokenResponse>() {
+            @Override
+            public void onResponse(Call<FcmTokenResponse> call, Response<FcmTokenResponse> response) {
+            }
+
+            @Override
+            public void onFailure(Call<FcmTokenResponse> call, Throwable t) {
+
+            }
+        });
     }
 }
