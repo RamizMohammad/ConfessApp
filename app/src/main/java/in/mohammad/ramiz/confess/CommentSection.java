@@ -41,7 +41,6 @@ public class CommentSection extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CommentAdapter adapter;
     private List<CommentData> comments = new ArrayList<>();
-
     private boolean isLoading = false;
     private boolean hasMore = true;
     private String lastCommentDate = "empty";
