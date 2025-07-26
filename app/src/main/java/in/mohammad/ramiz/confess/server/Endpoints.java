@@ -1,5 +1,7 @@
 package in.mohammad.ramiz.confess.server;
 
+import in.mohammad.ramiz.confess.commentlogic.GetCommentResponse;
+import in.mohammad.ramiz.confess.commentlogic.GetCommentsRequest;
 import in.mohammad.ramiz.confess.entities.AddUserRequest;
 import in.mohammad.ramiz.confess.entities.AddUserResponse;
 import in.mohammad.ramiz.confess.entities.BiometricRequest;
@@ -10,6 +12,8 @@ import in.mohammad.ramiz.confess.entities.CheckPasswordRequest;
 import in.mohammad.ramiz.confess.entities.CheckPasswordResponse;
 import in.mohammad.ramiz.confess.entities.CheckUserPassRequest;
 import in.mohammad.ramiz.confess.entities.CheckUserPassResponse;
+import in.mohammad.ramiz.confess.entities.CreateCommentRequest;
+import in.mohammad.ramiz.confess.entities.CreateCommentResponse;
 import in.mohammad.ramiz.confess.entities.CreatePostRequest;
 import in.mohammad.ramiz.confess.entities.CreatePostResponse;
 import in.mohammad.ramiz.confess.entities.FcmTokenRequest;
@@ -128,5 +132,17 @@ public interface Endpoints {
     Call<FcmTokenResponse> fcm(
             @Header("x-api-key") String apiKey,
             @Body FcmTokenRequest fcmTokenRequest
+    );
+
+    @POST("add-comments")
+    Call<CreateCommentResponse> comment(
+            @Header("x-api-key") String apiKey,
+            @Body CreateCommentRequest createCommentRequest
+    );
+
+    @POST("all-comments")
+    Call<GetCommentResponse> getComment(
+            @Header("x-api-key") String apiKey,
+            @Body GetCommentsRequest getCommentsRequest
     );
 }

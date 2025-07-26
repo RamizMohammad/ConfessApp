@@ -72,8 +72,10 @@
     <string name="title">Notification Title</string>
     <string name="body">Notification Body</string>
     <string name="enable_comments">Enable Comments</string>
-    <string name="commnets">Commnets</string>
+    <string name="commnets">Comments</string>
     <string name="post">Post</string>
     <string name="like">Like</string>
     <string name="comment">Comment</string>
+    <string name="write_comment">write comment</string>
+    <string name="banner">Everyone deserves a good treatment so be polite. Any non social thing will not be forgiven</string>
 </resources>

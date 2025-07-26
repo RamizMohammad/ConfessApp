@@ -17,6 +17,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ConfessMain">
         <activity
+            android:name=".CommentSection"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.Confess.AdjustResize"/>
+        <activity
             android:name=".NotificationPage"
             android:exported="false" />
         <activity
@@ -43,7 +48,7 @@
         <activity
             android:name=".ProfilePage"
             android:exported="false"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".HomePage"
             android:exported="false"

@@ -11,4 +11,12 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+    <style name="Theme.Confess.AdjustResize" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Crucial flags -->
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
 </resources>

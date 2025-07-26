@@ -1,5 +1,7 @@
 package in.mohammad.ramiz.confess.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import in.mohammad.ramiz.confess.CommentSection;
 import in.mohammad.ramiz.confess.R;
+import in.mohammad.ramiz.confess.haptics.VibManager;
 import in.mohammad.ramiz.confess.postdatabase.PostsData;
 
 public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder> {
@@ -91,7 +95,7 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
             postHolder.aliasName.setText(post.getAliasName() != null ? post.getAliasName() : "Anonymous");
             postHolder.date.setText(post.getFormatDate());
             postHolder.post.setText(post.getPost());
-            Log.d("MyPostAdapter", "Post ID: " + post.getPostId() + " isComment: " + post.isComment());
+
             if (post.isComment()) {
                 postHolder.commentButton.setVisibility(View.VISIBLE);
             } else {
@@ -102,6 +106,14 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
                     .load(post.getProfileLink())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(postHolder.profilePhoto);
+
+            postHolder.commentButton.setOnClickListener(v -> {
+                Context context = holder.itemView.getContext();
+                VibManager.vibrateTick(context);
+                Intent commentIntent = new Intent(context, CommentSection.class);
+                commentIntent.putExtra("postId", post.getPostId());
+                context.startActivity(commentIntent);
+            });
         }
     }
 
