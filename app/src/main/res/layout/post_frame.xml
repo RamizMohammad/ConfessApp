@@ -89,14 +89,14 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
             app:layout_constraintTop_toBottomOf="@id/details"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintStart_toStartOf="@id/details"
+            app:layout_constraintEnd_toEndOf="@id/details"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -104,80 +104,63 @@
 
                 <LinearLayout
                     android:id="@+id/likePanel"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="center"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/commentPanel"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <ImageView
                         android:id="@+id/like"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"/>
+                        android:layout_width="20dp"
+                        android:src="@drawable/like"
+                        android:layout_marginEnd="10dp"
+                        android:layout_height="20dp"/>
 
                     <TextView
                         android:id="@+id/likeCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1K"
-                        android:fontFamily="@font/roboto_slab"
+                        android:text="@string/like"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:fontFamily="@font/poppins"
                         android:layout_gravity="center"
                         android:textColor="@color/white"
-                        android:letterSpacing="0.05"
-                        android:textSize="18sp"/>
+                        android:textSize="15sp"/>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/supportPanel"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/commentPanel"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="center"
                     app:layout_constraintStart_toEndOf="@id/likePanel"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <ImageView
-                        android:id="@+id/support"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"/>
+                        android:id="@+id/comment"
+                        android:layout_width="20dp"
+                        android:src="@drawable/comment"
+                        android:layout_marginEnd="10dp"
+                        android:layout_height="20dp"/>
 
                     <TextView
-                        android:id="@+id/supportCount"
+                        android:id="@+id/commentText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1K"
-                        android:fontFamily="@font/roboto_slab"
+                        android:text="@string/comment"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/poppins"
                         android:layout_gravity="center"
                         android:textColor="@color/white"
-                        android:letterSpacing="0.05"
-                        android:textSize="18sp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/usPanel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    app:layout_constraintStart_toEndOf="@id/supportPanel"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent">
-
-                    <ImageView
-                        android:id="@+id/us"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"/>
-
-                    <TextView
-                        android:id="@+id/usCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1K"
-                        android:fontFamily="@font/roboto_slab"
-                        android:layout_gravity="center"
-                        android:textColor="@color/white"
-                        android:letterSpacing="0.05"
-                        android:textSize="18sp"/>
-
+                        android:textSize="15sp"/>
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

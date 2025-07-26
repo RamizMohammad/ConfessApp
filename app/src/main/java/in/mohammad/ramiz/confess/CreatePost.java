@@ -1,6 +1,8 @@
 package in.mohammad.ramiz.confess;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -35,15 +37,17 @@ import retrofit2.Response;
 
 public class CreatePost extends AppCompatActivity {
 
-    private TextView wordCount;
+    private TextView wordCount, commentText;
     private EditText postData;
     private ImageView backButton;
-    private FrameLayout postButton;
+    private FrameLayout postButton, commentButton;
     private Endpoints endpoints;
     private String email;
     private OnlyLoader popUp;
     private OkPopUp popUp2;
     private int currentLength;
+    private boolean isComment = false;
+    private GradientDrawable drawable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +64,16 @@ public class CreatePost extends AppCompatActivity {
         postData = findViewById(R.id.postText);
         backButton = findViewById(R.id.backButton);
         postButton = findViewById(R.id.postButton);
+        commentButton = findViewById(R.id.commentButton);
+        commentText = findViewById(R.id.commentText);
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         endpoints = ServerConfigs.getInstance().create(Endpoints.class);
+
+        Drawable background = commentButton.getBackground();
+        if(background instanceof GradientDrawable){
+            drawable = (GradientDrawable) background;
+        }
 
         postData.addTextChangedListener(new TextWatcher() {
             @Override
@@ -86,6 +97,20 @@ public class CreatePost extends AppCompatActivity {
             Intent backIntent = new Intent(this, HomePage.class);
             startActivity(backIntent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        });
+
+        commentButton.setOnClickListener(v -> {
+            VibManager.vibrateTick(this);
+            if(!isComment){
+                drawable.setColor(getColor(R.color.yellow));
+                commentText.setTextColor(getColor(R.color.black));
+                isComment = !isComment;
+            }
+            else{
+                drawable.setColor(getColor(R.color.extraColor));
+                commentText.setTextColor(getColor(R.color.white));
+                isComment = !isComment;
+            }
         });
 
         postButton.setOnClickListener(v -> {
@@ -121,10 +146,16 @@ public class CreatePost extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
     private void createPost(String email, String post, UserCallback callback){
 
         String isoDate = Instant.now().toString();
-        CreatePostRequest postData = new CreatePostRequest(email,post,isoDate);
+        CreatePostRequest postData = new CreatePostRequest(email, post, isoDate, isComment);
 
         Call<CreatePostResponse> call = endpoints.createPost(BuildConfig.CLIENT_API, postData);
 

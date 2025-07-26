@@ -71,6 +71,7 @@ public class YourConfession extends AppCompatActivity {
             if(myPostsData != null && !myPostsData.isEmpty()){
                 recyclerView.setAdapter(adapter);
                 adapter.submitList(myPostsData);
+                recyclerView.smoothScrollToPosition(0);
                 empty.setVisibility(View.GONE);
             }
             else {
@@ -85,6 +86,7 @@ public class YourConfession extends AppCompatActivity {
                 public void onSuccess() {
                     swipeRefreshLayout.setRefreshing(false);
                     recyclerView.setVisibility(View.VISIBLE);
+                    recyclerView.smoothScrollToPosition(0);
                     empty.setVisibility(View.GONE);
                 }
 
@@ -157,6 +159,7 @@ public class YourConfession extends AppCompatActivity {
                 recyclerView.setAdapter(adapter);
                 recyclerView.setVisibility(View.VISIBLE);
                 empty.setVisibility(View.GONE);
+                recyclerView.smoothScrollToPosition(0);
             }
 
             @Override

@@ -16,8 +16,7 @@ public class NotificationEntity {
     @ColumnInfo(name = "body")
     private String body;
 
-    public NotificationEntity(@NonNull int id,  String title, String body) {
-        this.id = id;
+    public NotificationEntity(String title, String body) {
         this.title = title;
         this.body = body;
     }

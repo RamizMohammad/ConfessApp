@@ -2,7 +2,6 @@ package in.mohammad.ramiz.confess.notificationdatabase;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -18,6 +17,6 @@ public interface NotificationDao {
     @Query("DELETE FROM notificationTable")
     void deleteAll();
 
-    @Query("SELECT * FROM notificationTable")
-    List<NotificationEntity> fetchAll();
+    @Query("SELECT * FROM notificationTable") // optional ordering
+    LiveData<List<NotificationEntity>> fetchAll();
 }

@@ -16,12 +16,22 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import in.mohammad.ramiz.confess.R;
+import in.mohammad.ramiz.confess.notificationdatabase.NotificationEntity;
+import in.mohammad.ramiz.confess.notificationdatabase.NotificationRepo;
+import in.mohammad.ramiz.confess.notificationdatabase.NotificationViewmodel;
 import in.mohammad.ramiz.confess.security.BiometricPrefs;
 
 public class FirebaseMessaging extends FirebaseMessagingService {
 
     private static final String TAG = "FCM-Service";
     private static final String CHANNEL_ID = "confess_channel";
+    private NotificationRepo repo;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        repo = new NotificationRepo(getApplication());
+    }
 
     @Override
     public void onNewToken(@NonNull String token) {
@@ -52,6 +62,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
             body = message.getNotification().getBody();
         }
 
+        sendNotificationToDb(title, body);
         sendNotification(title, body);
     }
 
@@ -87,5 +98,10 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                 manager.createNotificationChannel(channel);
             }
         }
+    }
+
+    private void sendNotificationToDb(String title, String body){
+        NotificationEntity notification = new NotificationEntity(title, body);
+        repo.insertNotification(notification);
     }
 }

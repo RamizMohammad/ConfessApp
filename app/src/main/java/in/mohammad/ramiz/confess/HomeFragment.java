@@ -61,7 +61,8 @@ public class HomeFragment extends Fragment {
         viewmodel.getSavedPosts().observe(getViewLifecycleOwner(), postsData -> {
             if (postsData != null && !postsData.isEmpty()) {
                 recyclerView.setAdapter(postAdapter);
-                postAdapter.submitList(postsData); // DiffUtil handles updates
+                postAdapter.submitList(postsData);
+                recyclerView.smoothScrollToPosition(0);
                 empty.setVisibility(View.GONE);
             } else {
                 empty.setVisibility(View.VISIBLE);
@@ -84,6 +85,7 @@ public class HomeFragment extends Fragment {
                     swipeRefreshLayout.setRefreshing(false);
                     recyclerView.setVisibility(View.VISIBLE);
                     empty.setVisibility(View.GONE);
+                    recyclerView.smoothScrollToPosition(0);
                 }
 
                 @Override
@@ -157,6 +159,7 @@ public class HomeFragment extends Fragment {
             public void onSuccess() {
                 recyclerView.setAdapter(postAdapter);
                 recyclerView.setVisibility(View.VISIBLE);
+                recyclerView.smoothScrollToPosition(0);
                 empty.setVisibility(View.GONE);
             }
 

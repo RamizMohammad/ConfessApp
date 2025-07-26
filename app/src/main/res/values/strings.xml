@@ -67,4 +67,13 @@
     <string name="update_password">Update password</string>
     <string name="your_posts">Your Posts</string>
     <string name="get_a_visuals_over_all_the_confessions_u_have_made_till_now">Get a visuals over all the confessions you have made till now.</string>
+    <string name="notifications">Notifications</string>
+    <string name="clear_all">Clear all</string>
+    <string name="title">Notification Title</string>
+    <string name="body">Notification Body</string>
+    <string name="enable_comments">Enable Comments</string>
+    <string name="commnets">Commnets</string>
+    <string name="post">Post</string>
+    <string name="like">Like</string>
+    <string name="comment">Comment</string>
 </resources>

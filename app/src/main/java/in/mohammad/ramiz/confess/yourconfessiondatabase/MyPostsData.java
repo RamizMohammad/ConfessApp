@@ -35,9 +35,13 @@ public class MyPostsData {
     @ColumnInfo(name = "profileLink")
     private String profileLink;
 
+    @SerializedName("isComment")
+    @ColumnInfo(name = "isComment")
+    private boolean isComment;
+
     public MyPostsData(@NonNull String postId, String aliasName,
                      String email, String post,
-                     String date, String formatDate, String profileLink) {
+                     String date, String formatDate, String profileLink, boolean isComment) {
         this.postId = postId;
         this.aliasName = aliasName;
         this.email = email;
@@ -45,6 +49,7 @@ public class MyPostsData {
         this.date = date;
         this.formatDate = formatDate;
         this.profileLink = profileLink;
+        this.isComment = isComment;
     }
 
     @NonNull
@@ -98,5 +103,13 @@ public class MyPostsData {
     }
     public void setProfileLink(String profileLink) {
         this.profileLink = profileLink;
+    }
+
+    public boolean isComment() {
+        return isComment;
+    }
+
+    public void setComment(boolean comment) {
+        isComment = comment;
     }
 }

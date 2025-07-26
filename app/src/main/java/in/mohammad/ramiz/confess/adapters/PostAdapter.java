@@ -1,9 +1,11 @@
 package in.mohammad.ramiz.confess.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -89,6 +91,12 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
             postHolder.aliasName.setText(post.getAliasName() != null ? post.getAliasName() : "Anonymous");
             postHolder.date.setText(post.getFormatDate());
             postHolder.post.setText(post.getPost());
+            Log.d("MyPostAdapter", "Post ID: " + post.getPostId() + " isComment: " + post.isComment());
+            if (post.isComment()) {
+                postHolder.commentButton.setVisibility(View.VISIBLE);
+            } else {
+                postHolder.commentButton.setVisibility(View.GONE);
+            }
 
             Glide.with(postHolder.itemView.getContext())
                     .load(post.getProfileLink())
@@ -118,6 +126,7 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
     static class PostViewHolder extends RecyclerView.ViewHolder {
         TextView aliasName, date, post;
         ImageView profilePhoto;
+        LinearLayout commentButton;
 
         PostViewHolder(View itemView) {
             super(itemView);
@@ -125,6 +134,7 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
             date = itemView.findViewById(R.id.date);
             post = itemView.findViewById(R.id.postData);
             profilePhoto = itemView.findViewById(R.id.profilePhoto);
+            commentButton = itemView.findViewById(R.id.commentPanel);
         }
     }
 

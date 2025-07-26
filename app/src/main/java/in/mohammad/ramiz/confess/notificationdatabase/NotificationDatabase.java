@@ -10,17 +10,19 @@ import androidx.room.RoomDatabase;
 public abstract class NotificationDatabase extends RoomDatabase {
 
     private static volatile NotificationDatabase INSTANCE;
+
     public abstract NotificationDao notificationDao();
 
-    public static NotificationDatabase getInstance(Context context){
-        if(INSTANCE == null){
-            synchronized (NotificationDatabase.INSTANCE){
-                if(INSTANCE == null){
+    public static NotificationDatabase getInstance(Context context) {
+        if (INSTANCE == null) {
+            synchronized (NotificationDatabase.class) {
+                if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(
-                            context.getApplicationContext(),
-                            NotificationDatabase.class,
-                            "notification_db"
-                    ).fallbackToDestructiveMigrationOnDowngrade().build();
+                                    context.getApplicationContext(),
+                                    NotificationDatabase.class,
+                                    "notification_db"
+                            ).fallbackToDestructiveMigrationOnDowngrade()
+                            .build();
                 }
             }
         }

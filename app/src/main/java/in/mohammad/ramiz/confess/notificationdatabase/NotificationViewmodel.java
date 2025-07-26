@@ -11,23 +11,23 @@ import java.util.List;
 public class NotificationViewmodel extends AndroidViewModel {
 
     private final NotificationRepo repo;
-    private final LiveData<List<NotificationEntity>> getAllNotification;
+    private final LiveData<List<NotificationEntity>> allNotifications;
 
-    public NotificationViewmodel(@NonNull Application application){
+    public NotificationViewmodel(@NonNull Application application) {
         super(application);
         repo = new NotificationRepo(application);
-        getAllNotification = repo.getAllNotification();
+        allNotifications = repo.getAllNotification();
     }
 
-    public LiveData<List<NotificationEntity>> getGetAllNotification(){
-        return getAllNotification;
+    public LiveData<List<NotificationEntity>> getAllNotifications() {
+        return allNotifications;
     }
 
-    public void deleteAllNotification(){
+    public void deleteAllNotifications() {
         repo.deleteAllNoti();
     }
 
-    public void insertNotification(NotificationEntity notification){
+    public void insertNotification(NotificationEntity notification) {
         repo.insertNotification(notification);
     }
 }

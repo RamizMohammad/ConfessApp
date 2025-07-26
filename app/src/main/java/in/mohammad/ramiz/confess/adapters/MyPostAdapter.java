@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -85,6 +86,11 @@ public class MyPostAdapter extends ListAdapter<MyPostsData, RecyclerView.ViewHol
             postHolder.aliasName.setText(post.getAliasName() != null ? post.getAliasName() : "Anonymous");
             postHolder.date.setText(post.getFormatDate());
             postHolder.post.setText(post.getPost());
+            if (post.isComment()) {
+                postHolder.commentButton.setVisibility(View.VISIBLE);
+            } else {
+                postHolder.commentButton.setVisibility(View.GONE);
+            }
 
             String profileUrl = post.getProfileLink();
             Log.d("MyPostAdapter", "Loading profile URL: " + profileUrl);
@@ -129,6 +135,7 @@ public class MyPostAdapter extends ListAdapter<MyPostsData, RecyclerView.ViewHol
     public static class PostViewHolder extends RecyclerView.ViewHolder {
         TextView aliasName, date, post;
         ImageView profilePhoto;
+        LinearLayout commentButton;
 
         PostViewHolder(View itemView) {
             super(itemView);
@@ -136,6 +143,7 @@ public class MyPostAdapter extends ListAdapter<MyPostsData, RecyclerView.ViewHol
             date = itemView.findViewById(R.id.date);
             post = itemView.findViewById(R.id.postData);
             profilePhoto = itemView.findViewById(R.id.profilePhoto);
+            commentButton = itemView.findViewById(R.id.commentPanel);
         }
     }
 

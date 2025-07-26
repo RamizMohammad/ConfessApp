@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 import in.mohammad.ramiz.confess.BuildConfig;
+import in.mohammad.ramiz.confess.debugmonitor.TelegramLogs;
 import in.mohammad.ramiz.confess.server.Endpoints;
 import in.mohammad.ramiz.confess.server.ServerConfigs;
 import retrofit2.Call;

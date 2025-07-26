@@ -5,11 +5,13 @@ public class CreatePostRequest {
     private String email;
     private String post;
     private String date;
+    private boolean isComment;
 
-    public CreatePostRequest(String email, String post, String date) {
+    public CreatePostRequest(String email, String post, String date, boolean isComment) {
         this.email = email;
         this.post = post;
         this.date = date;
+        this.isComment = isComment;
     }
 
     public CreatePostRequest() {
@@ -37,5 +39,13 @@ public class CreatePostRequest {
 
     public void setPost(String post) {
         this.post = post;
+    }
+
+    public boolean isComment() {
+        return isComment;
+    }
+
+    public void setComment(boolean comment) {
+        isComment = comment;
     }
 }
