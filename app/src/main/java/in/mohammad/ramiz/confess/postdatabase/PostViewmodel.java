@@ -1,6 +1,7 @@
 package in.mohammad.ramiz.confess.postdatabase;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -34,9 +35,9 @@ public class PostViewmodel extends AndroidViewModel {
         repo.eraseAll();
     }
 
-    public void refreshTopPosts(ViewmodelRefreshCallback callback) {
+    public void refreshTopPosts(String email, ViewmodelRefreshCallback callback) {
         isLoading.setValue(true);
-        repo.refreshPosts(new PostRepo.RepoCallback() {
+        repo.refreshPosts(email, new PostRepo.RepoCallback() {
             @Override
             public void onRepoSuccess() {
                 callback.onSuccess();
@@ -57,11 +58,12 @@ public class PostViewmodel extends AndroidViewModel {
         });
     }
 
-    public void fetchNextPosts(String lastDate, ViewmodelNextCallback callback) {
+    public void fetchNextPosts(String email, String lastDate, ViewmodelNextCallback callback) {
         isLoading.setValue(true);
-        repo.loadNextPosts(lastDate, new Callback<PostResponse>() {
+        repo.loadNextPosts(email, lastDate, new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                Log.d("resposne", ""+response.body());
                 if (response.isSuccessful() && (response.body().getStatus()).equals("done")) {
                     nextPosts.postValue(response.body().getPosts());
                     callback.onSuccess();
@@ -69,6 +71,7 @@ public class PostViewmodel extends AndroidViewModel {
                     callback.onEmpty();
                 }
                 else {
+
                     callback.onFail();
                 }
                 isLoading.setValue(false);
@@ -76,6 +79,7 @@ public class PostViewmodel extends AndroidViewModel {
 
             @Override
             public void onFailure(Call<PostResponse> call, Throwable t) {
+                Log.d("checks", ""+t);
                 isLoading.setValue(false);
                 callback.onFail();
             }

@@ -3,6 +3,7 @@ package in.mohammad.ramiz.confess.postdatabase;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
@@ -38,8 +39,8 @@ public class PostRepo {
         });
     }
 
-    public void refreshPosts(RepoCallback callback) {
-        PostRequest request = new PostRequest("empty");
+    public void refreshPosts(String email, RepoCallback callback) {
+        PostRequest request = new PostRequest(email,"empty");
         Call<PostResponse> call = endpoints.getAllPosts(BuildConfig.CLIENT_API, request);
 
         call.enqueue(new Callback<PostResponse>() {
@@ -61,13 +62,14 @@ public class PostRepo {
 
             @Override
             public void onFailure(Call<PostResponse> call, Throwable t) {
+                Log.d("checks", ""+t);
                 mainHandler.post(callback::onRepoFailure);
             }
         });
     }
 
-    public void loadNextPosts(String lastDate, Callback<PostResponse> callback) {
-        PostRequest request = new PostRequest(lastDate);
+    public void loadNextPosts(String email, String lastDate, Callback<PostResponse> callback) {
+        PostRequest request = new PostRequest(email, lastDate);
         endpoints.getAllPosts(BuildConfig.CLIENT_API, request).enqueue(callback);
     }
 
@@ -76,4 +78,5 @@ public class PostRepo {
         void onRepoFailure();
         void onEmptyPostResponse();
     }
+
 }

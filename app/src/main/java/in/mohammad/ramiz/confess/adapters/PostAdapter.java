@@ -95,11 +95,19 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
             postHolder.aliasName.setText(post.getAliasName() != null ? post.getAliasName() : "Anonymous");
             postHolder.date.setText(post.getFormatDate());
             postHolder.post.setText(post.getPost());
+            postHolder.likeCount.setText(post.getTotalLikes());
 
             if (post.isComment()) {
                 postHolder.commentButton.setVisibility(View.VISIBLE);
             } else {
                 postHolder.commentButton.setVisibility(View.GONE);
+            }
+
+            if(post.isUserLiked()){
+                postHolder.like.setImageResource(R.drawable.like);
+            }
+            else{
+                postHolder.like.setImageResource(R.drawable.unlike);
             }
 
             Glide.with(postHolder.itemView.getContext())
@@ -136,8 +144,8 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
     }
 
     static class PostViewHolder extends RecyclerView.ViewHolder {
-        TextView aliasName, date, post;
-        ImageView profilePhoto;
+        TextView aliasName, date, post, likeCount;
+        ImageView profilePhoto, like;
         LinearLayout commentButton;
 
         PostViewHolder(View itemView) {
@@ -147,6 +155,8 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
             post = itemView.findViewById(R.id.postData);
             profilePhoto = itemView.findViewById(R.id.profilePhoto);
             commentButton = itemView.findViewById(R.id.commentPanel);
+            like = itemView.findViewById(R.id.like);
+            likeCount = itemView.findViewById(R.id.likeCount);
         }
     }
 

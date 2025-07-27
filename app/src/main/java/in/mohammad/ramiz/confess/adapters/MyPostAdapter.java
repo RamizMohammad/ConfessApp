@@ -86,6 +86,8 @@ public class MyPostAdapter extends ListAdapter<MyPostsData, RecyclerView.ViewHol
             postHolder.aliasName.setText(post.getAliasName() != null ? post.getAliasName() : "Anonymous");
             postHolder.date.setText(post.getFormatDate());
             postHolder.post.setText(post.getPost());
+
+
             if (post.isComment()) {
                 postHolder.commentButton.setVisibility(View.VISIBLE);
             } else {
@@ -133,8 +135,8 @@ public class MyPostAdapter extends ListAdapter<MyPostsData, RecyclerView.ViewHol
 
     // ViewHolders
     public static class PostViewHolder extends RecyclerView.ViewHolder {
-        TextView aliasName, date, post;
-        ImageView profilePhoto;
+        TextView aliasName, date, post, likeCount;
+        ImageView profilePhoto, like;
         LinearLayout commentButton;
 
         PostViewHolder(View itemView) {

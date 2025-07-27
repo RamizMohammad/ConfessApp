@@ -116,7 +116,7 @@
                     <ImageView
                         android:id="@+id/like"
                         android:layout_width="20dp"
-                        android:src="@drawable/like"
+                        android:src="@drawable/unlike"
                         android:layout_marginEnd="10dp"
                         android:layout_height="20dp"/>
 

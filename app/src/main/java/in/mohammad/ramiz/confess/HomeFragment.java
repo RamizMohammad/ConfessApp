@@ -2,6 +2,7 @@ package in.mohammad.ramiz.confess;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import java.util.List;
 
@@ -35,6 +39,8 @@ public class HomeFragment extends Fragment {
     private LinearLayout empty;
     private ImageView notificationButton;
     private boolean isLoadingNextPage = false;
+    private String email;
+    private boolean isRefreshing = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +63,16 @@ public class HomeFragment extends Fragment {
 
         viewmodel = new ViewModelProvider(this).get(PostViewmodel.class);
 
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(requireContext());
+
+        if(account != null){
+            Log.d("check", ""+account.getEmail());
+            email = account.getEmail();
+        }
+        else{
+            Log.d("account","account is null");
+        }
+
         // Observe cached posts
         viewmodel.getSavedPosts().observe(getViewLifecycleOwner(), postsData -> {
             if (postsData != null && !postsData.isEmpty()) {
@@ -65,7 +81,9 @@ public class HomeFragment extends Fragment {
                 recyclerView.smoothScrollToPosition(0);
                 empty.setVisibility(View.GONE);
             } else {
-                empty.setVisibility(View.VISIBLE);
+                if(!isRefreshing){
+                    empty.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -79,10 +97,11 @@ public class HomeFragment extends Fragment {
         // Swipe-to-refresh
         swipeRefreshLayout.setOnRefreshListener(() -> {
             recyclerView.setAdapter(shimmerAdapter);
-            viewmodel.refreshTopPosts(new PostViewmodel.ViewmodelRefreshCallback() {
+            viewmodel.refreshTopPosts(email, new PostViewmodel.ViewmodelRefreshCallback() {
                 @Override
                 public void onSuccess() {
                     swipeRefreshLayout.setRefreshing(false);
+                    isRefreshing = false;
                     recyclerView.setVisibility(View.VISIBLE);
                     empty.setVisibility(View.GONE);
                     recyclerView.smoothScrollToPosition(0);
@@ -91,6 +110,7 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onFail() {
                     swipeRefreshLayout.setRefreshing(false);
+                    recyclerView.setAdapter(postAdapter);
                     new OkPopUp(getActivity(), R.raw.error_animation, "Fetching of posts failed");
                 }
 
@@ -120,7 +140,7 @@ public class HomeFragment extends Fragment {
                             isLoadingNextPage = true;
                             postAdapter.showShimmer(true);
                             String lastDate = currentList.get(currentList.size() - 1).getDate();
-                            viewmodel.fetchNextPosts(lastDate, new PostViewmodel.ViewmodelNextCallback() {
+                            viewmodel.fetchNextPosts(email, lastDate, new PostViewmodel.ViewmodelNextCallback() {
                                 @Override
                                 public void onSuccess() {
                                     isLoadingNextPage = false;
@@ -154,17 +174,19 @@ public class HomeFragment extends Fragment {
         });
 
         // Initial fetch (with shimmer)
-        viewmodel.refreshTopPosts(new PostViewmodel.ViewmodelRefreshCallback() {
+        viewmodel.refreshTopPosts(email, new PostViewmodel.ViewmodelRefreshCallback() {
             @Override
             public void onSuccess() {
                 recyclerView.setAdapter(postAdapter);
                 recyclerView.setVisibility(View.VISIBLE);
                 recyclerView.smoothScrollToPosition(0);
+                isRefreshing = false;
                 empty.setVisibility(View.GONE);
             }
 
             @Override
             public void onFail() {
+                recyclerView.setAdapter(postAdapter);
                 new OkPopUp(getActivity(), R.raw.error_animation, "Fetching of post is failed");
             }
 

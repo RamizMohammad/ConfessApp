@@ -39,9 +39,18 @@ public class PostsData {
     @ColumnInfo(name = "isComment")
     private boolean isComment;
 
+    @SerializedName("isUserLiked")
+    @ColumnInfo(name = "isUserLiked")
+    private boolean isUserLiked;
+
+    @SerializedName("totalLikes")
+    @ColumnInfo(name = "totalLikes")
+    private String totalLikes;
+
     public PostsData(@NonNull String postId, String aliasName,
                      String email, String post,
-                     String date, String formatDate, String profileLink, boolean isComment) {
+                     String date, String formatDate, String profileLink,
+                     boolean isComment, boolean isUserLiked, String totalLikes) {
         this.postId = postId;
         this.aliasName = aliasName;
         this.email = email;
@@ -50,6 +59,8 @@ public class PostsData {
         this.formatDate = formatDate;
         this.profileLink = profileLink;
         this.isComment = isComment;
+        this.isUserLiked = isUserLiked;
+        this.totalLikes = totalLikes;
     }
 
     @NonNull
@@ -102,6 +113,7 @@ public class PostsData {
     public String getProfileLink() {
         return profileLink;
     }
+
     public void setProfileLink(String profileLink) {
         this.profileLink = profileLink;
     }
@@ -112,5 +124,37 @@ public class PostsData {
 
     public void setComment(boolean comment) {
         isComment = comment;
+    }
+
+    public boolean isUserLiked() {
+        return isUserLiked;
+    }
+
+    public void setUserLiked(boolean userLiked) {
+        isUserLiked = userLiked;
+    }
+
+    public String getTotalLikes() {
+        return totalLikes;
+    }
+
+    public void setTotalLikes(String totalLikes) {
+        this.totalLikes = totalLikes;
+    }
+
+    @Override
+    public String toString() {
+        return "PostsData{" +
+                "postId='" + postId + '\'' +
+                ", aliasName='" + aliasName + '\'' +
+                ", email='" + email + '\'' +
+                ", post='" + post + '\'' +
+                ", date='" + date + '\'' +
+                ", formatDate='" + formatDate + '\'' +
+                ", profileLink='" + profileLink + '\'' +
+                ", isComment=" + isComment +
+                ", isUserLiked=" + isUserLiked +
+                ", totalLikes=" + totalLikes +
+                '}';
     }
 }
