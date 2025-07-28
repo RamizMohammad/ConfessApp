@@ -39,9 +39,18 @@ public class MyPostsData {
     @ColumnInfo(name = "isComment")
     private boolean isComment;
 
+    @SerializedName("isUserLiked")
+    @ColumnInfo(name = "isUserLiked")
+    private boolean isUserLiked;
+
+    @SerializedName("totalLikes")
+    @ColumnInfo(name = "totalLikes")
+    private String totalLikes;
+
     public MyPostsData(@NonNull String postId, String aliasName,
                      String email, String post,
-                     String date, String formatDate, String profileLink, boolean isComment) {
+                     String date, String formatDate, String profileLink,
+                       boolean isComment, boolean isUserLiked, String totalLikes) {
         this.postId = postId;
         this.aliasName = aliasName;
         this.email = email;
@@ -50,6 +59,8 @@ public class MyPostsData {
         this.formatDate = formatDate;
         this.profileLink = profileLink;
         this.isComment = isComment;
+        this.isUserLiked = isUserLiked;
+        this.totalLikes = totalLikes;
     }
 
     @NonNull
@@ -111,5 +122,21 @@ public class MyPostsData {
 
     public void setComment(boolean comment) {
         isComment = comment;
+    }
+
+    public boolean isUserLiked() {
+        return isUserLiked;
+    }
+
+    public void setUserLiked(boolean userLiked) {
+        isUserLiked = userLiked;
+    }
+
+    public String getTotalLikes() {
+        return totalLikes;
+    }
+
+    public void setTotalLikes(String totalLikes) {
+        this.totalLikes = totalLikes;
     }
 }

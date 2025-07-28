@@ -24,6 +24,8 @@ import in.mohammad.ramiz.confess.entities.GetProfileRequest;
 import in.mohammad.ramiz.confess.entities.GetProfileResponse;
 import in.mohammad.ramiz.confess.entities.UpdateProfilePictureRequest;
 import in.mohammad.ramiz.confess.entities.UpdateProfilePictureResponse;
+import in.mohammad.ramiz.confess.likemanager.LikeRequest;
+import in.mohammad.ramiz.confess.likemanager.LikeResponse;
 import in.mohammad.ramiz.confess.postdatabase.PostRequest;
 import in.mohammad.ramiz.confess.postdatabase.PostResponse;
 import in.mohammad.ramiz.confess.entities.UpdateAboutRequest;
@@ -144,5 +146,17 @@ public interface Endpoints {
     Call<GetCommentResponse> getComment(
             @Header("x-api-key") String apiKey,
             @Body GetCommentsRequest getCommentsRequest
+    );
+
+    @POST("add-like")
+    Call<LikeResponse> addLike(
+            @Header("x-api-key") String apiKey,
+            @Body LikeRequest likeRequest
+    );
+
+    @POST("add-unlike")
+    Call<LikeResponse> addUnlike(
+            @Header("x-api-key") String apiKey,
+            @Body LikeRequest likeRequest
     );
 }

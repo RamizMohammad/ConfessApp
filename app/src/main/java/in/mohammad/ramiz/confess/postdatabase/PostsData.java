@@ -141,20 +141,4 @@ public class PostsData {
     public void setTotalLikes(String totalLikes) {
         this.totalLikes = totalLikes;
     }
-
-    @Override
-    public String toString() {
-        return "PostsData{" +
-                "postId='" + postId + '\'' +
-                ", aliasName='" + aliasName + '\'' +
-                ", email='" + email + '\'' +
-                ", post='" + post + '\'' +
-                ", date='" + date + '\'' +
-                ", formatDate='" + formatDate + '\'' +
-                ", profileLink='" + profileLink + '\'' +
-                ", isComment=" + isComment +
-                ", isUserLiked=" + isUserLiked +
-                ", totalLikes=" + totalLikes +
-                '}';
-    }
 }

@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -123,6 +124,10 @@ public class CreatePost extends AppCompatActivity {
                 email = account.getEmail();
             }
             String postText = postData.getText().toString();
+            if(TextUtils.isEmpty(postText)){
+               new OkPopUp(this, R.raw.file_not_found, "Cannot make a empty post");
+               return;
+            }
             popUp = new OnlyLoader(this, R.raw.loading_animation);
             createPost(email, postText, (isPosted, label) -> {
                 popUp.dismiss();

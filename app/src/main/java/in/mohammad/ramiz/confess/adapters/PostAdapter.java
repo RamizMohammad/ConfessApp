@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.Objects;
 import in.mohammad.ramiz.confess.CommentSection;
 import in.mohammad.ramiz.confess.R;
 import in.mohammad.ramiz.confess.haptics.VibManager;
+import in.mohammad.ramiz.confess.likemanager.LikeStageManager;
 import in.mohammad.ramiz.confess.postdatabase.PostsData;
 
 public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder> {
@@ -32,7 +35,7 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_SHIMMER = 1;
     private static final int TYPE_FOOTER = 2;
-
+    private String email;
     private boolean showShimmer = false;
     private boolean showFooter = false;
 
@@ -73,6 +76,10 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(parent.getContext());
+        if(account != null){
+            email = account.getEmail();
+        }
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == TYPE_SHIMMER) {
             View view = inflater.inflate(R.layout.next_page_frame, parent, false);
@@ -122,6 +129,20 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
                 commentIntent.putExtra("postId", post.getPostId());
                 context.startActivity(commentIntent);
             });
+
+            postHolder.likeButton.setOnClickListener(v -> {
+                boolean currentLikeStatus = post.isUserLiked();
+                post.setUserLiked(!currentLikeStatus);
+
+                postHolder.like.setImageResource(!currentLikeStatus ? R.drawable.like : R.drawable.unlike);
+
+                int count = Integer.parseInt(post.getTotalLikes());
+                count = !currentLikeStatus ? count + 1 : count - 1;
+                post.setTotalLikes(String.valueOf(count));
+                postHolder.likeCount.setText(post.getTotalLikes());
+
+                LikeStageManager.getInstance().onLikeAction(post.getPostId(), email, !currentLikeStatus);
+            });
         }
     }
 
@@ -146,7 +167,7 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
     static class PostViewHolder extends RecyclerView.ViewHolder {
         TextView aliasName, date, post, likeCount;
         ImageView profilePhoto, like;
-        LinearLayout commentButton;
+        LinearLayout commentButton, likeButton;
 
         PostViewHolder(View itemView) {
             super(itemView);
@@ -157,6 +178,7 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
             commentButton = itemView.findViewById(R.id.commentPanel);
             like = itemView.findViewById(R.id.like);
             likeCount = itemView.findViewById(R.id.likeCount);
+            likeButton = itemView.findViewById(R.id.likePanel);
         }
     }
 

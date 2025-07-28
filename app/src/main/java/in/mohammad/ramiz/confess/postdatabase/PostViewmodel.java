@@ -63,7 +63,6 @@ public class PostViewmodel extends AndroidViewModel {
         repo.loadNextPosts(email, lastDate, new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
-                Log.d("resposne", ""+response.body());
                 if (response.isSuccessful() && (response.body().getStatus()).equals("done")) {
                     nextPosts.postValue(response.body().getPosts());
                     callback.onSuccess();
