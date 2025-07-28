@@ -19,10 +19,12 @@
         <activity
             android:name=".CommentSection"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.Confess.AdjustResize"/>
         <activity
             android:name=".NotificationPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".YourConfession"
