@@ -63,7 +63,7 @@ public class ProfileFragment extends Fragment {
     private OnlyLoader loader;
     private boolean biometricInfo, isPassword;
     private ButtonLoader buttonLoader;
-    private LinearLayout button1, button2, button3, button4, button5, button6, button7, button8;
+    private LinearLayout button1, button2, button3, button4, button5, button6, button7, button8, demandButton;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -87,6 +87,7 @@ public class ProfileFragment extends Fragment {
         bioIcon = view.findViewById(R.id.bioIcon);
         pinIcon = view.findViewById(R.id.pinButton);
         pinText = view.findViewById(R.id.pinText);
+        demandButton = view.findViewById(R.id.demandButton);
 
         // Button layouts
         button1 = view.findViewById(R.id.button1);
@@ -323,6 +324,12 @@ public class ProfileFragment extends Fragment {
             Intent profileChange = new Intent(requireContext(), ProfilePage.class);
             profileChange.putExtra("Calling", "Home");
             startActivity(profileChange);
+        });
+
+        demandButton.setOnClickListener(v -> {
+            VibManager.vibrateTick(requireContext());
+            Intent demandIntent = new Intent(requireContext(), FeatureDemand.class);
+            startActivity(demandIntent);
         });
 
         if (account == null) {

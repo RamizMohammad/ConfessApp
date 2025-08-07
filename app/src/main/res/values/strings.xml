@@ -78,4 +78,10 @@
     <string name="comment">Comment</string>
     <string name="write_comment">write comment</string>
     <string name="banner">Everyone deserves a good treatment so be polite. Any non social thing will not be forgiven</string>
+    <string name="no_commnets_on_post">No comments on post</string>
+    <string name="feature_description">Feature description</string>
+    <string name="submit">Submit</string>
+    <string name="demand_feature">Demand Feature</string>
+    <string name="enter_the_details_of_any_new_feature_suggestion_in_application_or_any_feedback_you_think_can_be_improved">Enter the details of any new feature suggestion in application or any feedback you think can be improved.</string>
+    <string name="feature_demand_feedback">Feature demand / Feedback</string>
 </resources>

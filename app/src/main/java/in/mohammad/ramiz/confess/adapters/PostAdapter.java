@@ -131,9 +131,10 @@ public class PostAdapter extends ListAdapter<PostsData, RecyclerView.ViewHolder>
             });
 
             postHolder.likeButton.setOnClickListener(v -> {
+                Context context = holder.itemView.getContext();
+                VibManager.vibrateTick(context);
                 boolean currentLikeStatus = post.isUserLiked();
                 post.setUserLiked(!currentLikeStatus);
-
                 postHolder.like.setImageResource(!currentLikeStatus ? R.drawable.like : R.drawable.unlike);
 
                 int count = Integer.parseInt(post.getTotalLikes());

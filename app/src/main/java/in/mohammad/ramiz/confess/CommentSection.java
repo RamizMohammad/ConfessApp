@@ -3,8 +3,10 @@ package in.mohammad.ramiz.confess;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,7 +46,7 @@ public class CommentSection extends AppCompatActivity {
     private boolean isLoading = false;
     private boolean hasMore = true;
     private String lastCommentDate = "empty";
-
+    private LinearLayout empty;
     private String postId;
     private OnlyLoader loader;
     private Endpoints endpoints;
@@ -64,6 +66,7 @@ public class CommentSection extends AppCompatActivity {
         sendButton = findViewById(R.id.sendButton);
         comment = findViewById(R.id.comment);
         recyclerView = findViewById(R.id.recycleView);
+        empty = findViewById(R.id.empty);
 
         e1 = findViewById(R.id.e1);
         e2 = findViewById(R.id.e2);
@@ -158,18 +161,28 @@ public class CommentSection extends AppCompatActivity {
                         comments.addAll(newComments);
                         lastCommentDate = newComments.get(newComments.size() - 1).getDate();
                         adapter.setComments(comments);
-
+                        recyclerView.setVisibility(View.VISIBLE);
+                        empty.setVisibility(View.GONE);
                         if (newComments.size() < 10) {
                             hasMore = false;
                         }
                     } else {
                         hasMore = false;
+
                         if (isInitialLoad) {
-                            adapter.setComments(new ArrayList<>()); // empty state
+                            comments.clear();
+                            adapter.setComments(new ArrayList<>());
+                            recyclerView.setVisibility(View.GONE);
+                            empty.setVisibility(View.VISIBLE);
                         }
                     }
                 } else {
                     hasMore = false;
+
+                    if (isInitialLoad && comments.isEmpty()) {
+                        recyclerView.setVisibility(View.GONE);
+                        empty.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
@@ -177,6 +190,11 @@ public class CommentSection extends AppCompatActivity {
             public void onFailure(Call<GetCommentResponse> call, Throwable t) {
                 isLoading = false;
                 adapter.showFooterShimmer(false);
+
+                if (isInitialLoad && comments.isEmpty()) {
+                    recyclerView.setVisibility(View.GONE);
+                    empty.setVisibility(View.VISIBLE);
+                }
             }
         });
     }

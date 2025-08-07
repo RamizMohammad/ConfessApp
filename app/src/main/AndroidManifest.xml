@@ -17,15 +17,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ConfessMain">
         <activity
+            android:name=".FeatureDemand"
+            android:exported="false" />
+        <activity
             android:name=".CommentSection"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.Confess.AdjustResize"/>
+            android:theme="@style/Theme.Confess.AdjustResize"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".NotificationPage"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".YourConfession"
             android:exported="false"

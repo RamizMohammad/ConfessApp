@@ -18,6 +18,8 @@ import in.mohammad.ramiz.confess.entities.CreatePostRequest;
 import in.mohammad.ramiz.confess.entities.CreatePostResponse;
 import in.mohammad.ramiz.confess.entities.FcmTokenRequest;
 import in.mohammad.ramiz.confess.entities.FcmTokenResponse;
+import in.mohammad.ramiz.confess.entities.FeatureDemandRequest;
+import in.mohammad.ramiz.confess.entities.FeatureDemandResponse;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordRequest;
 import in.mohammad.ramiz.confess.entities.ForgotPasswordResponse;
 import in.mohammad.ramiz.confess.entities.GetProfileRequest;
@@ -158,5 +160,11 @@ public interface Endpoints {
     Call<LikeResponse> addUnlike(
             @Header("x-api-key") String apiKey,
             @Body LikeRequest likeRequest
+    );
+
+    @POST("demand-feature")
+    Call<FeatureDemandResponse> featureDemand(
+            @Header("x-api-key") String apiKey,
+            @Body FeatureDemandRequest featureDemandRequest
     );
 }
