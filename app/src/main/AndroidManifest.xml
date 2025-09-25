@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ConfessMain">
         <activity
+            android:name=".User_LookUp"
+            android:exported="false" />
+        <activity
             android:name=".FeatureDemand"
             android:exported="false" />
         <activity

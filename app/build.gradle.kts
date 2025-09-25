@@ -24,8 +24,8 @@ android {
         applicationId = "in.mohammad.ramiz.confess"
         minSdk = 31
         targetSdk = 36
-        versionCode = 14
-        versionName = "4.0.0"
+        versionCode = 15
+        versionName = "4.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -44,6 +44,7 @@ android {
         val cloudSaveApi = secretProperties.getProperty("CLOUD_SAVE_API", "")
         val cloudSaveKey = secretProperties.getProperty("CLOUD_SAVE_KEY", "")
         val cloudSaveName = secretProperties.getProperty("CLOUD_SAVE_NAME", "")
+        val backupServer = secretProperties.getProperty("BACKUP_URL", "")
 
         buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
         buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
@@ -60,6 +61,7 @@ android {
         buildConfigField("String", "CLOUD_SAVE_API", "\"$cloudSaveApi\"")
         buildConfigField("String", "CLOUD_SAVE_KEY", "\"$cloudSaveKey\"")
         buildConfigField("String", "CLOUD_SAVE_NAME", "\"$cloudSaveName\"")
+        buildConfigField("String", "BACKUP_URL", "\"$backupServer\"")
     }
 
     buildTypes {

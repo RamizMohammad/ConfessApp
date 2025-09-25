@@ -2,14 +2,14 @@ package in.mohammad.ramiz.confess;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.concurrent.Executors;
@@ -29,6 +29,10 @@ public class Launcher extends AppCompatActivity {
 
     private Endpoints endpoints;
     private OnlyLoader loader;
+    private Handler handler = new Handler(Looper.getMainLooper());
+
+    private boolean navigationTriggered = false; // ✅ prevent double navigation
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,41 +40,50 @@ public class Launcher extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         endpoints = ServerConfigs.getInstance().create(Endpoints.class);
 
-        Executors.newSingleThreadExecutor().execute(() -> {
-            fetchFcm();
-        });
+        Executors.newSingleThreadExecutor().execute(this::fetchFcm);
 
         if (account != null) {
             String email = account.getEmail();
             loader = new OnlyLoader(this, R.raw.loading_animation);
-            checkUser(email, (isUser, isPassword, isBiometric) -> {
-                if(loader != null){
+
+            // Optional: hide loader if waiting too long, but DON'T navigate
+            handler.postDelayed(() -> {
+                if (loader != null && loader.isShowing() && !navigationTriggered) {
+                    Log.w("Launcher", "⏳ Loader timeout reached (UI hidden, still waiting for API)");
                     loader.dismiss();
+                    TelegramLogs.sendTelegramLog("Loader hidden due to timeout, still waiting for API in Launcher");
                 }
-                if (isUser && isPassword) {
-                    BiometricPrefs.getInstance(this).setPasswordStatus(true);
-                    if(isBiometric){
-                        BiometricPrefs.getInstance(this).setBiometricEnabled(true);
-                        BiometricPrefs.getInstance(this).setBiometricLogin(true);
+            }, 10000); // 10s max loader, but keep waiting
+
+            checkUser(email, (isUser, isPassword, isBiometric) -> {
+                if (!navigationTriggered) {
+                    navigationTriggered = true; // ✅ avoid double calls
+                    if (loader != null && loader.isShowing()) {
+                        loader.dismiss();
                     }
-                    else{
-                        BiometricPrefs.getInstance(this).setBiometricEnabled(false);
-                        BiometricPrefs.getInstance(this).setBiometricLogin(false);
+
+                    if (isUser && isPassword) {
+                        BiometricPrefs.getInstance(this).setPasswordStatus(true);
+                        if (isBiometric) {
+                            BiometricPrefs.getInstance(this).setBiometricEnabled(true);
+                            BiometricPrefs.getInstance(this).setBiometricLogin(true);
+                        } else {
+                            BiometricPrefs.getInstance(this).setBiometricEnabled(false);
+                            BiometricPrefs.getInstance(this).setBiometricLogin(false);
+                        }
+                        startActivity(new Intent(this, Password_Page.class));
+                    } else if (isUser) {
+                        BiometricPrefs.getInstance(this).setPasswordStatus(false);
+                        startActivity(new Intent(this, HomePage.class));
+                    } else {
+                        startActivity(new Intent(this, MainActivity.class));
                     }
-                    Intent passwordIntent = new Intent(this, Password_Page.class);
-                    startActivity(passwordIntent);
+                    finish(); // ✅ only finish AFTER we know backup also had a chance
                 }
-                else if(isUser) {
-                    BiometricPrefs.getInstance(this).setPasswordStatus(false);
-                    startActivity(new Intent(this, HomePage.class));
-                } else {
-                    startActivity(new Intent(this, MainActivity.class));
-                }
-                finish();
             });
 
         } else {
-            if(loader != null){
+            if (loader != null && loader.isShowing()) {
                 loader.dismiss();
             }
             startActivity(new Intent(this, MainActivity.class));
@@ -80,7 +93,7 @@ public class Launcher extends AppCompatActivity {
 
     private void checkUser(String email, UserCallback callback) {
         CheckUserPassRequest request = new CheckUserPassRequest(email);
-        Call<CheckUserPassResponse> call = endpoints.checkUserPass(BuildConfig.CLIENT_API,request);
+        Call<CheckUserPassResponse> call = endpoints.checkUserPass(BuildConfig.CLIENT_API, request);
 
         call.enqueue(new Callback<CheckUserPassResponse>() {
             @Override
@@ -101,18 +114,17 @@ public class Launcher extends AppCompatActivity {
         });
     }
 
-    public interface UserCallback{
-        void onResult (boolean isUser,boolean isPassword, boolean isBiometric);
+    public interface UserCallback {
+        void onResult(boolean isUser, boolean isPassword, boolean isBiometric);
     }
 
-    private void fetchFcm(){
+    private void fetchFcm() {
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         BiometricPrefs.getInstance(this).setFcmKey(true);
                         BiometricPrefs.getInstance(this).setFcmValue(task.getResult());
-                    }
-                    else {
+                    } else {
                         TelegramLogs.sendTelegramLog("FCM token fetch failed");
                     }
                 });
