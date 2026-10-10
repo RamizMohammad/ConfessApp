@@ -13,9 +13,11 @@ import androidx.fragment.app.Fragment;
 import java.util.Locale;
 
 import in.mohammad.ramiz.confess.R;
+import in.mohammad.ramiz.confess.core.FollowEvents;
 import in.mohammad.ramiz.confess.core.Formats;
 import in.mohammad.ramiz.confess.core.PostEvents;
 import in.mohammad.ramiz.confess.data.api.ApiCallback;
+import in.mohammad.ramiz.confess.data.drafts.Drafts;
 import in.mohammad.ramiz.confess.data.api.ApiException;
 import in.mohammad.ramiz.confess.data.model.Me;
 import in.mohammad.ramiz.confess.data.repo.UserRepository;
@@ -23,6 +25,7 @@ import in.mohammad.ramiz.confess.data.session.SessionManager;
 import in.mohammad.ramiz.confess.databinding.FragmentMeBinding;
 import in.mohammad.ramiz.confess.ui.nav.Nav;
 import in.mohammad.ramiz.confess.ui.util.EdgeInsets;
+import in.mohammad.ramiz.confess.ui.util.Motion;
 
 /**
  * S11 · Me tab. Old: ProfileFragment (profile + a grid of setting buttons).
@@ -61,6 +64,11 @@ public class MeFragment extends Fragment {
         b.refresh.setOnRefreshListener(this::refresh);
 
         b.cardLetters.setOnClickListener(v -> Nav.myLetters(requireContext()));
+        b.cardDrafts.setOnClickListener(v -> Nav.drafts(requireContext()));
+        b.cardFollowing.setOnClickListener(v -> Nav.people(requireContext(), false));
+        b.cardFollowers.setOnClickListener(v -> Nav.people(requireContext(), true));
+        // Followed / unfollowed someone anywhere → my "following" number changes.
+        FollowEvents.changes().observe(getViewLifecycleOwner(), c -> { if (c != null && !isHidden()) refresh(); });
         b.cardFelt.setOnClickListener(v -> Nav.received(requireContext(), ReceivedActivity.MODE_FELT));
         b.cardResponses.setOnClickListener(v -> Nav.received(requireContext(), ReceivedActivity.MODE_RESPONSES));
         b.cardSettings.setOnClickListener(v -> Nav.settings(requireContext()));
@@ -74,17 +82,32 @@ public class MeFragment extends Fragment {
         });
 
         render(SessionManager.get().cachedMe());       // fresh numbers come in onResume / when shown
+        if (!isHidden()) enterCards();
+    }
+
+    /** The cards ease in the first time Me is actually on screen. */
+    private boolean cardsEntered = false;
+
+    private void enterCards() {
+        if (cardsEntered || b == null) return;
+        cardsEntered = true;
+        Motion.enterStack((ViewGroup) b.scroll.getChildAt(0));
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (!hidden && b != null) refresh();
+        if (!hidden && b != null) {
+            enterCards();
+            refresh();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Me cached = SessionManager.get().cachedMe();
+        if (cached != null) renderDrafts(cached.id);
         if (!isHidden()) refresh();
     }
 
@@ -104,6 +127,7 @@ public class MeFragment extends Fragment {
     private void render(@Nullable Me me) {
         if (me == null || b == null) return;
         b.avatar.setAvatar(me.avatar);
+        b.avatar.setStoryAlias(me.alias);
         b.alias.setText("@" + me.alias);
 
         boolean hasAbout = me.about != null && !me.about.trim().isEmpty();
@@ -115,10 +139,19 @@ public class MeFragment extends Fragment {
         b.since.setText(getString(R.string.me_since, since.toUpperCase(Locale.getDefault())));
 
         b.letterCount.setText(Formats.count(me.postCount));
+        b.followingCount.setText(Formats.count(me.following));
+        b.followersCount.setText(Formats.count(me.followers));
+        renderDrafts(me.id);
         b.feltGiven.value.setText(Formats.count(me.likesGiven));
         b.feltReceived.value.setText(Formats.count(me.likesReceived));
         b.responsesMade.value.setText(Formats.count(me.commentsMade));
         b.responsesReceived.value.setText(Formats.count(me.commentsReceived));
+    }
+
+    /** Drafts live on the phone, so their count is read locally (also when coming back from the composer). */
+    private void renderDrafts(@Nullable String userId) {
+        if (b == null) return;
+        b.draftCount.setText(Formats.count(Drafts.get(requireContext()).count(userId)));
     }
 
     /** Re-selecting the Me tab. */

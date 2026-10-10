@@ -20,6 +20,7 @@ import in.mohammad.ramiz.confess.databinding.ActivityReceivedBinding;
 import in.mohammad.ramiz.confess.ui.base.BaseActivity;
 import in.mohammad.ramiz.confess.ui.nav.Nav;
 import in.mohammad.ramiz.confess.ui.util.EdgeInsets;
+import in.mohammad.ramiz.confess.ui.util.Motion;
 
 /**
  * Felt / Responses on my letters (from the Me page cards). Each letter is a
@@ -79,6 +80,8 @@ public class ReceivedActivity extends BaseActivity implements ReceivedAdapter.Li
         vm.start(felt);
     }
 
+    private boolean listEntered = false;
+
     private void render(@Nullable ReceivedViewModel.State s) {
         if (s == null) return;
         shown = s;
@@ -105,7 +108,13 @@ public class ReceivedActivity extends BaseActivity implements ReceivedAdapter.Li
         } else {
             b.state.setVisibility(View.GONE);
         }
-        adapter.submit(s, this::maybeLoadMore);
+        adapter.submit(s, () -> {
+            if (!listEntered && s.screen == ReceivedViewModel.Screen.CONTENT) {
+                listEntered = true;
+                Motion.enterList(b.list);
+            }
+            maybeLoadMore();
+        });
     }
 
     private void maybeLoadMore() {

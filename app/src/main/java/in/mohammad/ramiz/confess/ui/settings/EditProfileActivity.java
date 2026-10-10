@@ -1,7 +1,6 @@
 package in.mohammad.ramiz.confess.ui.settings;
 
-import android.graphics.Bitmap;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,7 +19,6 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import in.mohammad.ramiz.confess.R;
 import in.mohammad.ramiz.confess.core.Haptics;
@@ -34,17 +31,18 @@ import in.mohammad.ramiz.confess.data.session.SessionManager;
 import in.mohammad.ramiz.confess.databinding.ActivityEditProfileBinding;
 import in.mohammad.ramiz.confess.databinding.ItemAuraTileBinding;
 import in.mohammad.ramiz.confess.ui.base.BaseActivity;
+import in.mohammad.ramiz.confess.ui.avatar.AvatarStudioActivity;
 import in.mohammad.ramiz.confess.ui.components.Aura;
+import in.mohammad.ramiz.confess.ui.components.AvatarSpec;
 import in.mohammad.ramiz.confess.ui.util.EdgeInsets;
 import in.mohammad.ramiz.confess.ui.util.PhotoPrep;
 import in.mohammad.ramiz.confess.ui.util.SimpleTextWatcher;
 
 /**
- * S13 · Photo, aura & about. Old: ProfilePage (6 avatar PNGs) + UpdateAbout.
+ * S13 · Avatar, aura & about. Old: ProfilePage (6 avatar PNGs) + UpdateAbout.
  *
- *  - photo: system photo picker (no storage permission) → square ≤768 px JPEG on the
- *    phone → POST users/me/avatar/upload (server strips metadata, moderates, stores in
- *    PixelVault). Choosing an aura afterwards removes the photo.
+ *  - avatar: designed in AvatarStudioActivity (illustrated, never a photo) → "av1:…" → POST users/me/avatar.
+ *    Photo uploads are gone from the app; an old uploaded photo still shows until replaced.
  *  - aura: the 12 presets → POST users/me/avatar
  *  - about: moderated, 451 shows inline
  * Saves only what changed. The alias is fixed (no endpoint to change it).
@@ -56,14 +54,18 @@ public class EditProfileActivity extends BaseActivity {
     private final List<ItemAuraTileBinding> tiles = new ArrayList<>();
     private String originalAvatar = "";
     private String originalAbout = "";
-    /** Chosen aura, or null while a photo (current or new) is the avatar. */
+    /** Chosen aura, or null while a designed avatar (or an old photo) is the avatar. */
     @Nullable private Aura selected;
-    /** A new photo picked on this phone, not yet uploaded. */
-    @Nullable private byte[] pendingPhoto;
+    /** A designed avatar ("av1:…"), or null. */
+    @Nullable private String designed;
     private boolean saving;
 
-    private final ActivityResultLauncher<PickVisualMediaRequest> picker = registerForActivityResult(
-            new ActivityResultContracts.PickVisualMedia(), this::onPicked);
+    private final ActivityResultLauncher<Intent> studio = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), res -> {
+                if (res.getResultCode() != RESULT_OK || res.getData() == null) return;
+                String spec = res.getData().getStringExtra(AvatarStudioActivity.EXTRA_SPEC);
+                if (AvatarSpec.isSpec(spec)) showDesigned(spec, true);
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +83,9 @@ public class EditProfileActivity extends BaseActivity {
         b.previewAlias.setText("@" + me.alias);
 
         buildGrid();
-        if (PhotoPrep.isPhoto(originalAvatar)) {
+        if (AvatarSpec.isSpec(originalAvatar)) {
+            showDesigned(originalAvatar, false);
+        } else if (PhotoPrep.isPhoto(originalAvatar)) {
             showCurrentPhoto();
         } else {
             select(Aura.resolve(originalAvatar), false);
@@ -95,10 +99,10 @@ public class EditProfileActivity extends BaseActivity {
         renderPreviewAbout();
         updateSave();
 
-        b.pickPhoto.setOnClickListener(v -> picker.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build()));
-        b.removePhoto.setOnClickListener(v -> select(Aura.resolve(originalAvatar.isEmpty() ? "aura_04" : originalAvatar), true));
+        b.pickPhoto.setOnClickListener(v -> studio.launch(AvatarStudioActivity.intent(this,
+                designed != null ? designed : (AvatarSpec.isSpec(originalAvatar) ? originalAvatar : null), false)));
+        b.removePhoto.setOnClickListener(v -> select(Aura.resolve(
+                Aura.fromId(originalAvatar) != null ? originalAvatar : "aura_04"), true));
         b.back.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         b.save.setOnClickListener(v -> save());
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -106,47 +110,30 @@ public class EditProfileActivity extends BaseActivity {
         });
     }
 
-    // ── Photo ────────────────────────────────────────────────────────────────
+    // ── Designed avatar ──────────────────────────────────────────────────────
 
-    private void onPicked(@Nullable Uri uri) {
-        if (uri == null) return;
+    private void showDesigned(@NonNull String spec, boolean fromUser) {
+        designed = spec;
+        selected = null;
+        markTiles(null);
+        b.preview.setAvatar(spec);
+        b.auraName.setText(R.string.avs_name);
+        b.removePhoto.setVisibility(View.VISIBLE);
+        b.pickPhoto.setText(R.string.avs_edit);
         b.photoError.setVisibility(View.GONE);
-        b.pickPhoto.setEnabled(false);
-        PhotoPrep.prepare(getContentResolver(), uri, new PhotoPrep.Callback() {
-            @Override public void onReady(@NonNull Bitmap preview, @NonNull byte[] jpeg) {
-                b.pickPhoto.setEnabled(true);
-                pendingPhoto = jpeg;
-                selected = null;
-                markTiles(null);
-                b.preview.setLocalPhoto(preview);
-                b.auraName.setText(R.string.edit_photo_name);
-                b.removePhoto.setVisibility(View.VISIBLE);
-                b.pickPhoto.setText(R.string.edit_photo_change);
-                pop();
-                updateSave();
-            }
-
-            @Override public void onFailed() {
-                b.pickPhoto.setEnabled(true);
-                showPhotoError(getString(R.string.edit_photo_failed));
-            }
-        });
+        if (fromUser) pop();
+        updateSave();
     }
 
-    /** The account already uses a photo: show it, nothing selected in the grid. */
+    /** The account still uses an old uploaded photo: show it, nothing selected in the grid. */
     private void showCurrentPhoto() {
         selected = null;
+        designed = null;
         markTiles(null);
         b.preview.setAvatar(originalAvatar);
         b.auraName.setText(R.string.edit_photo_name);
         b.removePhoto.setVisibility(View.VISIBLE);
-        b.pickPhoto.setText(R.string.edit_photo_change);
-    }
-
-    private void showPhotoError(String message) {
-        b.photoError.setText(message);
-        b.photoError.setVisibility(View.VISIBLE);
-        b.scroll.post(() -> b.scroll.smoothScrollTo(0, b.photoError.getTop()));
+        b.pickPhoto.setText(R.string.avs_design);
     }
 
     // ── Aura grid (same tiles as onboarding) ─────────────────────────────────
@@ -178,15 +165,15 @@ public class EditProfileActivity extends BaseActivity {
         }
     }
 
-    /** An aura replaces any photo (current or freshly picked). */
+    /** An aura replaces a designed avatar or an old photo. */
     private void select(Aura aura, boolean fromUser) {
         selected = aura;
-        pendingPhoto = null;
+        designed = null;
         markTiles(aura);
         b.preview.setAvatar(aura.id);
         b.auraName.setText(getString(R.string.avatar_label, aura.number(), aura.displayName));
         b.removePhoto.setVisibility(View.GONE);
-        b.pickPhoto.setText(R.string.edit_photo_pick);
+        b.pickPhoto.setText(R.string.avs_design);
         b.photoError.setVisibility(View.GONE);
         if (fromUser) pop();
         updateSave();
@@ -211,9 +198,15 @@ public class EditProfileActivity extends BaseActivity {
         b.previewAbout.setText("“" + a + "”");
     }
 
+    /** The value to save ("aura_04" / "av1:…"), or null when the avatar didn't change. */
+    @Nullable
+    private String newAvatar() {
+        String v = designed != null ? designed : selected != null ? selected.id : null;
+        return v == null || v.equalsIgnoreCase(originalAvatar) ? null : v;
+    }
+
     private boolean avatarChanged() {
-        if (pendingPhoto != null) return true;
-        return selected != null && !selected.id.equalsIgnoreCase(originalAvatar);
+        return newAvatar() != null;
     }
 
     private boolean aboutChanged() {
@@ -229,25 +222,15 @@ public class EditProfileActivity extends BaseActivity {
     private void save() {
         if (saving) return;
         b.photoError.setVisibility(View.GONE);
-        if (pendingPhoto != null) {
-            setSaving(true, R.string.edit_uploading);
-            users.uploadAvatar(pendingPhoto, new ApiCallback<JsonObject>() {
-                @Override public void onSuccess(JsonObject data) {
-                    pendingPhoto = null;
-                    if (data.has("avatar")) originalAvatar = data.get("avatar").getAsString();
-                    saveAbout();
-                }
-                @Override public void onError(ApiException e) { photoFailed(e); }
-            });
-        } else if (avatarChanged() && selected != null) {
+        String id = newAvatar();
+        if (id != null) {
             setSaving(true, R.string.edit_saving);
-            String id = selected.id;
             users.updateAvatar(id, new ApiCallback<JsonObject>() {
                 @Override public void onSuccess(JsonObject data) {
                     originalAvatar = id;
                     saveAbout();
                 }
-                @Override public void onError(ApiException e) { failed(e); }
+                @Override public void onError(ApiException e) { avatarFailed(e); }
             });
         } else {
             setSaving(true, R.string.edit_saving);
@@ -280,25 +263,13 @@ public class EditProfileActivity extends BaseActivity {
         finish();
     }
 
-    /** Upload refused or failed — explain under the photo section. */
-    private void photoFailed(ApiException e) {
+    /** Saving the avatar failed — explain under the avatar section. */
+    private void avatarFailed(ApiException e) {
         setSaving(false, 0);
         Haptics.reject(this);
-        if (e.is(ErrorCode.CONTENT_FLAGGED)) {
-            String m = e.serverMessage.toLowerCase(Locale.ROOT);
-            int res = m.contains("sexual") ? R.string.photo_flag_sexual
-                    : m.contains("violent") ? R.string.photo_flag_violent
-                    : m.contains("hateful") ? R.string.photo_flag_hateful
-                    : m.contains("personal") ? R.string.photo_flag_personal
-                    : R.string.photo_flag_generic;
-            showPhotoError(getString(res));
-        } else if (e.is(ErrorCode.MODERATION_UNAVAILABLE) || e.httpStatus == 503) {
-            showPhotoError(getString(R.string.photo_unavailable));
-        } else if (e.is(ErrorCode.VALIDATION_ERROR) || e.httpStatus == 413) {
-            showPhotoError(e.serverMessage.isEmpty() ? getString(R.string.edit_photo_failed) : e.serverMessage);
-        } else {
-            showPhotoError(e.userMessage(this));
-        }
+        b.photoError.setText(e.userMessage(this));
+        b.photoError.setVisibility(View.VISIBLE);
+        b.scroll.post(() -> b.scroll.smoothScrollTo(0, b.photoError.getTop()));
     }
 
     private void failed(ApiException e) {

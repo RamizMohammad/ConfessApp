@@ -62,6 +62,9 @@ public enum Aura {
     public static Aura resolve(@Nullable String value) {
         Aura exact = fromId(value);
         if (exact != null) return exact;
+        if (AvatarSpec.isSpec(value)) {                        // designed avatar → its backdrop
+            return values()[AvatarSpec.parse(value).get(AvatarSpec.Part.BACKDROP) % values().length];
+        }
         int h = value == null ? 0 : value.hashCode();
         return values()[Math.floorMod(h, values().length)];
     }

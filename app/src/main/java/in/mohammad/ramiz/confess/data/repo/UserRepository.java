@@ -15,11 +15,15 @@ import in.mohammad.ramiz.confess.data.model.AboutRequest;
 import in.mohammad.ramiz.confess.data.model.AvatarRequest;
 import in.mohammad.ramiz.confess.data.model.ChangePasswordRequest;
 import in.mohammad.ramiz.confess.data.model.EnabledRequest;
+import in.mohammad.ramiz.confess.data.model.FollowState;
 import in.mohammad.ramiz.confess.data.model.MatchResult;
 import in.mohammad.ramiz.confess.data.model.Me;
+import in.mohammad.ramiz.confess.data.model.NotificationPrefs;
 import in.mohammad.ramiz.confess.data.model.PasswordRequest;
+import in.mohammad.ramiz.confess.data.model.PersonPage;
 import in.mohammad.ramiz.confess.data.model.PostPage;
 import in.mohammad.ramiz.confess.data.model.PublicProfile;
+import in.mohammad.ramiz.confess.data.model.ReportRequest;
 import in.mohammad.ramiz.confess.data.model.UserSearchResult;
 import in.mohammad.ramiz.confess.data.security.PlayIntegrity;
 import in.mohammad.ramiz.confess.data.session.SessionManager;
@@ -134,6 +138,29 @@ public final class UserRepository {
 
     public Call<PublicProfile> profile(@NonNull String alias, @NonNull ApiCallback<PublicProfile> cb) {
         return Calls.enqueue(ApiClient.api().profile(alias), cb);
+    }
+
+    // ── Following ────────────────────────────────────────────────────────────
+
+    /** Idempotent on the server — safe to retry. */
+    public Call<FollowState> setFollowing(@NonNull String alias, boolean follow, @NonNull ApiCallback<FollowState> cb) {
+        return Calls.enqueue(follow ? ApiClient.api().follow(alias) : ApiClient.api().unfollow(alias), cb);
+    }
+
+    /** Report a person (one per reporter on the server, idempotent). */
+    public Call<JsonObject> reportUser(@NonNull String alias, @NonNull String reason, @NonNull ApiCallback<JsonObject> cb) {
+        return Calls.enqueue(ApiClient.api().reportUser(alias, new ReportRequest(reason)), cb);
+    }
+
+    /** followers == true → people who follow me; false → people I follow. */
+    public Call<PersonPage> people(boolean followers, @Nullable String cursor, @NonNull ApiCallback<PersonPage> cb) {
+        return Calls.enqueue(followers ? ApiClient.api().followers(cursor) : ApiClient.api().following(cursor), cb);
+    }
+
+    /** Change some notification switches (null = unchanged). */
+    public Call<NotificationPrefs> setNotificationPrefs(@NonNull NotificationPrefs change,
+                                                        @NonNull ApiCallback<NotificationPrefs> cb) {
+        return Calls.enqueue(ApiClient.api().setNotificationPrefs(change), cb);
     }
 
     public Call<PostPage> postsByAlias(@NonNull String alias, @Nullable String cursor, @NonNull ApiCallback<PostPage> cb) {

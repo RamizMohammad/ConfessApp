@@ -17,6 +17,7 @@ import java.util.Map;
 
 import in.mohammad.ramiz.confess.R;
 import in.mohammad.ramiz.confess.core.Event;
+import in.mohammad.ramiz.confess.core.FollowEvents;
 import in.mohammad.ramiz.confess.core.PostEvents;
 import in.mohammad.ramiz.confess.data.api.ApiCallback;
 import in.mohammad.ramiz.confess.data.api.ApiException;
@@ -58,11 +59,45 @@ public class FeedViewModel extends ViewModel {
     private final FeltSync felt = new FeltSync(this::find, e -> say(0, e));
 
     private final Observer<PostEvents.Change> changeObserver = this::apply;
+    private final Observer<FollowEvents.Change> followObserver = c -> { if (c != null) resetFollowing(); };
 
     public FeedViewModel() {
-        tabs.put(PostRepository.SORT_LATEST, new Tab(PostRepository.SORT_LATEST));
-        tabs.put(PostRepository.SORT_TOP, new Tab(PostRepository.SORT_TOP));
+        for (String scope : new String[]{PostRepository.SCOPE_ALL, PostRepository.SCOPE_FOLLOWING}) {
+            for (String sort : new String[]{PostRepository.SORT_LATEST, PostRepository.SORT_TOP}) {
+                Tab t = new Tab(sort, scope);
+                tabs.put(t.key, t);
+            }
+        }
         PostEvents.changes().observeForever(changeObserver);
+        FollowEvents.changes().observeForever(followObserver);
+    }
+
+    /** Who I follow changed: the Following tabs start over (the visible one reloads now). */
+    private void resetFollowing() {
+        for (Tab t : tabs.values()) {
+            if (!PostRepository.SCOPE_FOLLOWING.equals(t.scope)) continue;
+            if (t.firstCall != null) t.firstCall.cancel();
+            if (t.moreCall != null) t.moreCall.cancel();
+            t.firstCall = null;
+            t.moreCall = null;
+            t.posts.clear();
+            t.cursor = null;
+            t.loaded = false;
+            t.error = null;
+            t.refreshing = false;
+            t.footer = FeedState.Footer.NONE;
+            t.screen = FeedState.Screen.LOADING;
+            if (t.live.hasActiveObservers()) {
+                t.publish();
+                loadFirst(t);
+            }
+        }
+    }
+
+    /** The tab key the fragment uses: sort for everyone ("latest"/"top"), "following:<sort>" otherwise. */
+    @NonNull
+    public static String key(@NonNull String sort, @NonNull String scope) {
+        return PostRepository.SCOPE_FOLLOWING.equals(scope) ? "following:" + sort : sort;
     }
 
     public LiveData<FeedState> state(@NonNull String sort) {
@@ -103,7 +138,7 @@ public class FeedViewModel extends ViewModel {
 
     private void loadFirst(Tab t) {
         if (t.moreCall != null) { t.moreCall.cancel(); t.moreCall = null; }
-        t.firstCall = repo.feed(t.sort, null, new ApiCallback<PostPage>() {
+        t.firstCall = repo.feed(t.sort, t.scope, null, new ApiCallback<PostPage>() {
             @Override
             public void onSuccess(PostPage page) {
                 t.firstCall = null;
@@ -140,7 +175,7 @@ public class FeedViewModel extends ViewModel {
                 || t.footer == FeedState.Footer.ERROR) return;
         t.footer = FeedState.Footer.LOADING;
         t.publish();
-        t.moreCall = repo.feed(t.sort, t.cursor, new ApiCallback<PostPage>() {
+        t.moreCall = repo.feed(t.sort, t.scope, t.cursor, new ApiCallback<PostPage>() {
             @Override
             public void onSuccess(PostPage page) {
                 t.moreCall = null;
@@ -177,6 +212,10 @@ public class FeedViewModel extends ViewModel {
 
     public void toggleFelt(@NonNull Post post) {
         felt.toggle(post);
+    }
+
+    public void react(@NonNull Post post, @NonNull String reaction) {
+        felt.react(post, reaction);
     }
 
     // ── Delete / report ──────────────────────────────────────────────────────
@@ -249,12 +288,13 @@ public class FeedViewModel extends ViewModel {
                         t.posts.remove(i);
                         if (t.posts.isEmpty() && t.footer == FeedState.Footer.END) t.screen = FeedState.Screen.EMPTY;
                         t.publish();
-                        if (t.posts.isEmpty()) loadMore(t.sort);       // emptied a page — fetch the next
+                        if (t.posts.isEmpty()) loadMore(t.key);       // emptied a page — fetch the next
                     }
                     break;
                 case CREATED:
-                    // A new confession belongs on top of "Latest" only.
-                    if (i < 0 && t.loaded && PostRepository.SORT_LATEST.equals(t.sort)) {
+                    // A new confession (mine) belongs on top of everyone's "Latest" only.
+                    if (i < 0 && t.loaded && PostRepository.SORT_LATEST.equals(t.sort)
+                            && PostRepository.SCOPE_ALL.equals(t.scope)) {
                         t.posts.add(0, c.post.copy());
                         t.screen = FeedState.Screen.CONTENT;
                         t.publish();
@@ -294,15 +334,18 @@ public class FeedViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         PostEvents.changes().removeObserver(changeObserver);
+        FollowEvents.changes().removeObserver(followObserver);
         for (Tab t : tabs.values()) {
             if (t.firstCall != null) t.firstCall.cancel();
             if (t.moreCall != null) t.moreCall.cancel();
         }
     }
 
-    /** Mutable per-sort state; publishes immutable {@link FeedState} snapshots. */
+    /** Mutable per-(sort, scope) state; publishes immutable {@link FeedState} snapshots. */
     private static final class Tab {
+        final String key;
         final String sort;
+        final String scope;
         final MutableLiveData<FeedState> live = new MutableLiveData<>();
         final List<Post> posts = new ArrayList<>();
         final Map<String, Integer> removedAt = new HashMap<>();
@@ -315,8 +358,10 @@ public class FeedViewModel extends ViewModel {
         @Nullable Call<PostPage> firstCall;
         @Nullable Call<PostPage> moreCall;
 
-        Tab(String sort) {
+        Tab(String sort, String scope) {
             this.sort = sort;
+            this.scope = scope;
+            this.key = key(sort, scope);
         }
 
         void publish() {

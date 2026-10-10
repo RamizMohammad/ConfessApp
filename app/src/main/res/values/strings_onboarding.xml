@@ -13,6 +13,11 @@
     <string name="alias_available">Available</string>
     <string name="alias_taken">Taken</string>
     <string name="alias_offline">Can\'t check right now</string>
+    <string name="alias_not_allowed">Not allowed</string>
+    <string name="alias_not_allowed_offensive">That alias has words we don\'t allow.</string>
+    <string name="alias_not_allowed_hateful">That alias targets a group of people.</string>
+    <string name="alias_not_allowed_identity">That could reveal who someone is — keep it anonymous.</string>
+    <string name="alias_free_title">Free right now</string>
     <string name="alias_permanent">Alias can\'t be changed once confirmed. Choose with intention.</string>
     <string name="alias_suggestions">Suggestions</string>
     <string name="alias_shuffle">Shuffle</string>
@@ -45,5 +50,6 @@
     <string name="avatar_enter">Enter Confess</string>
     <string name="avatar_creating">Creating your space…</string>
     <string name="register_alias_taken">Someone just took that alias. Pick another one.</string>
+    <string name="register_alias_not_allowed">That alias isn\'t allowed. Pick another one.</string>
     <string name="register_expired">Your sign-in timed out. Please continue with Google again.</string>
 </resources>

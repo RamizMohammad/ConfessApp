@@ -130,7 +130,9 @@ public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewH
             if (a.post == null || b.post == null) return a.footer == b.footer;
             return sameExceptFelt(a.post, b.post)
                     && a.post.likedByMe == b.post.likedByMe
-                    && a.post.likeCount == b.post.likeCount;
+                    && a.post.likeCount == b.post.likeCount
+                    && Objects.equals(a.post.myReaction, b.post.myReaction)
+                    && Objects.equals(a.post.reactions, b.post.reactions);
         }
 
         @Nullable

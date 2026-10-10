@@ -60,6 +60,51 @@
         android:textColor="@color/text_secondary"
         tools:text="MEMBER SINCE OCT 2026" />
 
+    <!-- "12 followers · 4 following" -->
+    <TextView
+        android:id="@+id/followCounts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:textAppearance="@style/TextAppearance.Confess.Meta"
+        android:textColor="@color/text_secondary"
+        tools:text="12 followers · 4 following" />
+
+    <!-- Someone else: Follow (filled) / Following (outlined) -->
+    <FrameLayout
+        android:id="@+id/followBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/followBtn"
+            style="@style/Widget.Confess.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="140dp"
+            android:minHeight="44dp"
+            android:text="@string/follow"
+            app:icon="@drawable/ic_plus"
+            app:iconGravity="textStart"
+            app:iconSize="@dimen/icon_size_sm" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/followingBtn"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="140dp"
+            android:minHeight="44dp"
+            android:text="@string/following_btn"
+            android:visibility="gone"
+            app:icon="@drawable/ic_check"
+            app:iconGravity="textStart"
+            app:iconSize="@dimen/icon_size_sm" />
+    </FrameLayout>
+
     <!-- Me only -->
     <LinearLayout
         android:id="@+id/actions"

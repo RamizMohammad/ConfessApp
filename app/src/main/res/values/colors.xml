@@ -10,6 +10,8 @@
     <color name="brand_tile">#201F27</color>      <!-- = surface_high -->
     <color name="brand_mark">#E8A04C</color>      <!-- = amber -->
 
+    <color name="story_night">#2A2236</color>         <!-- story background 0 (deep plum) -->
+    <color name="story_gold">#F6C76A</color>          <!-- story ring highlight (amber → gold sweep) -->
     <color name="ink">#0F0E13</color>                 <!-- level 0: app background -->
     <color name="surface_raised">#17161D</color>      <!-- level 1: plates, inputs, sheets, nav -->
     <color name="surface_high">#201F27</color>        <!-- pressed / highlighted rows -->

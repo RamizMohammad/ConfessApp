@@ -13,13 +13,13 @@
     android:background="@color/ink"
     android:orientation="vertical">
 
-    <!-- Top bar: back · ✉ LETTER · share · more -->
+    <!-- Top bar: back · ✉ LETTER · report/delete (share is off for now) -->
     <FrameLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/toolbar_height"
-        android:paddingHorizontal="@dimen/space_xs">
+        android:paddingHorizontal="@dimen/space_sm">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/back"
@@ -55,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/cd_share"
                 android:enabled="false"
+                android:visibility="gone"
                 app:icon="@drawable/ic_share" />
 
             <com.google.android.material.button.MaterialButton
@@ -62,9 +63,10 @@
                 style="@style/Widget.Confess.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/action_more"
+                android:contentDescription="@string/cd_report_menu"
                 android:enabled="false"
-                app:icon="@drawable/ic_more_vertical" />
+                app:icon="@drawable/ic_flag"
+                app:iconSize="22dp" />
         </LinearLayout>
     </FrameLayout>
 

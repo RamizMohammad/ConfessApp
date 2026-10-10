@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/toolbar_height"
-        android:paddingHorizontal="@dimen/space_xs">
+        android:paddingHorizontal="@dimen/space_sm">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/back"

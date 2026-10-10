@@ -89,9 +89,24 @@
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.Confess.AlertDialog</item>
         <item name="bottomNavigationStyle">@style/Widget.Confess.BottomNavigation</item>
         <item name="toolbarStyle">@style/Widget.Confess.Toolbar</item>
+        <!-- Screen-to-screen motion: a soft rise + fade (see anim/screen_*). -->
+        <item name="android:windowAnimationStyle">@style/Animation.Confess.Screen</item>
+    </style>
+
+    <style name="Animation.Confess.Screen" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/screen_open_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/screen_open_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/screen_close_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/screen_close_exit</item>
     </style>
 
     <style name="Theme.Confess" parent="Base.Theme.Confess" />
+
+    <!-- PostMenu popup window animation -->
+    <style name="Animation.Confess.Popup" parent="">
+        <item name="android:windowEnterAnimation">@anim/popup_in</item>
+        <item name="android:windowExitAnimation">@anim/popup_out</item>
+    </style>
 
     <!-- Splash (Android 12+ SplashScreen API) — used from Section 2. -->
     <!-- Invisible trampoline for links (LinkActivity). -->

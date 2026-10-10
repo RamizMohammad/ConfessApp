@@ -133,10 +133,9 @@ public class DesignCheckActivity extends AppCompatActivity {
         card.avatar.setAvatar("aura_04");
         card.alias.setText("@solitary_star");
         card.time.setText("2h ago");
-        card.text.setText("“I still look for your car at every red light, even though I moved three states "
-                + "away two years ago. I don't miss you, I just miss who I was before you made me quiet.”");
+        card.text.setText("I still look for your car at every red light, even though I moved three states "
+                + "away two years ago. I don't miss you, I just miss who I was before you made me quiet.");
         card.responses.setText("86");
-        card.commentsClosed.setVisibility(View.GONE);
         renderFelt(card);
         card.felt.setOnClickListener(v -> {
             felt = !felt;

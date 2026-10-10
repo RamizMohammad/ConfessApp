@@ -96,6 +96,7 @@ public class ApiException extends Exception {
             case ErrorCode.CONTENT_FLAGGED:        return ctx.getString(R.string.error_content_flagged);
             case ErrorCode.MODERATION_UNAVAILABLE: return ctx.getString(R.string.error_moderation_unavailable);
             case ErrorCode.ALIAS_TAKEN:            return ctx.getString(R.string.error_alias_taken);
+            case ErrorCode.ALIAS_NOT_ALLOWED:      return ctx.getString(R.string.register_alias_not_allowed);
             case ErrorCode.ACCOUNT_EXISTS:         return ctx.getString(R.string.error_account_exists);
             case ErrorCode.WRONG_PASSWORD:         return ctx.getString(R.string.error_wrong_password);
             case ErrorCode.COMMENTS_DISABLED:      return ctx.getString(R.string.error_comments_disabled);

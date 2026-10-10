@@ -51,7 +51,9 @@
     </style>
 
     <!-- Feed-card variant: a little smaller so 6 lines fit comfortably. -->
+    <!-- Cards: upright (not italic) — easier to read in a scrolling feed. -->
     <style name="TextAppearance.Confess.Confession.Card">
+        <item name="android:textStyle">normal</item>
         <item name="android:textSize">18sp</item>
         <item name="android:lineHeight">28sp</item>
         <item name="lineHeight">28sp</item>

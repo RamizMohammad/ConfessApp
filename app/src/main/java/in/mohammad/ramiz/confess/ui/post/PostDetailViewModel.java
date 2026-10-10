@@ -202,6 +202,10 @@ public class PostDetailViewModel extends ViewModel {
         if (post != null) felt.toggle(post);
     }
 
+    public void react(@NonNull String reaction) {
+        if (post != null) felt.react(post, reaction);
+    }
+
     public void deletePost() {
         if (post == null) return;
         repo.delete(post.postId, new ApiCallback<JsonObject>() {

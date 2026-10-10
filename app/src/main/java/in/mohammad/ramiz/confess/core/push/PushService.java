@@ -51,11 +51,14 @@ public class PushService extends FirebaseMessagingService {
 
         String type = data.get("type");
         String postId = data.get("postId");
-        boolean activity = "like".equals(type) || "comment".equals(type);
+        String alias = data.get("alias");
+        boolean activity = "like".equals(type) || "comment".equals(type) || "follow".equals(type)
+                || "story_reaction".equals(type);
         if (activity) ActivityEvents.ping();                       // bell dot refreshes if the app is open
 
         String channel = activity ? Push.CHANNEL_ACTIVITY
-                : "new_post".equals(type) ? Push.CHANNEL_NEW_POSTS : Push.CHANNEL_REMINDERS;
+                : "new_post".equals(type) || "following_post".equals(type) ? Push.CHANNEL_NEW_POSTS
+                : Push.CHANNEL_REMINDERS;
         Push.ensureChannels(this);
 
         Intent open = new Intent(this, LauncherActivity.class)
@@ -64,7 +67,8 @@ public class PushService extends FirebaseMessagingService {
             open.putExtra(DeepLink.EXTRA_POST_ID, postId)
                     .putExtra(DeepLink.EXTRA_TO_RESPONSES, "comment".equals(type));
         }
-        int id = (type + ":" + (postId != null ? postId : title)).hashCode();
+        if ("follow".equals(type) && alias != null) open.putExtra(DeepLink.EXTRA_ALIAS, alias);
+        int id = (type + ":" + (postId != null ? postId : alias != null ? alias : title)).hashCode();
         PendingIntent tap = PendingIntent.getActivity(this, id, open,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 

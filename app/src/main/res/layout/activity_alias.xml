@@ -94,6 +94,38 @@
                     android:text="@string/alias_rules"
                     android:textAppearance="@style/TextAppearance.Confess.Meta"
                     android:textColor="@color/text_muted" />
+
+                <!-- Why it's not allowed (wording check) -->
+                <TextView
+                    android:id="@+id/aliasReason"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_secondary"
+                    android:visibility="gone" />
+
+                <!-- Taken → free variations from the server -->
+                <LinearLayout
+                    android:id="@+id/freePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/alias_free_title"
+                        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                        android:textColor="@color/sage" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/freeSuggestions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
             </LinearLayout>
 
             <TextView

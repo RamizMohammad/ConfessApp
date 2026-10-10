@@ -18,4 +18,8 @@ public class Me {
     public int likesGiven;
     public int commentsReceived;
     public int commentsMade;
+    public int followers;
+    public int following;
+    /** Per-type push switches (null on an old cached copy → treat as all on). */
+    @androidx.annotation.Nullable public NotificationPrefs notifications;
 }

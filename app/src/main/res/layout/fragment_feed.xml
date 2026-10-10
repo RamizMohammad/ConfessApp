@@ -21,7 +21,7 @@
         android:minHeight="@dimen/toolbar_height"
         android:orientation="horizontal"
         android:paddingStart="@dimen/margin_screen"
-        android:paddingEnd="@dimen/space_xs">
+        android:paddingEnd="@dimen/space_sm">
 
         <FrameLayout
             android:layout_width="0dp"
@@ -70,6 +70,16 @@
                 tools:visibility="visible" />
         </FrameLayout>
     </LinearLayout>
+
+    <!-- Stories tray -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/stories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingHorizontal="12dp"
+        android:paddingBottom="@dimen/space_xs" />
 
     <!-- Sort tabs -->
     <LinearLayout
@@ -129,17 +139,18 @@
                 android:visibility="invisible" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/sortHint"
+        <View
             android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Everyone / Following -->
+        <include
+            android:id="@+id/scope"
+            layout="@layout/view_scope_toggle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:text="@string/sort_top_hint"
-            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
-            android:textColor="@color/text_muted"
-            android:visibility="invisible" />
+            android:layout_marginBottom="8dp" />
     </LinearLayout>
 
     <View

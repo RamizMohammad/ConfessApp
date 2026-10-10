@@ -134,6 +134,35 @@
             android:name=".ui.me.ReceivedActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.me.DraftsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.settings.NotificationSettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.people.PeopleActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- Avatar studio -->
+        <activity
+            android:name=".ui.avatar.AvatarStudioActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- Stories -->
+        <activity
+            android:name=".ui.stories.StoryComposeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ui.stories.StoryViewerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <!-- Settings (Section 10) -->
         <activity

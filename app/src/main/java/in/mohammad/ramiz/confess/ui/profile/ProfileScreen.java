@@ -1,9 +1,7 @@
 package in.mohammad.ramiz.confess.ui.profile;
 
 import android.content.Context;
-import android.view.Menu;
 import android.view.View;
-import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,8 +18,10 @@ import in.mohammad.ramiz.confess.R;
 import in.mohammad.ramiz.confess.core.Haptics;
 import in.mohammad.ramiz.confess.data.model.Post;
 import in.mohammad.ramiz.confess.databinding.ViewProfileBinding;
+import in.mohammad.ramiz.confess.ui.feed.PostMenu;
 import in.mohammad.ramiz.confess.ui.feed.ReportSheet;
 import in.mohammad.ramiz.confess.ui.nav.Nav;
+import in.mohammad.ramiz.confess.ui.util.Motion;
 
 /**
  * Wires view_profile to a {@link ProfileViewModel}. Used by the Me tab and by
@@ -86,12 +86,16 @@ public final class ProfileScreen implements ProfileAdapter.Listener {
             String text = m.error != null ? m.error.userMessage(ctx) : ctx.getString(m.res);
             Snackbar.make(b.getRoot(), text, Snackbar.LENGTH_SHORT).show();
         });
-        fm.setFragmentResultListener(ReportSheet.RESULT, owner, (key, result) -> {
-            String postId = result.getString(ReportSheet.KEY_POST_ID);
-            String reason = result.getString(ReportSheet.KEY_REASON);
-            if (postId != null && reason != null) vm.report(postId, reason);
-        });
+        fm.setFragmentResultListener(ReportSheet.RESULT, owner, (key, result) ->
+                ReportSheet.deliver(ctx, result, new ReportSheet.Outcome() {
+                    @Override public void reportPost(@NonNull String postId, @NonNull String reason) { vm.report(postId, reason); }
+                    @Override public void say(@NonNull String text) {
+                        Snackbar.make(b.getRoot(), text, Snackbar.LENGTH_SHORT).show();
+                    }
+                }));
     }
+
+    private boolean listEntered = false;
 
     private void render(@Nullable ProfileViewModel.State s) {
         if (s == null) return;
@@ -114,7 +118,13 @@ public final class ProfileScreen implements ProfileAdapter.Listener {
         } else {
             b.state.setVisibility(View.GONE);
         }
-        adapter.submit(s, this::maybeLoadMore);
+        adapter.submit(s, () -> {
+            if (!listEntered && s.screen == ProfileViewModel.Screen.CONTENT) {
+                listEntered = true;
+                Motion.enterList(b.list);
+            }
+            maybeLoadMore();
+        });
     }
 
     private void showState(int icon, String title, String body, boolean retry) {
@@ -150,24 +160,24 @@ public final class ProfileScreen implements ProfileAdapter.Listener {
     }
 
     @Override
+    public void onReact(@NonNull Post post, @NonNull String reaction) {
+        vm.react(post, reaction);
+    }
+
+    @Override
     public void onMore(@NonNull Post post, @NonNull View anchor) {
-        PopupMenu menu = new PopupMenu(ctx, anchor);
-        if (post.isMine) menu.getMenu().add(Menu.NONE, 1, Menu.NONE, R.string.menu_delete);
-        else menu.getMenu().add(Menu.NONE, 2, Menu.NONE, R.string.menu_report);
-        menu.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == 1) {
+        PostMenu.show(anchor, post, new PostMenu.Listener() {
+            @Override public void onDelete(@NonNull Post p) {
                 new MaterialAlertDialogBuilder(ctx)
                         .setTitle(R.string.delete_title)
                         .setMessage(R.string.delete_body)
                         .setNegativeButton(R.string.action_cancel, null)
-                        .setPositiveButton(R.string.action_delete, (d, w) -> vm.delete(post))
+                        .setPositiveButton(R.string.action_delete, (d, w) -> vm.delete(p))
                         .show();
-            } else {
-                ReportSheet.showIn(fm, post.postId);
             }
-            return true;
+            @Override public void onReportPost(@NonNull Post p) { ReportSheet.showIn(fm, p.postId); }
+            @Override public void onReportUser(@NonNull Post p, @NonNull String alias) { ReportSheet.showUser(fm, alias); }
         });
-        menu.show();
     }
 
     @Override
@@ -183,5 +193,21 @@ public final class ProfileScreen implements ProfileAdapter.Listener {
     @Override
     public void onRetryMore() {
         vm.retryMore();
+    }
+
+    /** Follow at once; unfollowing asks first (it's easy to tap by accident). */
+    @Override
+    public void onFollow(boolean currentlyFollowing, @NonNull String alias) {
+        Haptics.tick(ctx);
+        if (!currentlyFollowing) {
+            vm.toggleFollow();
+            return;
+        }
+        new MaterialAlertDialogBuilder(ctx)
+                .setTitle(ctx.getString(R.string.unfollow_title, alias))
+                .setMessage(R.string.unfollow_body)
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.unfollow_confirm, (d, w) -> vm.toggleFollow())
+                .show();
     }
 }

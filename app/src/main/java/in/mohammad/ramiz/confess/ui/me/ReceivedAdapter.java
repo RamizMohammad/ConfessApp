@@ -158,7 +158,7 @@ public class ReceivedAdapter extends ListAdapter<ReceivedAdapter.Row, RecyclerVi
         b.count.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 felt ? R.drawable.ic_heart_filled : R.drawable.ic_message, 0, 0, 0);
         b.count.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(
-                ctx.getColor(felt ? R.color.brick : R.color.paper_ink)));
+                ctx.getColor(felt ? R.color.amber : R.color.paper_ink)));
         b.chevron.animate().rotation(row.expanded ? 180f : 0f).setDuration(180).start();
         b.card.setContentDescription(text + ", " + n + ". "
                 + ctx.getString(row.expanded ? R.string.cd_collapse : R.string.cd_expand));
@@ -169,8 +169,9 @@ public class ReceivedAdapter extends ListAdapter<ReceivedAdapter.Row, RecyclerVi
         Liker l = row.liker;
         if (l == null) return;
         b.avatar.setAvatar(l.avatar);
+        b.avatar.setStoryAlias(l.alias);
         b.alias.setText("@" + l.alias);
-        b.time.setText(Formats.relative(l.likedAt));
+        b.time.setText(in.mohammad.ramiz.confess.ui.feed.Reactions.emoji(l.reaction) + "  " + Formats.relative(l.likedAt));
         b.row.setOnClickListener(v -> listener.onPerson(l.alias));
     }
 
@@ -180,6 +181,7 @@ public class ReceivedAdapter extends ListAdapter<ReceivedAdapter.Row, RecyclerVi
         String alias = c.author != null && c.author.alias != null ? c.author.alias : "";
         String avatar = c.author != null ? c.author.avatar : null;
         b.avatar.setAvatar(avatar);
+        b.avatar.setStoryAlias(alias);
         b.alias.setText("@" + alias);
         b.authorTag.setVisibility(c.isPostAuthor ? View.VISIBLE : View.GONE);
         b.time.setText(Formats.relative(c.createdAt));

@@ -30,6 +30,7 @@ import in.mohammad.ramiz.confess.data.session.SessionManager;
 import in.mohammad.ramiz.confess.databinding.ActivityPostDetailBinding;
 import in.mohammad.ramiz.confess.ui.base.BaseActivity;
 import in.mohammad.ramiz.confess.ui.compose.Moderation;
+import in.mohammad.ramiz.confess.ui.feed.PostMenu;
 import in.mohammad.ramiz.confess.ui.feed.ReportSheet;
 import in.mohammad.ramiz.confess.ui.nav.Nav;
 import in.mohammad.ramiz.confess.ui.util.EdgeInsets;
@@ -83,7 +84,7 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
         if (me != null) b.myAvatar.setAvatar(me.avatar);
 
         b.back.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
-        b.share.setOnClickListener(v -> share());
+        // Sharing is off for now (button hidden in the layout); share() stays for when it comes back.
         b.more.setOnClickListener(v -> postMenu(v));
         b.input.addTextChangedListener(new SimpleTextWatcher(t -> updateInput()));
         b.send.setOnClickListener(v -> send());
@@ -126,10 +127,14 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
                 finish();
             }
         });
-        getSupportFragmentManager().setFragmentResultListener(ReportSheet.RESULT, this, (key, result) -> {
-            String reason = result.getString(ReportSheet.KEY_REASON);
-            if (reason != null) vm.report(reason);
-        });
+        getSupportFragmentManager().setFragmentResultListener(ReportSheet.RESULT, this, (key, result) ->
+                ReportSheet.deliver(this, result, new ReportSheet.Outcome() {
+                    @Override public void reportPost(@NonNull String postId, @NonNull String reason) { vm.report(reason); }
+                    @Override public void say(@NonNull String text) {
+                        if (isFinishing() || isDestroyed()) return;
+                        Snackbar.make(b.getRoot(), text, Snackbar.LENGTH_SHORT).setAnchorView(b.bottom).show();
+                    }
+                }));
 
         vm.start(postId);
     }
@@ -145,8 +150,11 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
         b.skeleton.setVisibility(loading ? View.VISIBLE : View.GONE);
         if (loading) b.skeleton.startShimmer(); else b.skeleton.stopShimmer();
         b.list.setVisibility(content ? View.VISIBLE : View.INVISIBLE);
-        b.share.setEnabled(content);
         b.more.setEnabled(content);
+        if (content) {                                   // mine → bin (delete) · theirs → flag (report)
+            b.more.setIconResource(s.post.isMine ? R.drawable.ic_trash : R.drawable.ic_flag);
+            b.more.setContentDescription(getString(s.post.isMine ? R.string.cd_delete_menu : R.string.cd_report_menu));
+        }
 
         if (s.screen == PostDetailViewModel.Screen.GONE) {
             showState(R.drawable.ic_mail_open, getString(R.string.detail_gone_title),
@@ -260,23 +268,22 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
     private void postMenu(View anchor) {
         Post post = vm.post();
         if (post == null) return;
-        PopupMenu menu = new PopupMenu(this, anchor);
-        if (post.isMine) menu.getMenu().add(Menu.NONE, 1, Menu.NONE, R.string.menu_delete);
-        else menu.getMenu().add(Menu.NONE, 2, Menu.NONE, R.string.menu_report);
-        menu.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == 1) {
-                new MaterialAlertDialogBuilder(this)
+        PostMenu.show(anchor, post, new PostMenu.Listener() {
+            @Override public void onDelete(@NonNull Post p) {
+                new MaterialAlertDialogBuilder(PostDetailActivity.this)
                         .setTitle(R.string.delete_title)
                         .setMessage(R.string.delete_body)
                         .setNegativeButton(R.string.action_cancel, null)
                         .setPositiveButton(R.string.action_delete, (d, w) -> vm.deletePost())
                         .show();
-            } else {
-                ReportSheet.showIn(getSupportFragmentManager(), post.postId);
             }
-            return true;
+            @Override public void onReportPost(@NonNull Post p) {
+                ReportSheet.showIn(getSupportFragmentManager(), p.postId);
+            }
+            @Override public void onReportUser(@NonNull Post p, @NonNull String alias) {
+                ReportSheet.showUser(getSupportFragmentManager(), alias);
+            }
         });
-        menu.show();
     }
 
     private void share() {
@@ -309,6 +316,11 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
     public void onFelt(@NonNull Post post) {
         Haptics.tick(this);
         vm.toggleFelt();
+    }
+
+    @Override
+    public void onReact(@NonNull Post post, @NonNull String reaction) {
+        vm.react(reaction);
     }
 
     @Override

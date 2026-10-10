@@ -22,6 +22,7 @@ import in.mohammad.ramiz.confess.core.Haptics;
 import in.mohammad.ramiz.confess.core.LockPrefs;
 import in.mohammad.ramiz.confess.core.push.Push;
 import in.mohammad.ramiz.confess.data.api.ApiCallback;
+import in.mohammad.ramiz.confess.data.drafts.Drafts;
 import in.mohammad.ramiz.confess.data.api.ApiException;
 import in.mohammad.ramiz.confess.data.api.ErrorCode;
 import in.mohammad.ramiz.confess.data.model.Me;
@@ -35,7 +36,6 @@ import in.mohammad.ramiz.confess.ui.auth.Biometrics;
 import in.mohammad.ramiz.confess.ui.auth.GoogleAuth;
 import in.mohammad.ramiz.confess.ui.base.BaseActivity;
 import in.mohammad.ramiz.confess.ui.base.Router;
-import in.mohammad.ramiz.confess.ui.compose.ComposeDraft;
 import in.mohammad.ramiz.confess.ui.dev.DesignCheckActivity;
 import in.mohammad.ramiz.confess.ui.entry.GuidelinesActivity;
 import in.mohammad.ramiz.confess.ui.util.EdgeInsets;
@@ -73,7 +73,7 @@ public class SettingsActivity extends BaseActivity {
         setup(b.changePassword, R.drawable.ic_pencil, R.string.settings_change_password);
         setup(b.privacyScreen, R.drawable.ic_eye_off, R.string.settings_privacy_screen);
         setup(b.push, R.drawable.ic_bell, R.string.settings_push);
-        setup(b.pushSystem, R.drawable.ic_settings, R.string.settings_push_system);
+        setup(b.pushSystem, R.drawable.ic_settings, R.string.settings_notif_types);
         setup(b.editProfile, R.drawable.ic_user, R.string.settings_edit_profile);
         setup(b.feature, R.drawable.ic_mail_open, R.string.settings_feature);
         setup(b.guidelines, R.drawable.ic_shield, R.string.settings_guidelines);
@@ -91,7 +91,7 @@ public class SettingsActivity extends BaseActivity {
         chevron(b.editProfile);
         chevron(b.feature);
         chevron(b.guidelines);
-        subtitle(b.pushSystem, R.string.settings_push_system_sub);
+        subtitle(b.pushSystem, R.string.settings_notif_types_sub);
         subtitle(b.editProfile, R.string.settings_edit_profile_sub);
         subtitle(b.feature, R.string.settings_feature_sub);
         subtitle(b.push, R.string.settings_push_sub);
@@ -111,8 +111,7 @@ public class SettingsActivity extends BaseActivity {
             Haptics.tick(this);
             applySecureFlag();
         });
-        b.pushSystem.row.setOnClickListener(v -> startActivity(new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName())));
+        b.pushSystem.row.setOnClickListener(v -> startActivity(new Intent(this, NotificationSettingsActivity.class)));
         b.editProfile.row.setOnClickListener(v -> startActivity(new Intent(this, EditProfileActivity.class)));
         b.feature.row.setOnClickListener(v -> startActivity(new Intent(this, FeatureRequestActivity.class)));
         b.guidelines.row.setOnClickListener(v -> startActivity(new Intent(this, GuidelinesActivity.class)
@@ -348,7 +347,7 @@ public class SettingsActivity extends BaseActivity {
             users.deleteAccount(new ApiCallback<JsonObject>() {
                 @Override public void onSuccess(JsonObject data) {
                     dialog.dismiss();
-                    ComposeDraft.clear(SettingsActivity.this, userId);
+                    Drafts.get(SettingsActivity.this).clearAll(userId);
                     GoogleAuth.signOut(SettingsActivity.this);
                     android.widget.Toast.makeText(SettingsActivity.this, R.string.delete_account_done,
                             android.widget.Toast.LENGTH_LONG).show();

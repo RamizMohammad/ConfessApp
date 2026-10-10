@@ -32,6 +32,9 @@ public class ProfileAdapter extends ListAdapter<ProfileAdapter.Row, RecyclerView
 
         void onEditAbout();
 
+        /** Follow / Following button on someone else's profile. */
+        void onFollow(boolean currentlyFollowing, @NonNull String alias);
+
         void onRetryMore();
     }
 
@@ -119,6 +122,7 @@ public class ProfileAdapter extends ListAdapter<ProfileAdapter.Row, RecyclerView
     private void bindHeader(ItemProfileHeaderBinding b, ProfileViewModel.Header h) {
         Context ctx = b.getRoot().getContext();
         b.avatar.setAvatar(h.avatar);
+        b.avatar.setStoryAlias(h.alias);
         b.alias.setText("@" + h.alias);
 
         boolean hasAbout = h.about != null && !h.about.trim().isEmpty();
@@ -142,6 +146,16 @@ public class ProfileAdapter extends ListAdapter<ProfileAdapter.Row, RecyclerView
         b.since.setText(ctx.getString(R.string.me_since, since.toUpperCase(java.util.Locale.getDefault())));
 
         b.actions.setVisibility(h.isMe ? View.VISIBLE : View.GONE);
+        b.followBox.setVisibility(h.isMe ? View.GONE : View.VISIBLE);
+        if (!h.isMe) {
+            b.followBtn.setVisibility(h.isFollowing ? View.GONE : View.VISIBLE);
+            b.followingBtn.setVisibility(h.isFollowing ? View.VISIBLE : View.GONE);
+            b.followBtn.setOnClickListener(v -> listener.onFollow(false, h.alias));
+            b.followingBtn.setOnClickListener(v -> listener.onFollow(true, h.alias));
+        }
+        b.followCounts.setText(ctx.getString(R.string.profile_follow_counts,
+                Formats.count(h.followers), ctx.getString(R.string.followers_label),
+                Formats.count(h.following), ctx.getString(R.string.following_label)));
         b.editAura.setOnClickListener(v -> listener.onEditAura());
         b.editAbout.setOnClickListener(v -> listener.onEditAbout());
 
@@ -200,7 +214,8 @@ public class ProfileAdapter extends ListAdapter<ProfileAdapter.Row, RecyclerView
                     return a.header == b.header;               // a new Header object means it changed
                 case T_POST:
                     return a.post != null && b.post != null && same(a.post, b.post)
-                            && a.post.likedByMe == b.post.likedByMe && a.post.likeCount == b.post.likeCount;
+                            && a.post.likedByMe == b.post.likedByMe && a.post.likeCount == b.post.likeCount
+                            && Objects.equals(a.post.myReaction, b.post.myReaction) && Objects.equals(a.post.reactions, b.post.reactions);
                 default:
                     return a.footer == b.footer && a.count == b.count;
             }

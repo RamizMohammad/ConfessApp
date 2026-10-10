@@ -11,6 +11,7 @@ import in.mohammad.ramiz.confess.data.api.Calls;
 import in.mohammad.ramiz.confess.data.model.Comment;
 import in.mohammad.ramiz.confess.data.model.CommentPage;
 import in.mohammad.ramiz.confess.data.model.CreatePostRequest;
+import in.mohammad.ramiz.confess.data.model.LikeRequest;
 import in.mohammad.ramiz.confess.data.model.LikeState;
 import in.mohammad.ramiz.confess.data.model.LikerPage;
 import in.mohammad.ramiz.confess.data.model.Post;
@@ -24,9 +25,12 @@ public final class PostRepository {
 
     public static final String SORT_LATEST = "latest";
     public static final String SORT_TOP = "top";
+    public static final String SCOPE_ALL = "all";
+    public static final String SCOPE_FOLLOWING = "following";
 
-    public Call<PostPage> feed(@NonNull String sort, @Nullable String cursor, @NonNull ApiCallback<PostPage> cb) {
-        return Calls.enqueue(ApiClient.api().feed(sort, cursor, null), cb);
+    public Call<PostPage> feed(@NonNull String sort, @NonNull String scope, @Nullable String cursor,
+                               @NonNull ApiCallback<PostPage> cb) {
+        return Calls.enqueue(ApiClient.api().feed(sort, scope, cursor, null), cb);
     }
 
     public Call<PostPage> myPosts(@Nullable String cursor, @NonNull ApiCallback<PostPage> cb) {
@@ -48,7 +52,14 @@ public final class PostRepository {
 
     /** Idempotent on the server: safe to call again after a flaky network. */
     public Call<LikeState> setFelt(@NonNull String postId, boolean felt, @NonNull ApiCallback<LikeState> cb) {
-        return Calls.enqueue(felt ? ApiClient.api().like(postId) : ApiClient.api().unlike(postId), cb);
+        return setReaction(postId, felt ? "felt" : null, cb);
+    }
+
+    /** reaction null → remove mine; otherwise set (or switch to) that reaction. */
+    public Call<LikeState> setReaction(@NonNull String postId, @Nullable String reaction, @NonNull ApiCallback<LikeState> cb) {
+        return Calls.enqueue(reaction != null
+                ? ApiClient.api().like(postId, new LikeRequest(reaction))
+                : ApiClient.api().unlike(postId), cb);
     }
 
     /** Who felt my confession, newest first (writer only). */

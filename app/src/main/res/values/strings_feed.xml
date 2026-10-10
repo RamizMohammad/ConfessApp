@@ -24,6 +24,23 @@
 
     <string name="menu_delete">Delete confession</string>
     <string name="menu_report">Report</string>
+    <string name="menu_report_post">Report confession</string>
+    <string name="menu_report_user">Report @%1$s</string>
+    <string name="report_user_title">Report this person</string>
+    <string name="report_user_subtitle">Their account goes to our moderators. Use this when it\'s about them, not just one confession.</string>
+    <string name="report_user_send">Report person</string>
+    <string name="reported_user">Reported. Our moderators will take a look.</string>
+    <string name="cd_responses_closed">Responses closed</string>
+    <string name="copied">Copied</string>
+    <string name="reaction_felt">Felt</string>
+    <string name="reaction_hug">Hug</string>
+    <string name="reaction_same">Same</string>
+    <string name="reaction_strength">Strength</string>
+    <string name="reaction_tears">Tears</string>
+    <string name="cd_reacted">You reacted: %1$s</string>
+    <string name="cd_react_hint">Long-press for more reactions</string>
+    <string name="cd_report_menu">Report or more</string>
+    <string name="cd_delete_menu">Delete</string>
     <string name="delete_title">Delete this confession?</string>
     <string name="delete_body">It disappears for everyone, along with its responses. This can\'t be undone.</string>
     <string name="deleted">Confession deleted.</string>

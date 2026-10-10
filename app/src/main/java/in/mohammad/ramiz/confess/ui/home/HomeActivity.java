@@ -106,6 +106,8 @@ public class HomeActivity extends BaseActivity {
         if (!SessionManager.get().needsUnlock()) {
             String[] link = DeepLink.consume();
             if (link != null) Nav.post(this, link[0], "1".equals(link[1]));
+            String who = DeepLink.consumeAlias();
+            if (who != null) Nav.profile(this, who);
             checkBiometricAfterReset();
         }
     }
@@ -198,7 +200,7 @@ public class HomeActivity extends BaseActivity {
         if (feed == null || me == null) return;
 
         androidx.fragment.app.FragmentTransaction tx = fm.beginTransaction().setReorderingAllowed(true);
-        if (animate) tx.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        if (animate) tx.setCustomAnimations(R.anim.tab_in, R.anim.tab_out);
         if (TAG_FEED.equals(which)) tx.show(feed).hide(me); else tx.show(me).hide(feed);
         tx.commit();
 

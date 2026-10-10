@@ -70,9 +70,11 @@ public final class Push {
     private static void register(Context app, String token, boolean force) {
         SharedPreferences p = prefs(app);
         p.edit().putString(KEY_TOKEN, token).apply();
+        if (!SessionManager.get().isSignedIn()) return;
+        // The server ties the token to whoever's session sends it, so we don't need the profile
+        // loaded yet (waiting for it used to skip registration on a fresh sign-in → no pushes ever).
         Me me = SessionManager.get().cachedMe();
-        if (!SessionManager.get().isSignedIn() || me == null) return;
-        String pair = me.id + ":" + token.hashCode();
+        String pair = (me != null ? me.id : "session") + ":" + token.hashCode();
         if (!force && pair.equals(p.getString(KEY_REGISTERED_FOR, null))) return;
 
         new ActivityRepository().registerPushToken(token, new ApiCallback<JsonObject>() {

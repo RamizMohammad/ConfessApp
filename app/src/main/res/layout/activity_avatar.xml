@@ -101,6 +101,20 @@
                     app:iconTint="@color/text_secondary" />
             </LinearLayout>
 
+            <!-- Design your own (illustrated avatar studio) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/design"
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:minHeight="44dp"
+                android:text="@string/avs_design"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                app:icon="@drawable/ic_user"
+                app:iconGravity="textStart"
+                app:iconSize="@dimen/icon_size_sm" />
+
             <TextView
                 style="@style/Confess.SectionLabel"
                 android:layout_width="wrap_content"

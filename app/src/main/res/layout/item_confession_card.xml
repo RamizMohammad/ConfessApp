@@ -7,6 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
+    android:stateListAnimator="@animator/press_scale"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/margin_screen"
@@ -26,9 +27,9 @@
         android:paddingStart="@dimen/paper_padding"
         android:paddingTop="@dimen/space_md"
         android:paddingEnd="@dimen/space_sm"
-        android:paddingBottom="@dimen/space_sm">
+        android:paddingBottom="@dimen/space_xs">
 
-        <!-- Header: aura · @alias / time · overflow -->
+        <!-- Header: aura · @alias / time -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,30 +68,9 @@
                     tools:text="2h ago" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/commentsClosed"
-                style="@style/Confess.Tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/space_xs"
-                android:background="@drawable/bg_tag_paper"
-                android:text="@string/comments_closed"
-                android:textColor="@color/paper_meta"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/more"
-                style="@style/Widget.Confess.IconButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/action_more"
-                app:icon="@drawable/ic_more"
-                app:iconTint="@color/paper_meta"
-                app:rippleColor="@color/paper_rule" />
         </LinearLayout>
 
-        <!-- The confession -->
+        <!-- The confession (plain, no quote marks) -->
         <TextView
             android:id="@+id/text"
             android:layout_width="match_parent"
@@ -101,19 +81,13 @@
             android:maxLines="6"
             android:textAppearance="@style/TextAppearance.Confess.Confession.Card"
             android:textColor="@color/paper_ink"
-            tools:text="“I still look for your car at every red light, even though I moved three states away two years ago.”" />
+            tools:text="I still look for your car at every red light, even though I moved three states away two years ago." />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/space_md"
-            android:layout_marginEnd="@dimen/space_md"
-            android:background="@drawable/divider_paper" />
-
-        <!-- Footer: felt · responses -->
+        <!-- Footer: felt · responses (spacing follows the counts) ·············· ⋯ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -122,7 +96,11 @@
                 style="@style/Widget.Confess.Button.Ghost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="-12dp"
+                android:layout_marginStart="-10dp"
+                android:minWidth="0dp"
+                android:minHeight="40dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
                 android:contentDescription="@string/cd_felt"
                 android:textAppearance="@style/TextAppearance.Confess.Meta"
                 android:textColor="@color/paper_meta"
@@ -131,7 +109,7 @@
                 app:iconPadding="6dp"
                 app:iconSize="@dimen/icon_size_sm"
                 app:iconTint="@color/paper_meta"
-                app:rippleColor="@color/paper_rule"
+                app:rippleColor="@android:color/transparent"
                 tools:text="1.4k" />
 
             <com.google.android.material.button.MaterialButton
@@ -139,6 +117,11 @@
                 style="@style/Widget.Confess.Button.Ghost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:minWidth="0dp"
+                android:minHeight="40dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
                 android:contentDescription="@string/cd_responses"
                 android:textAppearance="@style/TextAppearance.Confess.Meta"
                 android:textColor="@color/paper_meta"
@@ -149,6 +132,43 @@
                 app:iconTint="@color/paper_meta"
                 app:rippleColor="@color/paper_rule"
                 tools:text="86" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/more"
+                style="@style/Widget.Confess.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="40dp"
+                android:minHeight="40dp"
+                android:contentDescription="@string/cd_report_menu"
+                app:icon="@drawable/ic_flag"
+                app:iconSize="@dimen/icon_size_sm"
+                app:iconTint="@color/paper_meta"
+                app:rippleColor="@color/paper_rule" />
         </LinearLayout>
     </LinearLayout>
+
+    <!-- Double-tap / like burst: big heart + flying sparks, drawn over the card, never touchable -->
+    <FrameLayout
+        android:id="@+id/burstLayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:importantForAccessibility="no">
+
+        <ImageView
+            android:id="@+id/burst"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_heart_filled"
+            android:visibility="gone"
+            app:tint="@color/amber" />
+    </FrameLayout>
 </com.google.android.material.card.MaterialCardView>

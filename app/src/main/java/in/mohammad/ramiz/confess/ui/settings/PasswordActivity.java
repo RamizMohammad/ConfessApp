@@ -122,7 +122,17 @@ public class PasswordActivity extends BaseActivity {
     private void rule(TextView pill, boolean met) {
         int color = ContextCompat.getColor(this, met ? R.color.sage : R.color.text_muted);
         pill.setTextColor(color);
-        pill.setCompoundDrawablesRelativeWithIntrinsicBounds(met ? R.drawable.ic_check : 0, 0, 0, 0);
+        // A small 14dp tick (the 24dp intrinsic one made the pill taller and pushed the next one off-screen).
+        android.graphics.drawable.Drawable tick = null;
+        if (met) {
+            tick = ContextCompat.getDrawable(this, R.drawable.ic_check);
+            if (tick != null) {
+                tick = tick.mutate();
+                int size = Math.round(14 * getResources().getDisplayMetrics().density);
+                tick.setBounds(0, 0, size, size);
+            }
+        }
+        pill.setCompoundDrawablesRelative(tick, null, null, null);
         pill.setCompoundDrawableTintList(ColorStateList.valueOf(color));
     }
 

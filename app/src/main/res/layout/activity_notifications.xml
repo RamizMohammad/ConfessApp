@@ -66,15 +66,47 @@
             app:iconPadding="6dp"
             app:iconSize="@dimen/icon_size_sm"
             tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/settings"
+            style="@style/Widget.Confess.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_notification_settings"
+            app:icon="@drawable/ic_settings"
+            app:iconTint="@color/text_secondary" />
     </LinearLayout>
 
-    <!-- Filters -->
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/filters"
+    <!-- Scope (Everyone / Following) -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingHorizontal="@dimen/margin_screen"
+        android:paddingBottom="@dimen/space_sm">
+
+        <include
+            android:id="@+id/scope"
+            layout="@layout/view_scope_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- Filters (scroll sideways on narrow phones) -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never"
         android:paddingBottom="@dimen/space_xs"
+        android:scrollbars="none">
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/filters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/margin_screen"
+        android:paddingEnd="@dimen/space_sm"
         app:chipSpacingHorizontal="@dimen/space_sm"
         app:selectionRequired="true"
         app:singleLine="true"
@@ -109,7 +141,19 @@
             app:chipIconSize="16dp"
             app:chipIconTint="@color/sl_chip_text"
             app:chipIconVisible="true" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/filterFollows"
+            style="@style/Widget.Confess.Chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notif_filter_follows"
+            app:chipIcon="@drawable/ic_user"
+            app:chipIconSize="16dp"
+            app:chipIconTint="@color/sl_chip_text"
+            app:chipIconVisible="true" />
     </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
 
     <FrameLayout
         android:layout_width="match_parent"

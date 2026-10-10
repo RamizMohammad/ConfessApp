@@ -38,6 +38,7 @@ public class PersonAdapter extends ListAdapter<UserSummary, PersonAdapter.Holder
     public void onBindViewHolder(@NonNull Holder h, int position) {
         UserSummary u = getItem(position);
         h.b.avatar.setAvatar(u.avatar);
+        h.b.avatar.setStoryAlias(u.alias);
         h.b.alias.setText("@" + u.alias);
         boolean hasAbout = u.about != null && !u.about.trim().isEmpty();
         h.b.about.setVisibility(hasAbout ? View.VISIBLE : View.GONE);

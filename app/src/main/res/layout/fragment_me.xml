@@ -140,12 +140,77 @@
                         app:iconSize="@dimen/icon_size_sm" />
                 </LinearLayout>
 
-                <!-- Letters -->
+                <!-- Following · Followers -->
                 <LinearLayout
-                    android:id="@+id/cardLetters"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_lg"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/cardFollowing"
+                        android:stateListAnimator="@animator/press_scale"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_me_card"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/space_md"
+                        android:paddingVertical="@dimen/space_12">
+
+                        <TextView
+                            android:id="@+id/followingCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Confess.Headline"
+                            android:textColor="@color/text_primary"
+                            tools:text="12" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/me_following"
+                            android:textAppearance="@style/TextAppearance.Confess.Meta"
+                            android:textColor="@color/text_muted" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cardFollowers"
+                        android:stateListAnimator="@animator/press_scale"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/space_12"
+                        android:background="@drawable/bg_me_card"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/space_md"
+                        android:paddingVertical="@dimen/space_12">
+
+                        <TextView
+                            android:id="@+id/followersCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Confess.Headline"
+                            android:textColor="@color/text_primary"
+                            tools:text="12" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/me_followers"
+                            android:textAppearance="@style/TextAppearance.Confess.Meta"
+                            android:textColor="@color/text_muted" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Letters -->
+                <LinearLayout
+                    android:id="@+id/cardLetters"
+                    android:stateListAnimator="@animator/press_scale"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12"
                     android:background="@drawable/bg_me_card"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
@@ -200,9 +265,71 @@
                         app:tint="@color/text_muted" />
                 </LinearLayout>
 
+                <!-- Drafts (unsent, on this phone) -->
+                <LinearLayout
+                    android:id="@+id/cardDrafts"
+                    android:stateListAnimator="@animator/press_scale"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12"
+                    android:background="@drawable/bg_me_card"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/space_md">
+
+                    <ImageView
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_icon_tile"
+                        android:importantForAccessibility="no"
+                        android:padding="11dp"
+                        android:src="@drawable/ic_pencil"
+                        app:tint="@color/amber" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_md"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/me_card_drafts"
+                            android:textAppearance="@style/TextAppearance.Confess.Body"
+                            android:textColor="@color/text_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/me_card_drafts_sub"
+                            android:textAppearance="@style/TextAppearance.Confess.Meta"
+                            android:textColor="@color/text_muted" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/draftCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_sm"
+                        android:textAppearance="@style/TextAppearance.Confess.Headline"
+                        android:textColor="@color/text_primary"
+                        tools:text="2" />
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size_sm"
+                        android:layout_height="@dimen/icon_size_sm"
+                        android:layout_marginStart="@dimen/space_sm"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/text_muted" />
+                </LinearLayout>
+
                 <!-- Felt -->
                 <LinearLayout
                     android:id="@+id/cardFelt"
+                    android:stateListAnimator="@animator/press_scale"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_12"
@@ -266,6 +393,7 @@
                 <!-- Responses -->
                 <LinearLayout
                     android:id="@+id/cardResponses"
+                    android:stateListAnimator="@animator/press_scale"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_12"
@@ -329,6 +457,7 @@
                 <!-- Settings -->
                 <LinearLayout
                     android:id="@+id/cardSettings"
+                    android:stateListAnimator="@animator/press_scale"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_12"

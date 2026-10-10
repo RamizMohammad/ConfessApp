@@ -12,17 +12,22 @@ import in.mohammad.ramiz.confess.data.model.ChangePasswordRequest;
 import in.mohammad.ramiz.confess.data.model.Comment;
 import in.mohammad.ramiz.confess.data.model.CommentPage;
 import in.mohammad.ramiz.confess.data.model.CreatePostRequest;
+import in.mohammad.ramiz.confess.data.model.CreateStoryRequest;
 import in.mohammad.ramiz.confess.data.model.EnabledRequest;
 import in.mohammad.ramiz.confess.data.model.FeatureRequest;
+import in.mohammad.ramiz.confess.data.model.FollowState;
 import in.mohammad.ramiz.confess.data.model.GoogleTokenRequest;
 import in.mohammad.ramiz.confess.data.model.IntegrityNonce;
+import in.mohammad.ramiz.confess.data.model.LikeRequest;
 import in.mohammad.ramiz.confess.data.model.LikeState;
 import in.mohammad.ramiz.confess.data.model.LikerPage;
 import in.mohammad.ramiz.confess.data.model.MarkReadRequest;
 import in.mohammad.ramiz.confess.data.model.MatchResult;
 import in.mohammad.ramiz.confess.data.model.Me;
 import in.mohammad.ramiz.confess.data.model.NotificationPage;
+import in.mohammad.ramiz.confess.data.model.NotificationPrefs;
 import in.mohammad.ramiz.confess.data.model.PasswordRequest;
+import in.mohammad.ramiz.confess.data.model.PersonPage;
 import in.mohammad.ramiz.confess.data.model.Post;
 import in.mohammad.ramiz.confess.data.model.PostPage;
 import in.mohammad.ramiz.confess.data.model.PublicProfile;
@@ -30,6 +35,9 @@ import in.mohammad.ramiz.confess.data.model.PushTokenRequest;
 import in.mohammad.ramiz.confess.data.model.RefreshRequest;
 import in.mohammad.ramiz.confess.data.model.RegisterRequest;
 import in.mohammad.ramiz.confess.data.model.ReportRequest;
+import in.mohammad.ramiz.confess.data.model.Story;
+import in.mohammad.ramiz.confess.data.model.StoryTray;
+import in.mohammad.ramiz.confess.data.model.StoryViewers;
 import in.mohammad.ramiz.confess.data.model.TextRequest;
 import in.mohammad.ramiz.confess.data.model.UnreadCount;
 import in.mohammad.ramiz.confess.data.model.UserSearchResult;
@@ -129,6 +137,25 @@ public interface ConfessApi {
     @GET("api/v2/users/{alias}")
     Call<PublicProfile> profile(@Path("alias") String alias);
 
+    @POST("api/v2/users/{alias}/follow")
+    Call<FollowState> follow(@Path("alias") String alias);
+
+    @DELETE("api/v2/users/{alias}/follow")
+    Call<FollowState> unfollow(@Path("alias") String alias);
+
+    @POST("api/v2/users/{alias}/report")
+    Call<JsonObject> reportUser(@Path("alias") String alias, @Body ReportRequest body);
+
+    @GET("api/v2/users/me/followers")
+    Call<PersonPage> followers(@Query("cursor") @Nullable String cursor);
+
+    @GET("api/v2/users/me/following")
+    Call<PersonPage> following(@Query("cursor") @Nullable String cursor);
+
+    /** Partial: only non-null switches change. Returns all six. */
+    @POST("api/v2/users/me/notifications")
+    Call<NotificationPrefs> setNotificationPrefs(@Body NotificationPrefs body);
+
     @GET("api/v2/users/{alias}/posts")
     Call<PostPage> postsByAlias(@Path("alias") String alias,
                                 @Query("cursor") @Nullable String cursor,
@@ -138,9 +165,10 @@ public interface ConfessApi {
     @POST("api/v2/posts")
     Call<Post> createPost(@Body CreatePostRequest body);
 
-    /** sort: "latest" | "top" (most felt, last 7 days). */
+    /** sort: "latest" | "top" (most felt, last 7 days) · scope: "all" | "following". */
     @GET("api/v2/posts/feed")
     Call<PostPage> feed(@Query("sort") String sort,
+                        @Query("scope") String scope,
                         @Query("cursor") @Nullable String cursor,
                         @Query("limit") @Nullable Integer limit);
 
@@ -155,7 +183,7 @@ public interface ConfessApi {
     Call<JsonObject> deletePost(@Path("postId") String postId);
 
     @POST("api/v2/posts/{postId}/like")
-    Call<LikeState> like(@Path("postId") String postId);
+    Call<LikeState> like(@Path("postId") String postId, @Body LikeRequest body);
 
     @DELETE("api/v2/posts/{postId}/like")
     Call<LikeState> unlike(@Path("postId") String postId);
@@ -178,9 +206,35 @@ public interface ConfessApi {
     @DELETE("api/v2/comments/{commentId}")
     Call<JsonObject> deleteComment(@Path("commentId") String commentId);
 
+    // ── Stories ───────────────────────────────────────────────────────────
+    @GET("api/v2/stories")
+    Call<StoryTray> storyTray();
+
+    @POST("api/v2/stories")
+    Call<Story> createStory(@Body CreateStoryRequest body);
+
+    @POST("api/v2/stories/{id}/view")
+    Call<JsonObject> viewStory(@Path("id") String id);
+
+    @DELETE("api/v2/stories/{id}")
+    Call<JsonObject> deleteStory(@Path("id") String id);
+
+    @GET("api/v2/stories/{id}/viewers")
+    Call<StoryViewers> storyViewers(@Path("id") String id, @Query("cursor") @Nullable String cursor);
+
+    @POST("api/v2/stories/{id}/react")
+    Call<JsonObject> reactStory(@Path("id") String id, @Body LikeRequest body);
+
+    @DELETE("api/v2/stories/{id}/react")
+    Call<JsonObject> unreactStory(@Path("id") String id);
+
+    @POST("api/v2/stories/{id}/report")
+    Call<JsonObject> reportStory(@Path("id") String id, @Body ReportRequest body);
+
     // ── Notifications ─────────────────────────────────────────────────────
     @GET("api/v2/notifications")
-    Call<NotificationPage> notifications(@Query("cursor") @Nullable String cursor,
+    Call<NotificationPage> notifications(@Query("scope") String scope,
+                                         @Query("cursor") @Nullable String cursor,
                                          @Query("limit") @Nullable Integer limit);
 
     @GET("api/v2/notifications/unread-count")

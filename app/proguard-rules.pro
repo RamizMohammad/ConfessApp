@@ -38,3 +38,6 @@
 }
 # Keep source-file/line info out of the APK; map files stay on the build machine.
 -renamesourcefileattribute ''
+
+# Drafts are stored as JSON (Gson reflection).
+-keep class in.mohammad.ramiz.confess.data.drafts.Drafts$Draft { *; }

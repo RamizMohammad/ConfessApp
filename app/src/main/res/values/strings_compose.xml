@@ -39,8 +39,8 @@
     <string name="mod_unavailable_body">Every confession is checked before it goes out. Nothing was posted — try again in a moment.</string>
 
     <!-- Leaving -->
-    <string name="compose_leave_title">Leave this confession?</string>
-    <string name="compose_leave_body">You can keep it as a draft on this phone and finish it later.</string>
-    <string name="compose_leave_keep">Keep draft</string>
     <string name="compose_leave_discard">Discard</string>
+    <string name="compose_saved_to_drafts">Saved to drafts</string>
+    <string name="compose_discard_title">Discard this confession?</string>
+    <string name="compose_discard_body">It won\'t be kept in your drafts.</string>
 </resources>

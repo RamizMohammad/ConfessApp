@@ -17,16 +17,18 @@ import in.mohammad.ramiz.confess.core.ActivityEvents;
 import in.mohammad.ramiz.confess.core.Haptics;
 import in.mohammad.ramiz.confess.data.api.ApiException;
 import in.mohammad.ramiz.confess.data.model.Notification;
+import in.mohammad.ramiz.confess.data.repo.PostRepository;
 import in.mohammad.ramiz.confess.databinding.ActivityNotificationsBinding;
 import in.mohammad.ramiz.confess.ui.base.BaseActivity;
 import in.mohammad.ramiz.confess.ui.nav.Nav;
 import in.mohammad.ramiz.confess.ui.util.EdgeInsets;
+import in.mohammad.ramiz.confess.ui.util.Motion;
 
 /**
  * S10 · Whispers & Echoes. Old: NotificationPage (a local list of received pushes).
  * Now the real activity from the server: who felt or responded, with read state.
  *
- *  - All / Felt / Responses filter
+ *  - Everyone / Following (only activity by people I follow) · All / Felt / Responses / Follows filter
  *  - tap → marks it read and opens the confession (at the responses for a response)
  *  - "Mark all read"; leaving the screen also marks everything seen as read,
  *    so the bell dot clears
@@ -76,8 +78,13 @@ public class NotificationsActivity extends BaseActivity implements NotificationA
             Haptics.tick(this);
             vm.setFilter(id == R.id.filterFelt ? NotificationsViewModel.Filter.FELT
                     : id == R.id.filterResponses ? NotificationsViewModel.Filter.RESPONSES
+                    : id == R.id.filterFollows ? NotificationsViewModel.Filter.FOLLOWS
                     : NotificationsViewModel.Filter.ALL);
         });
+        b.scope.scopeAll.setOnClickListener(v -> selectScope(PostRepository.SCOPE_ALL));
+        b.scope.scopeFollowing.setOnClickListener(v -> selectScope(PostRepository.SCOPE_FOLLOWING));
+        b.settings.setOnClickListener(v -> Nav.notificationSettings(this));
+        showScope();
         b.stateAction.setOnClickListener(v -> vm.refresh());
 
         vm.state().observe(this, this::render);
@@ -95,6 +102,22 @@ public class NotificationsActivity extends BaseActivity implements NotificationA
         vm.start();
     }
 
+    private boolean listEntered = false;
+
+    private void selectScope(String next) {
+        if (next.equals(vm.scope())) return;
+        Haptics.tick(this);
+        vm.setScope(next);
+        listEntered = false;
+        showScope();
+    }
+
+    private void showScope() {
+        boolean everyone = PostRepository.SCOPE_ALL.equals(vm.scope());
+        b.scope.scopeAll.setSelected(everyone);
+        b.scope.scopeFollowing.setSelected(!everyone);
+    }
+
     private void render(@Nullable NotificationsViewModel.State s) {
         if (s == null) return;
         shown = s;
@@ -109,7 +132,11 @@ public class NotificationsActivity extends BaseActivity implements NotificationA
 
         boolean filteredEmpty = s.screen == NotificationsViewModel.Screen.CONTENT && s.items.isEmpty()
                 && s.footer == NotificationsViewModel.Footer.END;
-        if (s.screen == NotificationsViewModel.Screen.EMPTY || filteredEmpty) {
+        boolean following = PostRepository.SCOPE_FOLLOWING.equals(vm.scope());
+        if (following && (s.screen == NotificationsViewModel.Screen.EMPTY || filteredEmpty)) {
+            showState(R.drawable.ic_user, getString(R.string.notif_following_empty_title),
+                    getString(R.string.notif_following_empty_body), false);
+        } else if (s.screen == NotificationsViewModel.Screen.EMPTY || filteredEmpty) {
             showState(R.drawable.ic_mail_open, getString(R.string.notif_empty_title),
                     getString(filteredEmpty ? R.string.notif_empty_filtered : R.string.notif_empty_body), false);
         } else if (s.screen == NotificationsViewModel.Screen.ERROR) {
@@ -122,7 +149,13 @@ public class NotificationsActivity extends BaseActivity implements NotificationA
         b.list.setVisibility(s.screen == NotificationsViewModel.Screen.CONTENT && !filteredEmpty
                 ? View.VISIBLE : View.INVISIBLE);
 
-        adapter.submit(this, s.items, s.footer, this::maybeLoadMore);
+        adapter.submit(this, s.items, s.footer, () -> {
+            if (!listEntered && s.screen == NotificationsViewModel.Screen.CONTENT && !s.items.isEmpty()) {
+                listEntered = true;
+                Motion.enterList(b.list);
+            }
+            maybeLoadMore();
+        });
     }
 
     private void showState(int icon, String title, String body, boolean retry) {
@@ -142,7 +175,9 @@ public class NotificationsActivity extends BaseActivity implements NotificationA
     @Override
     public void onOpen(@NonNull Notification n) {
         vm.markRead(n);
-        if (n.postId != null) {
+        if (Notification.TYPE_FOLLOW.equals(n.type)) {
+            if (n.actor != null && n.actor.alias != null) Nav.profile(this, n.actor.alias);
+        } else if (n.postId != null) {
             Nav.post(this, n.postId, Notification.TYPE_COMMENT.equals(n.type));
         }
     }

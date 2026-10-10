@@ -19,6 +19,7 @@ import in.mohammad.ramiz.confess.data.api.ApiException;
 import in.mohammad.ramiz.confess.data.model.Notification;
 import in.mohammad.ramiz.confess.data.model.NotificationPage;
 import in.mohammad.ramiz.confess.data.repo.ActivityRepository;
+import in.mohammad.ramiz.confess.data.repo.PostRepository;
 import retrofit2.Call;
 
 /**
@@ -31,7 +32,7 @@ public class NotificationsViewModel extends ViewModel {
 
     public enum Footer { NONE, LOADING, ERROR, END }
 
-    public enum Filter { ALL, FELT, RESPONSES }
+    public enum Filter { ALL, FELT, RESPONSES, FOLLOWS }
 
     public static final class State {
         @NonNull public final Screen screen;
@@ -63,6 +64,8 @@ public class NotificationsViewModel extends ViewModel {
     private Screen screen = Screen.LOADING;
     private Footer footer = Footer.NONE;
     private Filter filter = Filter.ALL;
+    /** PostRepository.SCOPE_ALL or SCOPE_FOLLOWING (only activity by people I follow). */
+    private String scope = PostRepository.SCOPE_ALL;
     private boolean refreshing, loaded;
     @Nullable private String cursor;
     @Nullable private ApiException error;
@@ -87,7 +90,7 @@ public class NotificationsViewModel extends ViewModel {
 
     private void loadFirst() {
         if (moreCall != null) { moreCall.cancel(); moreCall = null; }
-        firstCall = repo.notifications(null, new ApiCallback<NotificationPage>() {
+        firstCall = repo.notifications(scope, null, new ApiCallback<NotificationPage>() {
             @Override
             public void onSuccess(NotificationPage page) {
                 firstCall = null;
@@ -117,7 +120,7 @@ public class NotificationsViewModel extends ViewModel {
         if (!loaded || cursor == null || moreCall != null || firstCall != null || footer == Footer.ERROR) return;
         footer = Footer.LOADING;
         publish();
-        moreCall = repo.notifications(cursor, new ApiCallback<NotificationPage>() {
+        moreCall = repo.notifications(scope, cursor, new ApiCallback<NotificationPage>() {
             @Override
             public void onSuccess(NotificationPage page) {
                 moreCall = null;
@@ -139,6 +142,28 @@ public class NotificationsViewModel extends ViewModel {
     public void retryMore() {
         if (footer == Footer.ERROR) footer = Footer.NONE;
         loadMore();
+    }
+
+    /** Everyone / Following: a different list from the server, so start over. */
+    public void setScope(@NonNull String next) {
+        if (next.equals(scope)) return;
+        scope = next;
+        if (firstCall != null) { firstCall.cancel(); firstCall = null; }
+        if (moreCall != null) { moreCall.cancel(); moreCall = null; }
+        all.clear();
+        cursor = null;
+        loaded = false;
+        error = null;
+        refreshing = false;
+        footer = Footer.NONE;
+        screen = Screen.LOADING;
+        publish();
+        loadFirst();
+    }
+
+    @NonNull
+    public String scope() {
+        return scope;
     }
 
     public void setFilter(@NonNull Filter f) {
@@ -218,8 +243,14 @@ public class NotificationsViewModel extends ViewModel {
     private void publish() {
         List<Notification> shown = new ArrayList<>();
         for (Notification n : all) {
-            boolean like = Notification.TYPE_LIKE.equals(n.type);
-            if (filter == Filter.ALL || (filter == Filter.FELT && like) || (filter == Filter.RESPONSES && !like)) {
+            boolean keep;
+            switch (filter) {
+                case FELT: keep = Notification.TYPE_LIKE.equals(n.type); break;
+                case RESPONSES: keep = Notification.TYPE_COMMENT.equals(n.type); break;
+                case FOLLOWS: keep = Notification.TYPE_FOLLOW.equals(n.type); break;
+                default: keep = true;
+            }
+            if (keep) {
                 shown.add(n);
             }
         }

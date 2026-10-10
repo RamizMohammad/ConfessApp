@@ -1,5 +1,6 @@
 package in.mohammad.ramiz.confess.ui.components;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -11,9 +12,13 @@ import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.RadialGradient;
 import android.graphics.Shader;
+import android.graphics.SweepGradient;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.SoundEffectConstants;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +31,7 @@ import com.bumptech.glide.request.transition.Transition;
 import java.util.Random;
 
 import in.mohammad.ramiz.confess.R;
+import in.mohammad.ramiz.confess.ui.stories.StoryRings;
 
 /**
  * Circular generative avatar ("aura"). Usage:
@@ -42,8 +48,12 @@ import in.mohammad.ramiz.confess.R;
  * An https value is an uploaded photo ({server}/media/avatars/<id>): it is
  * loaded with Glide (thumb or medium, by size) and drawn in the same circle;
  * a stable aura from the URL's hash shows while it loads or if it fails.
+ *
+ * Story ring: {@code avatarView.setStoryAlias(alias)} — while that person has a live
+ * story the avatar shrinks a little inside a glowing amber ring (soft amber once
+ * everything is seen), and tapping it opens their stories instead of the usual click.
  */
-public class AuraAvatarView extends View {
+public class AuraAvatarView extends View implements StoryRings.Listener {
 
     private static final float RING_GAP_DP = 3f;
     private static final float RING_WIDTH_DP = 2f;
@@ -69,6 +79,19 @@ public class AuraAvatarView extends View {
     @Nullable private String photoUrl;
     @Nullable private Bitmap photo;
     @Nullable private CustomTarget<Bitmap> photoTarget;
+    /** Designed avatar, drawn by AvatarRenderer at this view's size. */
+    @Nullable private AvatarSpec customSpec;
+
+    // Story ring
+    private static final long STORY_ANIM_MS = 260;
+    private final Paint storyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    @Nullable private String storyAlias;
+    private int storyState = StoryRings.NONE;      // what the tray says now
+    private int drawnState = StoryRings.NONE;      // colours on screen (kept while fading out)
+    private float storyProgress = 0f;              // 0 = no ring, 1 = full ring
+    @Nullable private ValueAnimator storyAnim;
+    private float storyStroke, storyRingR, storyScale = 1f;
+    private boolean ownClick;
 
     public AuraAvatarView(Context context) {
         this(context, null);
@@ -91,6 +114,8 @@ public class AuraAvatarView extends View {
         ring.setColor(ContextCompat.getColor(context, R.color.amber));
 
         grain.setStyle(Paint.Style.FILL);
+        storyPaint.setStyle(Paint.Style.STROKE);
+        storyPaint.setStrokeCap(Paint.Cap.ROUND);
 
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AuraAvatarView, defStyleAttr, 0);
@@ -110,12 +135,28 @@ public class AuraAvatarView extends View {
     /** Server avatar value: "aura_01"…"aura_12" (or anything — falls back by hash). */
     public void setAvatar(@Nullable String value) {
         setAura(Aura.resolve(value));
+        if (AvatarSpec.isSpec(value)) {                       // a designed avatar ("av1:…")
+            AvatarSpec spec = AvatarSpec.parse(value);
+            if (spec.equals(customSpec) && photo != null) return;
+            cancelPhoto();
+            photoUrl = null;
+            customSpec = spec;
+            renderCustom();
+            invalidate();
+            return;
+        }
+        if (customSpec != null) {
+            customSpec = null;
+            photo = null;
+            updatePhotoShader();
+        }
         String url = value != null && value.startsWith("https://") ? value.trim() : null;
         setPhoto(url);
     }
 
     /** Show a photo picked on this phone (Edit profile preview, before upload). */
     public void setLocalPhoto(@Nullable Bitmap bitmap) {
+        customSpec = null;
         cancelPhoto();
         photoUrl = null;
         photo = bitmap;
@@ -162,6 +203,12 @@ public class AuraAvatarView extends View {
         }
     }
 
+    private void renderCustom() {
+        if (customSpec == null || r <= 0) return;
+        photo = AvatarRenderer.bitmap(customSpec, Math.round(r * 2));
+        updatePhotoShader();
+    }
+
     private void cancelPhoto() {
         if (photoTarget != null) {
             try {
@@ -188,6 +235,145 @@ public class AuraAvatarView extends View {
         photoPaint.setShader(shader);
     }
 
+    // ── Story ring ──────────────────────────────────────────────────────────
+
+    /** Whose stories this avatar stands for (null = never show a ring). Cheap to call on every bind. */
+    public void setStoryAlias(@Nullable String alias) {
+        String a = alias == null || alias.trim().isEmpty() ? null : alias.trim();
+        storyAlias = a;
+        if (isAttachedToWindow()) {
+            if (a != null) StoryRings.addListener(this);
+            else StoryRings.removeListener(this);
+        }
+        applyStoryState(false);                      // recycled rows snap, never animate
+    }
+
+    @Override
+    public void onStoryRingsChanged() {
+        applyStoryState(true);
+    }
+
+    private void applyStoryState(boolean animate) {
+        int s = selectedRing ? StoryRings.NONE : StoryRings.state(storyAlias);
+        boolean changed = s != storyState;
+        storyState = s;
+        if (s != StoryRings.NONE) drawnState = s;
+        updateClickable();
+        float target = s == StoryRings.NONE ? 0f : 1f;
+        if (!changed && storyAnim == null && storyProgress == target) return;   // same as drawn
+        if (storyAnim != null) {
+            storyAnim.cancel();
+            storyAnim = null;
+        }
+        if (!animate || !isAttachedToWindow() || !isShown()) {
+            storyProgress = target;
+            if (target == 0f) drawnState = StoryRings.NONE;
+            layoutStoryRing();
+            invalidate();
+            return;
+        }
+        ValueAnimator a = ValueAnimator.ofFloat(storyProgress, target);
+        a.setDuration(STORY_ANIM_MS);
+        a.setInterpolator(new DecelerateInterpolator());
+        a.addUpdateListener(v -> {
+            storyProgress = (float) v.getAnimatedValue();
+            layoutStoryRing();
+            invalidate();
+        });
+        a.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(android.animation.Animator animation) {
+                if (storyAnim != animation) return;
+                storyAnim = null;
+                if (storyProgress == 0f) {
+                    drawnState = StoryRings.NONE;
+                    invalidate();
+                }
+            }
+        });
+        storyAnim = a;
+        a.start();
+    }
+
+    /** Ring size scales with the avatar so 28dp rows and the 112dp profile both look right. */
+    private void layoutStoryRing() {
+        if (r <= 0 || drawnState == StoryRings.NONE) {
+            storyScale = 1f;
+            return;
+        }
+        float outer = r;                                       // no selection ring when a story ring shows
+        float stroke = Math.max(1.5f * density, outer * 0.07f);
+        float gap = Math.max(1f * density, outer * 0.05f);
+        float glowPad = Math.max(1.5f * density, outer * 0.08f);
+        storyRingR = outer - glowPad - stroke / 2f;
+        float avatarR = storyRingR - stroke / 2f - gap;
+        storyScale = 1f - storyProgress * (1f - avatarR / outer);
+        storyStroke = drawnState == StoryRings.UNSEEN ? stroke : Math.max(1f * density, stroke * 0.7f);
+        updateStoryPaint(glowPad);
+    }
+
+    private void updateStoryPaint(float glowPad) {
+        int amber = ContextCompat.getColor(getContext(), R.color.amber);
+        storyPaint.setStrokeWidth(storyStroke);
+        if (drawnState == StoryRings.UNSEEN) {
+            int gold = ContextCompat.getColor(getContext(), R.color.story_gold);
+            SweepGradient sweep = new SweepGradient(cx, cy,
+                    new int[]{amber, gold, amber, gold, amber}, null);
+            Matrix m = new Matrix();
+            m.setRotate(-90f, cx, cy);
+            sweep.setLocalMatrix(m);
+            storyPaint.setShader(sweep);
+            storyPaint.setShadowLayer(glowPad * 1.4f, 0f, 0f, (amber & 0x00FFFFFF) | (Math.round(0xC0 * storyProgress) << 24));
+            storyPaint.setAlpha(Math.round(255 * storyProgress));
+        } else {
+            storyPaint.setShader(null);
+            storyPaint.clearShadowLayer();
+            storyPaint.setColor(amber);
+            storyPaint.setAlpha(Math.round(0x70 * storyProgress));
+        }
+    }
+
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        super.setOnClickListener(l);
+        ownClick = l != null;
+        updateClickable();
+    }
+
+    private void updateClickable() {
+        setClickable(ownClick || storyState != StoryRings.NONE);
+    }
+
+    @Override
+    public boolean performClick() {
+        if (storyState != StoryRings.NONE && storyAlias != null && StoryRings.open(getContext(), storyAlias)) {
+            sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
+            playSoundEffect(SoundEffectConstants.CLICK);
+            return true;
+        }
+        return super.performClick();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (storyAlias != null) {
+            StoryRings.addListener(this);
+            applyStoryState(false);
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        StoryRings.removeListener(this);
+        if (storyAnim != null) {
+            storyAnim.cancel();
+            storyAnim = null;
+            storyProgress = storyState == StoryRings.NONE ? 0f : 1f;
+            if (storyProgress == 0f) drawnState = StoryRings.NONE;
+        }
+        super.onDetachedFromWindow();
+    }
+
     public void setAura(@NonNull Aura aura) {
         if (this.aura == aura) return;
         this.aura = aura;
@@ -206,6 +392,7 @@ public class AuraAvatarView extends View {
         if (selectedRing == selected) return;
         selectedRing = selected;
         rebuild();
+        applyStoryState(false);
         invalidate();
     }
 
@@ -261,6 +448,7 @@ public class AuraAvatarView extends View {
 
         clip.reset();
         clip.addCircle(cx, cy, r, Path.Direction.CW);
+        if (customSpec != null) renderCustom();
         updatePhotoShader();
 
         // Film grain: deterministic per aura so it never "shimmers" between frames.
@@ -275,6 +463,7 @@ public class AuraAvatarView extends View {
             grainPoints[i * 2 + 1] = cy + (float) (Math.sin(ang) * dist);
             grainAlphas[i] = 10 + rnd.nextInt(26);
         }
+        layoutStoryRing();
     }
 
     @Override
@@ -282,6 +471,15 @@ public class AuraAvatarView extends View {
         super.onDraw(canvas);
         if (r <= 0) return;
 
+        boolean showStory = drawnState != StoryRings.NONE && storyProgress > 0f;
+        int scaled = canvas.save();
+        if (showStory) canvas.scale(storyScale, storyScale, cx, cy);
+        drawAvatar(canvas);
+        canvas.restoreToCount(scaled);
+        if (showStory) canvas.drawCircle(cx, cy, storyRingR, storyPaint);
+    }
+
+    private void drawAvatar(@NonNull Canvas canvas) {
         if (photo != null && photoPaint.getShader() != null) {
             canvas.drawCircle(cx, cy, r, photoPaint);
             canvas.drawCircle(cx, cy, r - rim.getStrokeWidth() / 2f, rim);

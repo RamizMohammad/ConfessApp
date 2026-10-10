@@ -21,8 +21,10 @@ import retrofit2.Call;
 /** Notifications (now server-side — no local Room table), push registration, feedback. */
 public final class ActivityRepository {
 
-    public Call<NotificationPage> notifications(@Nullable String cursor, @NonNull ApiCallback<NotificationPage> cb) {
-        return Calls.enqueue(ApiClient.api().notifications(cursor, null), cb);
+    /** scope: PostRepository.SCOPE_ALL | SCOPE_FOLLOWING. */
+    public Call<NotificationPage> notifications(@NonNull String scope, @Nullable String cursor,
+                                                @NonNull ApiCallback<NotificationPage> cb) {
+        return Calls.enqueue(ApiClient.api().notifications(scope, cursor, null), cb);
     }
 
     public Call<UnreadCount> unreadCount(@NonNull ApiCallback<UnreadCount> cb) {

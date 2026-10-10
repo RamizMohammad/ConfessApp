@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/toolbar_height"
-        android:paddingHorizontal="@dimen/space_xs">
+        android:paddingHorizontal="@dimen/space_sm">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/back"
@@ -198,7 +198,7 @@
                 android:textAppearance="@style/TextAppearance.Confess.Meta"
                 android:textColor="@color/text_muted" />
 
-            <!-- Photo -->
+            <!-- Avatar (designed in the studio; photo uploads are no longer offered) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -207,7 +207,7 @@
                 android:drawableStart="@drawable/dot_amber"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
-                android:text="@string/edit_photo_label"
+                android:text="@string/avs_label"
                 android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
                 android:textColor="@color/text_secondary" />
 
@@ -230,9 +230,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:minHeight="44dp"
-                        android:text="@string/edit_photo_pick"
+                        android:text="@string/avs_design"
                         android:textAppearance="@style/TextAppearance.Confess.Meta"
-                        app:icon="@drawable/ic_image"
+                        app:icon="@drawable/ic_user"
                         app:iconGravity="textStart"
                         app:iconSize="@dimen/icon_size_sm" />
 
@@ -243,7 +243,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/space_sm"
                         android:minHeight="44dp"
-                        android:text="@string/edit_photo_remove"
+                        android:text="@string/avs_use_aura"
                         android:textAppearance="@style/TextAppearance.Confess.Meta"
                         android:visibility="gone"
                         app:icon="@drawable/ic_close"
@@ -259,7 +259,7 @@
                     android:drawableStart="@drawable/ic_shield"
                     android:drawablePadding="10dp"
                     android:drawableTint="@color/amber"
-                    android:text="@string/edit_photo_note"
+                    android:text="@string/avs_note"
                     android:textAppearance="@style/TextAppearance.Confess.Meta"
                     android:textColor="@color/text_muted" />
 
@@ -273,7 +273,7 @@
                     android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
                     android:textColor="@color/text_primary"
                     android:visibility="gone"
-                    tools:text="This photo can't be used — it shows personal details."
+                    tools:text="Couldn't save your avatar. Try again."
                     tools:visibility="visible" />
             </LinearLayout>
 

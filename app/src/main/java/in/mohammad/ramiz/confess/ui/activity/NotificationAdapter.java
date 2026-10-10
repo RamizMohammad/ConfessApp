@@ -139,26 +139,32 @@ public class NotificationAdapter extends ListAdapter<NotificationAdapter.Row, Re
     private void bindItem(ItemNotificationBinding b, Notification n) {
         Context ctx = b.getRoot().getContext();
         boolean like = Notification.TYPE_LIKE.equals(n.type);
+        boolean follow = Notification.TYPE_FOLLOW.equals(n.type);
+        boolean letter = Notification.TYPE_POST.equals(n.type);
         String alias = "@" + (n.actor != null && n.actor.alias != null ? n.actor.alias : "someone");
         String when = Formats.relative(n.createdAt);
 
         b.avatar.setAvatar(n.actor != null ? n.actor.avatar : null);
-        b.badge.setImageResource(like ? R.drawable.ic_heart_filled : R.drawable.ic_message);
+        b.avatar.setStoryAlias(n.actor != null ? n.actor.alias : null);
+        b.badge.setImageResource(like ? R.drawable.ic_heart_filled : follow ? R.drawable.ic_user
+                : letter ? R.drawable.ic_letters : R.drawable.ic_message);
         b.badge.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx,
-                like ? R.color.amber : R.color.text_secondary)));
+                like || follow ? R.color.amber : letter ? R.color.sage : R.color.text_secondary)));
 
         SpannableStringBuilder line = new SpannableStringBuilder(alias);
         line.setSpan(new ForegroundColorSpan(ContextCompat.getColor(ctx, R.color.amber)), 0, alias.length(),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        line.append(ctx.getString(like ? R.string.notif_felt : R.string.notif_responded));
+        line.append(ctx.getString(like ? R.string.notif_felt : follow ? R.string.notif_followed_you
+                : letter ? R.string.notif_new_letter : R.string.notif_responded));
         b.line.setText(line);
         b.time.setText(when);
 
-        // Excerpt: their response, or (for felt) your confession.
-        String quote = like ? n.postExcerpt : (n.commentExcerpt != null ? n.commentExcerpt : n.postExcerpt);
+        // Excerpt: their response, or (for felt / a new letter) the confession. Nothing for a follow.
+        String quote = follow ? null
+                : (like || letter) ? n.postExcerpt : (n.commentExcerpt != null ? n.commentExcerpt : n.postExcerpt);
         b.quote.setVisibility(quote == null || quote.trim().isEmpty() ? View.GONE : View.VISIBLE);
         b.quote.setText(quote == null ? "" : "“" + quote.trim() + "”");
-        boolean showContext = !like && n.commentExcerpt != null && n.postExcerpt != null;
+        boolean showContext = Notification.TYPE_COMMENT.equals(n.type) && n.commentExcerpt != null && n.postExcerpt != null;
         b.context.setVisibility(showContext ? View.VISIBLE : View.GONE);
         if (showContext) b.context.setText(ctx.getString(R.string.notif_on, n.postExcerpt.trim()));
 
@@ -167,8 +173,9 @@ public class NotificationAdapter extends ListAdapter<NotificationAdapter.Row, Re
         b.card.setCardBackgroundColor(ContextCompat.getColor(ctx, n.read ? R.color.ink : R.color.surface_raised));
         b.line.setTextColor(ContextCompat.getColor(ctx, n.read ? R.color.text_secondary : R.color.text_primary));
 
-        b.card.setContentDescription(ctx.getString(like ? R.string.notif_cd_felt : R.string.notif_cd_responded,
-                alias, when));
+        b.card.setContentDescription(ctx.getString(like ? R.string.notif_cd_felt
+                : follow ? R.string.notif_cd_followed : letter ? R.string.notif_cd_new_letter
+                : R.string.notif_cd_responded, alias, when));
         b.card.setOnClickListener(v -> listener.onOpen(n));
     }
 

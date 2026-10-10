@@ -3,10 +3,8 @@ package in.mohammad.ramiz.confess.ui.feed;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,11 +25,20 @@ import in.mohammad.ramiz.confess.R;
 import in.mohammad.ramiz.confess.core.ActivityEvents;
 import in.mohammad.ramiz.confess.core.Haptics;
 import in.mohammad.ramiz.confess.data.model.Post;
+import in.mohammad.ramiz.confess.data.model.Me;
 import in.mohammad.ramiz.confess.data.repo.PostRepository;
+import in.mohammad.ramiz.confess.data.session.SessionManager;
 import in.mohammad.ramiz.confess.databinding.FragmentFeedBinding;
 import in.mohammad.ramiz.confess.ui.home.HomeActivity;
 import in.mohammad.ramiz.confess.ui.nav.Nav;
 import in.mohammad.ramiz.confess.ui.util.EdgeInsets;
+import in.mohammad.ramiz.confess.ui.util.Motion;
+import in.mohammad.ramiz.confess.data.api.ApiCallback;
+import in.mohammad.ramiz.confess.data.api.ApiException;
+import in.mohammad.ramiz.confess.data.model.StoryTray;
+import in.mohammad.ramiz.confess.data.repo.StoryRepository;
+import in.mohammad.ramiz.confess.ui.stories.StoryTrayAdapter;
+import in.mohammad.ramiz.confess.ui.stories.StoryTrayCache;
 
 /**
  * S7 · Feed tab. Old: HomeFragment.
@@ -51,6 +58,10 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     private PostAdapter adapter;
     private LinearLayoutManager layout;
     private String sort = PostRepository.SORT_LATEST;
+    /** Everyone (all) or only people I follow — remembered across launches. */
+    private String scope = PostRepository.SCOPE_ALL;
+    private static final String STATE_SCOPE = "scope";
+    private static final String PREF_SCOPE = "feed_scope";
     @Nullable private FeedState shown;
     private final Map<String, Parcelable> scrollBySort = new HashMap<>();
     private final Observer<FeedState> stateObserver = this::render;
@@ -65,11 +76,14 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
         if (state != null) sort = state.getString(STATE_SORT, PostRepository.SORT_LATEST);
+        scope = state != null ? state.getString(STATE_SCOPE, PostRepository.SCOPE_ALL)
+                : requireContext().getSharedPreferences("feed", android.content.Context.MODE_PRIVATE)
+                        .getString(PREF_SCOPE, PostRepository.SCOPE_ALL);
         vm = new ViewModelProvider(this).get(FeedViewModel.class);
         EdgeInsets.padTop(b.topBar);
 
         // List
-        adapter = new PostAdapter(this, () -> vm.retryMore(sort));
+        adapter = new PostAdapter(this, () -> vm.retryMore(key()));
         layout = new LinearLayoutManager(requireContext());
         b.list.setLayoutManager(layout);
         b.list.setAdapter(adapter);
@@ -82,7 +96,10 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
 
         b.refresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.amber));
         b.refresh.setProgressBackgroundColorSchemeColor(ContextCompat.getColor(requireContext(), R.color.surface_high));
-        b.refresh.setOnRefreshListener(() -> vm.refresh(sort));
+        b.refresh.setOnRefreshListener(() -> {
+            vm.refresh(key());
+            loadStories();
+        });
 
         // Top bar
         b.wordmark.setOnClickListener(v -> scrollToTop());
@@ -95,6 +112,9 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
         // Sort tabs
         b.sortLatest.setOnClickListener(v -> selectSort(PostRepository.SORT_LATEST));
         b.sortTop.setOnClickListener(v -> selectSort(PostRepository.SORT_TOP));
+        setupStories();
+        b.scope.scopeAll.setOnClickListener(v -> selectScope(PostRepository.SCOPE_ALL));
+        b.scope.scopeFollowing.setOnClickListener(v -> selectScope(PostRepository.SCOPE_FOLLOWING));
 
         // Messages + report results
         vm.messages().observe(getViewLifecycleOwner(), e -> {
@@ -103,27 +123,33 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
             String text = m.error != null ? m.error.userMessage(requireContext()) : getString(m.res);
             Snackbar.make(b.getRoot(), text, Snackbar.LENGTH_SHORT).show();
         });
-        getChildFragmentManager().setFragmentResultListener(ReportSheet.RESULT, getViewLifecycleOwner(), (key, result) -> {
-            String postId = result.getString(ReportSheet.KEY_POST_ID);
-            String reason = result.getString(ReportSheet.KEY_REASON);
-            if (postId != null && reason != null) vm.report(postId, reason);
-        });
+        getChildFragmentManager().setFragmentResultListener(ReportSheet.RESULT, getViewLifecycleOwner(), (key, result) ->
+                ReportSheet.deliver(requireContext(), result, new ReportSheet.Outcome() {
+                    @Override public void reportPost(@NonNull String postId, @NonNull String reason) { vm.report(postId, reason); }
+                    @Override public void say(@NonNull String text) {
+                        if (b != null) Snackbar.make(b.getRoot(), text, Snackbar.LENGTH_SHORT).show();
+                    }
+                }));
 
         showSortTabs();
-        vm.state(sort).observe(getViewLifecycleOwner(), stateObserver);
-        vm.start(sort);
+        vm.state(key()).observe(getViewLifecycleOwner(), stateObserver);
+        vm.start(key());
     }
 
     @Override
     public void onResume() {
         super.onResume();
         vm.refreshUnread();
+        loadStories();
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (!hidden && vm != null) vm.refreshUnread();
+        if (!hidden && vm != null) {
+            vm.refreshUnread();
+            loadStories();
+        }
     }
 
     // ── Sort ─────────────────────────────────────────────────────────────────
@@ -133,16 +159,78 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
             scrollToTop();
             return;
         }
+        switchTo(next, scope);
+    }
+
+    private void selectScope(String next) {
+        if (next.equals(scope)) {
+            scrollToTop();
+            return;
+        }
+        requireContext().getSharedPreferences("feed", android.content.Context.MODE_PRIVATE)
+                .edit().putString(PREF_SCOPE, next).apply();
+        switchTo(sort, next);
+    }
+
+    private void switchTo(String nextSort, String nextScope) {
         Haptics.tick(requireContext());
         Parcelable pos = layout.onSaveInstanceState();
-        if (pos != null) scrollBySort.put(sort, pos);
-        vm.state(sort).removeObserver(stateObserver);
+        if (pos != null) scrollBySort.put(key(), pos);
+        vm.state(key()).removeObserver(stateObserver);
 
-        sort = next;
+        sort = nextSort;
+        scope = nextScope;
         shown = null;
+        listEntered = false;
         showSortTabs();
-        vm.state(sort).observe(getViewLifecycleOwner(), stateObserver);
-        vm.start(sort);
+        vm.state(key()).observe(getViewLifecycleOwner(), stateObserver);
+        vm.start(key());
+    }
+
+    // ── Stories ──────────────────────────────────────────────────────────────
+
+    private final StoryRepository stories = new StoryRepository();
+    @Nullable private StoryTrayAdapter storyAdapter;
+    @Nullable private retrofit2.Call<StoryTray> storyCall;
+
+    private void setupStories() {
+        storyAdapter = new StoryTrayAdapter(new StoryTrayAdapter.Listener() {
+            @Override public void onOpenStories(int groupIndex) {
+                Nav.stories(requireContext(), groupIndex);
+            }
+            @Override public void onAddStory() {
+                Nav.composeStory(requireContext());
+            }
+        });
+        b.stories.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        b.stories.setAdapter(storyAdapter);
+        b.stories.setItemAnimator(null);
+        // Show what we had (e.g. after the viewer marked some seen) while the fresh tray loads.
+        storyAdapter.submit(SessionManager.get().cachedMe(), StoryTrayCache.get());
+    }
+
+    /** Reload the tray (on resume, on pull-to-refresh). */
+    private void loadStories() {
+        if (b == null || storyAdapter == null) return;
+        storyAdapter.submit(SessionManager.get().cachedMe(), StoryTrayCache.get());
+        if (storyCall != null) storyCall.cancel();
+        storyCall = stories.tray(new ApiCallback<StoryTray>() {
+            @Override public void onSuccess(StoryTray tray) {
+                storyCall = null;
+                StoryTrayCache.set(tray.people);
+                if (b != null && storyAdapter != null) {
+                    storyAdapter.submit(SessionManager.get().cachedMe(), tray.people);
+                }
+            }
+            @Override public void onError(ApiException e) {
+                storyCall = null;                     // the feed itself shows connection problems
+            }
+        });
+    }
+
+    /** ViewModel tab for the current sort + scope. */
+    private String key() {
+        return FeedViewModel.key(sort, scope);
     }
 
     private void showSortTabs() {
@@ -155,10 +243,15 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
         b.sortTopLine.setVisibility(latest ? View.INVISIBLE : View.VISIBLE);
         b.sortLatest.setSelected(latest);
         b.sortTop.setSelected(!latest);
-        b.sortHint.setVisibility(latest ? View.INVISIBLE : View.VISIBLE);
+        boolean everyone = PostRepository.SCOPE_ALL.equals(scope);
+        b.scope.scopeAll.setSelected(everyone);
+        b.scope.scopeFollowing.setSelected(!everyone);
     }
 
     // ── Render ───────────────────────────────────────────────────────────────
+
+    /** The first page eases in once; later updates don't animate. */
+    private boolean listEntered = false;
 
     private void render(@Nullable FeedState s) {
         if (s == null || b == null) return;
@@ -182,9 +275,13 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
         adapter.submit(s.posts, s.footer, () -> {
             if (b == null) return;
             if (firstForSort) {
-                Parcelable saved = scrollBySort.remove(sort);
+                Parcelable saved = scrollBySort.remove(key());
                 if (saved != null) layout.onRestoreInstanceState(saved);
                 else layout.scrollToPosition(0);
+            }
+            if (!listEntered && s.screen == FeedState.Screen.CONTENT && !s.posts.isEmpty()) {
+                listEntered = true;
+                Motion.enterList(b.list);
             }
             maybeLoadMore();              // short page that doesn't fill the screen
         });
@@ -193,6 +290,17 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     private void showEmpty() {
         boolean latest = PostRepository.SORT_LATEST.equals(sort);
         b.state.setVisibility(View.VISIBLE);
+        if (PostRepository.SCOPE_FOLLOWING.equals(scope)) {
+            Me me = SessionManager.get().cachedMe();
+            boolean followsNobody = me == null || me.following == 0;
+            b.stateIcon.setImageResource(R.drawable.ic_user);
+            b.stateTitle.setText(followsNobody ? R.string.feed_following_none_title : R.string.feed_following_empty_title);
+            b.stateBody.setText(followsNobody ? R.string.feed_following_none_body : R.string.feed_following_empty_body);
+            b.stateAction.setText(R.string.feed_following_find);
+            b.stateAction.setIconResource(R.drawable.ic_search);
+            b.stateAction.setOnClickListener(v -> Nav.search(requireContext()));
+            return;
+        }
         b.stateIcon.setImageResource(R.drawable.ic_mail_open);
         b.stateTitle.setText(latest ? R.string.feed_empty_title : R.string.feed_empty_top);
         b.stateBody.setText(R.string.feed_empty_body);
@@ -212,21 +320,21 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
         b.stateBody.setText(s.error != null ? s.error.userMessage(requireContext()) : getString(R.string.error_generic));
         b.stateAction.setText(R.string.action_retry);
         b.stateAction.setIconResource(R.drawable.ic_refresh);
-        b.stateAction.setOnClickListener(v -> vm.refresh(sort));
+        b.stateAction.setOnClickListener(v -> vm.refresh(key()));
     }
 
     private void maybeLoadMore() {
         if (shown == null || shown.screen != FeedState.Screen.CONTENT) return;
         int last = layout.findLastVisibleItemPosition();
-        if (last != RecyclerView.NO_POSITION && last >= adapter.getItemCount() - PREFETCH) vm.loadMore(sort);
+        if (last != RecyclerView.NO_POSITION && last >= adapter.getItemCount() - PREFETCH) vm.loadMore(key());
     }
 
     /** Just released from the composer: show Latest from the top (the new one is first). */
     public void showNewConfession() {
         if (b == null) return;
-        if (!PostRepository.SORT_LATEST.equals(sort)) {
+        if (!PostRepository.SORT_LATEST.equals(sort) || !PostRepository.SCOPE_ALL.equals(scope)) {
             scrollBySort.remove(PostRepository.SORT_LATEST);
-            selectSort(PostRepository.SORT_LATEST);
+            switchTo(PostRepository.SORT_LATEST, PostRepository.SCOPE_ALL);
         }
         b.list.scrollToPosition(0);
         // The new card is inserted by an async diff; follow it up once it lands.
@@ -259,19 +367,19 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     }
 
     @Override
+    public void onReact(@NonNull Post post, @NonNull String reaction) {
+        vm.react(post, reaction);
+    }
+
+    @Override
     public void onMore(@NonNull Post post, @NonNull View anchor) {
-        PopupMenu menu = new PopupMenu(requireContext(), anchor);
-        if (post.isMine) {
-            menu.getMenu().add(Menu.NONE, 1, Menu.NONE, R.string.menu_delete);
-        } else {
-            menu.getMenu().add(Menu.NONE, 2, Menu.NONE, R.string.menu_report);
-        }
-        menu.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == 1) confirmDelete(post);
-            else ReportSheet.show(this, post.postId);
-            return true;
+        PostMenu.show(anchor, post, new PostMenu.Listener() {
+            @Override public void onDelete(@NonNull Post p) { confirmDelete(p); }
+            @Override public void onReportPost(@NonNull Post p) { ReportSheet.show(FeedFragment.this, p.postId); }
+            @Override public void onReportUser(@NonNull Post p, @NonNull String alias) {
+                ReportSheet.showUser(getChildFragmentManager(), alias);
+            }
         });
-        menu.show();
     }
 
     private void confirmDelete(Post post) {
@@ -289,10 +397,14 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     public void onSaveInstanceState(@NonNull Bundle out) {
         super.onSaveInstanceState(out);
         out.putString(STATE_SORT, sort);
+        out.putString(STATE_SCOPE, scope);
     }
 
     @Override
     public void onDestroyView() {
+        if (storyCall != null) storyCall.cancel();
+        storyCall = null;
+        storyAdapter = null;
         super.onDestroyView();
         b = null;
         shown = null;

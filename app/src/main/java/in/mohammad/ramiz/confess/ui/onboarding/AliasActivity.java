@@ -40,7 +40,8 @@ import retrofit2.Call;
 /**
  * S4 · Choose your alias. Old: AlaisPage (alias + optional password + biometric).
  *
- *  - alias: 3–15 of [A-Za-z0-9_], checked live against users/alias-available (debounced)
+ *  - alias: 3–15 of [A-Za-z0-9_], checked live against users/alias-available (debounced):
+ *    free · taken (→ up to 3 free variations to tap) · not allowed (wording check, with why)
  *  - optional password lock (8–64) with a strength meter
  *  - optional biometric unlock, confirmed with a real BiometricPrompt before it's enabled
  *
@@ -53,7 +54,7 @@ public class AliasActivity extends BaseActivity {
     private static final Pattern ALIAS = Pattern.compile("^[A-Za-z0-9_]{3,15}$");
     private static final long DEBOUNCE_MS = 450;
 
-    private enum Status { RULES, CHECKING, AVAILABLE, TAKEN, OFFLINE }
+    private enum Status { RULES, CHECKING, AVAILABLE, TAKEN, NOT_ALLOWED, OFFLINE }
 
     private ActivityAliasBinding b;
     private final AuthRepository auth = new AuthRepository();
@@ -61,6 +62,8 @@ public class AliasActivity extends BaseActivity {
     @Nullable private Call<AliasAvailability> pending;
     private Status status = Status.RULES;
     private String checkedAlias = "";
+    /** Last answer for checkedAlias (reason + free suggestions). */
+    @Nullable private AliasAvailability lastCheck;
     /** True while we flip the biometric switch ourselves (so the listener doesn't re-prompt). */
     private boolean settingBio = false;
 
@@ -124,6 +127,7 @@ public class AliasActivity extends BaseActivity {
         handler.removeCallbacksAndMessages(null);
         if (pending != null) pending.cancel();
         checkedAlias = "";
+        lastCheck = null;
         if (!ALIAS.matcher(alias).matches()) {
             setStatus(Status.RULES);
             return;
@@ -138,7 +142,11 @@ public class AliasActivity extends BaseActivity {
             public void onSuccess(AliasAvailability a) {
                 if (!alias.equals(currentAlias())) return;      // user kept typing
                 checkedAlias = alias;
-                setStatus(a.valid && a.available ? Status.AVAILABLE : (a.valid ? Status.TAKEN : Status.RULES));
+                lastCheck = a;
+                if (!a.valid) setStatus(Status.RULES);
+                else if (!a.isAllowed()) setStatus(Status.NOT_ALLOWED);
+                else setStatus(a.available ? Status.AVAILABLE : Status.TAKEN);
+                if (status == Status.NOT_ALLOWED || status == Status.TAKEN) Haptics.reject(AliasActivity.this);
             }
 
             @Override
@@ -163,10 +171,51 @@ public class AliasActivity extends BaseActivity {
             case CHECKING:  styleStatus(R.string.alias_checking, R.color.text_secondary, R.color.surface_high, 0); break;
             case AVAILABLE: styleStatus(R.string.alias_available, R.color.sage, R.color.sage_tint, R.drawable.ic_check); break;
             case TAKEN:     styleStatus(R.string.alias_taken, R.color.brick, R.color.brick_tint, R.drawable.ic_close); break;
+            case NOT_ALLOWED: styleStatus(R.string.alias_not_allowed, R.color.brick, R.color.brick_tint, R.drawable.ic_alert); break;
             case OFFLINE:   styleStatus(R.string.alias_offline, R.color.text_secondary, R.color.surface_high, R.drawable.ic_wifi_off); break;
             default:        styleStatus(R.string.alias_rules, R.color.text_muted, R.color.surface_high, 0); break;
         }
+        renderReason();
+        renderFreeSuggestions();
         updateNext();
+    }
+
+    /** Not allowed → one calm line on why. */
+    private void renderReason() {
+        AliasAvailability a = lastCheck;
+        if (status != Status.NOT_ALLOWED || a == null) {
+            b.aliasReason.setVisibility(View.GONE);
+            return;
+        }
+        @StringRes int res = AliasAvailability.REASON_IDENTITY.equals(a.reason) ? R.string.alias_not_allowed_identity
+                : AliasAvailability.REASON_HATEFUL.equals(a.reason) ? R.string.alias_not_allowed_hateful
+                : AliasAvailability.REASON_OFFENSIVE.equals(a.reason) ? R.string.alias_not_allowed_offensive : 0;
+        String text = res != 0 ? getString(res) : (a.message != null ? a.message : getString(R.string.alias_not_allowed));
+        b.aliasReason.setText(text);
+        b.aliasReason.setVisibility(View.VISIBLE);
+    }
+
+    /** Taken → the server's free variations, one tap to use. */
+    private void renderFreeSuggestions() {
+        AliasAvailability a = lastCheck;
+        b.freeSuggestions.removeAllViews();
+        boolean show = status == Status.TAKEN && a != null && a.suggestions != null && !a.suggestions.isEmpty();
+        b.freePanel.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (!show) return;
+        for (String s : a.suggestions) {
+            if (s == null || !ALIAS.matcher(s).matches()) continue;
+            Chip chip = new Chip(this);
+            chip.setText(s);
+            chip.setCheckable(false);
+            chip.setOnClickListener(v -> {
+                Haptics.tick(this);
+                b.aliasInput.setText(s);
+                b.aliasInput.setSelection(s.length());
+            });
+            b.freeSuggestions.addView(chip);
+        }
+        b.freePanel.setAlpha(0f);
+        b.freePanel.animate().alpha(1f).setDuration(160).start();
     }
 
     private void styleStatus(@StringRes int text, @ColorRes int fg, @ColorRes int bg, @DrawableRes int icon) {
@@ -177,7 +226,7 @@ public class AliasActivity extends BaseActivity {
         b.aliasStatus.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, 0, 0, 0);
         b.aliasStatus.setCompoundDrawableTintList(ColorStateList.valueOf(color));
         b.aliasLayout.setBoxStrokeColorStateList(ContextCompat.getColorStateList(this,
-                status == Status.TAKEN ? R.color.brick : R.color.sl_input_stroke));
+                status == Status.TAKEN || status == Status.NOT_ALLOWED ? R.color.brick : R.color.sl_input_stroke));
     }
 
     // ── Suggestions ──────────────────────────────────────────────────────────
@@ -307,6 +356,13 @@ public class AliasActivity extends BaseActivity {
         draft.biometricEnabled = lock && b.bioSwitch.isChecked();
         Haptics.click(this);
         startActivity(new Intent(this, AvatarActivity.class));
+    }
+
+    /** Back from the avatar step (alias taken / not allowed at sign-up): check it again. */
+    @Override
+    protected void onNewIntent(@NonNull Intent intent) {
+        super.onNewIntent(intent);
+        onAliasChanged(currentAlias());
     }
 
     @Override

@@ -9,6 +9,9 @@ import androidx.core.app.ActivityOptionsCompat;
 import in.mohammad.ramiz.confess.R;
 import in.mohammad.ramiz.confess.ui.activity.NotificationsActivity;
 import in.mohammad.ramiz.confess.ui.compose.ComposeActivity;
+import in.mohammad.ramiz.confess.ui.me.DraftsActivity;
+import in.mohammad.ramiz.confess.ui.people.PeopleActivity;
+import in.mohammad.ramiz.confess.ui.settings.NotificationSettingsActivity;
 import in.mohammad.ramiz.confess.ui.me.LettersActivity;
 import in.mohammad.ramiz.confess.ui.me.ReceivedActivity;
 import in.mohammad.ramiz.confess.ui.post.PostDetailActivity;
@@ -16,6 +19,8 @@ import in.mohammad.ramiz.confess.ui.profile.ProfileActivity;
 import in.mohammad.ramiz.confess.ui.search.SearchActivity;
 import in.mohammad.ramiz.confess.ui.settings.EditProfileActivity;
 import in.mohammad.ramiz.confess.ui.settings.SettingsActivity;
+import in.mohammad.ramiz.confess.ui.stories.StoryComposeActivity;
+import in.mohammad.ramiz.confess.ui.stories.StoryViewerActivity;
 
 /**
  * Every in-app jump goes through here, so screens never hard-code each other.
@@ -35,6 +40,44 @@ public final class Nav {
 
     public static Intent composeIntent(@NonNull Context ctx) {
         return new Intent(ctx, ComposeActivity.class);
+    }
+
+    /** Continue a draft (Me → Drafts). */
+    public static void composeDraft(@NonNull Context ctx, @NonNull String draftId) {
+        ctx.startActivity(composeIntent(ctx).putExtra(ComposeActivity.EXTRA_DRAFT_ID, draftId),
+                composeAnimation(ctx).toBundle());
+    }
+
+    public static void drafts(@NonNull Context ctx) {
+        ctx.startActivity(new Intent(ctx, DraftsActivity.class));
+    }
+
+    /** Me → Followers (true) / Following (false). */
+    public static void people(@NonNull Context ctx, boolean followers) {
+        ctx.startActivity(new Intent(ctx, PeopleActivity.class).putExtra(PeopleActivity.EXTRA_FOLLOWERS, followers));
+    }
+
+    /** Stories viewer, starting at this person in the tray (StoryTrayCache). */
+    public static void stories(@NonNull Context ctx, int groupIndex) {
+        ctx.startActivity(new Intent(ctx, StoryViewerActivity.class).putExtra(StoryViewerActivity.EXTRA_GROUP, groupIndex),
+                ActivityOptionsCompat.makeCustomAnimation(ctx, R.anim.story_open, R.anim.stay).toBundle());
+    }
+
+    /** Just one person's stories (tapping a ringed avatar anywhere). */
+    public static void storiesOf(@NonNull Context ctx, int groupIndex) {
+        ctx.startActivity(new Intent(ctx, StoryViewerActivity.class)
+                        .putExtra(StoryViewerActivity.EXTRA_GROUP, groupIndex)
+                        .putExtra(StoryViewerActivity.EXTRA_SINGLE, true),
+                ActivityOptionsCompat.makeCustomAnimation(ctx, R.anim.story_open, R.anim.stay).toBundle());
+    }
+
+    /** New 24-hour story. */
+    public static void composeStory(@NonNull Context ctx) {
+        ctx.startActivity(new Intent(ctx, StoryComposeActivity.class), composeAnimation(ctx).toBundle());
+    }
+
+    public static void notificationSettings(@NonNull Context ctx) {
+        ctx.startActivity(new Intent(ctx, NotificationSettingsActivity.class));
     }
 
     /** The composer slides up over the current screen. */

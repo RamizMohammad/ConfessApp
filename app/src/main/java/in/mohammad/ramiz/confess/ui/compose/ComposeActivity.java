@@ -7,8 +7,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
@@ -27,6 +29,7 @@ import in.mohammad.ramiz.confess.core.PostEvents;
 import in.mohammad.ramiz.confess.data.api.ApiCallback;
 import in.mohammad.ramiz.confess.data.api.ApiException;
 import in.mohammad.ramiz.confess.data.api.ErrorCode;
+import in.mohammad.ramiz.confess.data.drafts.Drafts;
 import in.mohammad.ramiz.confess.data.model.Me;
 import in.mohammad.ramiz.confess.data.model.Post;
 import in.mohammad.ramiz.confess.data.repo.PostRepository;
@@ -53,6 +56,10 @@ import retrofit2.Call;
  */
 public class ComposeActivity extends BaseActivity {
 
+    /** Open this draft (from Me → Drafts) instead of a blank page. */
+    public static final String EXTRA_DRAFT_ID = "draft_id";
+    private static final String STATE_DRAFT_ID = "draft_id";
+
     public static final int MAX_CHARS = 2000;
     private static final int WARN_AT = 1800;
     private static final long DRAFT_DELAY_MS = 700;
@@ -62,6 +69,9 @@ public class ComposeActivity extends BaseActivity {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable saveDraft = this::saveDraftNow;
     @Nullable private String userId;
+    /** The draft being written (Drafts store); null until there's text. */
+    @Nullable private String draftId;
+    private Drafts drafts;
     @Nullable private Call<Post> pending;
     private boolean working = false;
     private boolean finished = false;
@@ -71,6 +81,8 @@ public class ComposeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         b = ActivityComposeBinding.inflate(getLayoutInflater());
         setContentView(b.getRoot());
+        drafts = Drafts.get(this);
+        if (savedInstanceState != null) draftId = savedInstanceState.getString(STATE_DRAFT_ID);
         EdgeInsets.padTop(b.topBar);
         EdgeInsets.padBottom(b.bottom, true);
 
@@ -105,7 +117,7 @@ public class ComposeActivity extends BaseActivity {
         b.allowText.setOnClickListener(v -> b.allow.toggle());
 
         b.release.setOnClickListener(v -> release());
-        b.discard.setOnClickListener(v -> leave());
+        b.discard.setOnClickListener(v -> discard());
         b.help.setOnClickListener(v -> openGuidelines());
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() { leave(); }
@@ -167,9 +179,17 @@ public class ComposeActivity extends BaseActivity {
 
     // ── Draft ────────────────────────────────────────────────────────────────
 
+    /**
+     * Which text to start with:
+     *   opened from Drafts (EXTRA_DRAFT_ID)       → that draft
+     *   left the composer less than a minute ago  → continue that draft
+     *   otherwise                                 → a blank page (drafts wait in Me → Drafts)
+     */
     private void restoreDraft() {
-        ComposeDraft draft = ComposeDraft.load(this, userId);
+        String asked = getIntent().getStringExtra(EXTRA_DRAFT_ID);
+        Drafts.Draft draft = asked != null ? drafts.find(userId, asked) : drafts.takeResumable(userId);
         if (draft == null) return;
+        draftId = draft.id;
         b.input.setText(draft.text);
         b.allow.setChecked(draft.allowResponses);
         showStamp(R.string.compose_draft_restored);
@@ -177,8 +197,8 @@ public class ComposeActivity extends BaseActivity {
 
     private void saveDraftNow() {
         if (finished || b == null) return;
-        ComposeDraft.save(this, userId, text(), b.allow.isChecked());
-        if (!text().trim().isEmpty()) showStamp(R.string.compose_draft_kept);
+        draftId = drafts.save(userId, draftId, text(), b.allow.isChecked());
+        if (draftId != null) showStamp(R.string.compose_draft_kept);
     }
 
     private void showStamp(int res) {
@@ -205,7 +225,7 @@ public class ComposeActivity extends BaseActivity {
             @Override
             public void onSuccess(Post post) {
                 finished = true;
-                ComposeDraft.clear(ComposeActivity.this, userId);
+                drafts.delete(userId, draftId);
                 PostEvents.created(post);
                 setResult(RESULT_OK);
                 close();
@@ -282,28 +302,36 @@ public class ComposeActivity extends BaseActivity {
 
     // ── Leaving ──────────────────────────────────────────────────────────────
 
+    /** Back: whatever was written is kept in Drafts (and resumes if they come straight back). */
     private void leave() {
         if (working) return;
+        handler.removeCallbacks(saveDraft);
+        finished = true;
+        draftId = drafts.save(userId, draftId, text(), b.allow.isChecked());
+        if (draftId != null) {
+            drafts.markLeft(userId, draftId);
+            Toast.makeText(this, R.string.compose_saved_to_drafts, Toast.LENGTH_SHORT).show();
+        }
+        close();
+    }
+
+    /** The Discard button: throw this one away (asks first when there's text). */
+    private void discard() {
+        if (working) return;
         if (text().trim().isEmpty()) {
-            ComposeDraft.clear(this, userId);
+            drafts.delete(userId, draftId);
             finished = true;
             close();
             return;
         }
         new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.compose_leave_title)
-                .setMessage(R.string.compose_leave_body)
-                .setNeutralButton(R.string.action_cancel, null)
-                .setNegativeButton(R.string.compose_leave_discard, (d, w) -> {
-                    finished = true;
+                .setTitle(R.string.compose_discard_title)
+                .setMessage(R.string.compose_discard_body)
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.compose_leave_discard, (d, w) -> {
                     handler.removeCallbacks(saveDraft);
-                    ComposeDraft.clear(this, userId);
-                    close();
-                })
-                .setPositiveButton(R.string.compose_leave_keep, (d, w) -> {
-                    handler.removeCallbacks(saveDraft);
-                    saveDraftNow();
                     finished = true;
+                    drafts.delete(userId, draftId);
                     close();
                 })
                 .show();
@@ -319,11 +347,17 @@ public class ComposeActivity extends BaseActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putString(STATE_DRAFT_ID, draftId);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         if (!finished) {
             handler.removeCallbacks(saveDraft);
-            ComposeDraft.save(this, userId, text(), b.allow.isChecked());
+            draftId = drafts.save(userId, draftId, text(), b.allow.isChecked());
         }
     }
 

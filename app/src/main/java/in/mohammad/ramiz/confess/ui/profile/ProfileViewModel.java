@@ -16,10 +16,12 @@ import java.util.List;
 
 import in.mohammad.ramiz.confess.R;
 import in.mohammad.ramiz.confess.core.Event;
+import in.mohammad.ramiz.confess.core.FollowEvents;
 import in.mohammad.ramiz.confess.core.PostEvents;
 import in.mohammad.ramiz.confess.data.api.ApiCallback;
 import in.mohammad.ramiz.confess.data.api.ApiException;
 import in.mohammad.ramiz.confess.data.api.ErrorCode;
+import in.mohammad.ramiz.confess.data.model.FollowState;
 import in.mohammad.ramiz.confess.data.model.Me;
 import in.mohammad.ramiz.confess.data.model.Post;
 import in.mohammad.ramiz.confess.data.model.PostPage;
@@ -52,9 +54,13 @@ public class ProfileViewModel extends ViewModel {
         @Nullable public final String createdAt;
         public final int postCount;
         @Nullable public final Integer feltCount;
+        public final int followers;
+        public final int following;
+        public final boolean isFollowing;
 
         Header(boolean isMe, @NonNull String alias, @Nullable String about, @Nullable String avatar,
-               @Nullable String createdAt, int postCount, @Nullable Integer feltCount) {
+               @Nullable String createdAt, int postCount, @Nullable Integer feltCount,
+               int followers, int following, boolean isFollowing) {
             this.isMe = isMe;
             this.alias = alias;
             this.about = about;
@@ -62,10 +68,19 @@ public class ProfileViewModel extends ViewModel {
             this.createdAt = createdAt;
             this.postCount = postCount;
             this.feltCount = feltCount;
+            this.followers = followers;
+            this.following = following;
+            this.isFollowing = isFollowing;
         }
 
         Header withPostCount(int n) {
-            return new Header(isMe, alias, about, avatar, createdAt, Math.max(0, n), feltCount);
+            return new Header(isMe, alias, about, avatar, createdAt, Math.max(0, n), feltCount,
+                    followers, following, isFollowing);
+        }
+
+        Header withFollow(boolean nowFollowing, int nowFollowers) {
+            return new Header(isMe, alias, about, avatar, createdAt, postCount, feltCount,
+                    Math.max(0, nowFollowers), following, nowFollowing);
         }
     }
 
@@ -166,7 +181,8 @@ public class ProfileViewModel extends ViewModel {
         } else if (alias != null) {
             users.profile(alias, new ApiCallback<PublicProfile>() {
                 @Override public void onSuccess(PublicProfile p) {
-                    header = new Header(false, p.alias, p.about, p.avatar, p.createdAt, p.postCount, null);
+                    header = new Header(false, p.alias, p.about, p.avatar, p.createdAt, p.postCount, null,
+                            p.followers, p.following, p.isFollowing);
                     screen = Screen.CONTENT;
                     error = null;
                     publish();
@@ -190,7 +206,36 @@ public class ProfileViewModel extends ViewModel {
     }
 
     private static Header fromMe(Me me) {
-        return new Header(true, me.alias, me.about, me.avatar, me.createdAt, me.postCount, me.likesReceived);
+        return new Header(true, me.alias, me.about, me.avatar, me.createdAt, me.postCount, me.likesReceived,
+                me.followers, me.following, false);
+    }
+
+    // ── Follow ───────────────────────────────────────────────────────────────
+
+    private boolean followBusy = false;
+
+    /** Follow / unfollow this person: flips at once, the server's counts settle it. */
+    public void toggleFollow() {
+        Header h = header;
+        if (isMe || h == null || followBusy) return;
+        boolean next = !h.isFollowing;
+        header = h.withFollow(next, h.followers + (next ? 1 : -1));
+        publish();
+        followBusy = true;
+        users.setFollowing(h.alias, next, new ApiCallback<FollowState>() {
+            @Override public void onSuccess(FollowState s) {
+                followBusy = false;
+                if (header != null) header = header.withFollow(s.following, s.followers);
+                publish();
+                FollowEvents.changed(h.alias, s.following, s.followers);
+            }
+            @Override public void onError(ApiException e) {
+                followBusy = false;
+                header = h;                         // back to how it was
+                publish();
+                say(0, e);
+            }
+        });
     }
 
     // ── Letters ──────────────────────────────────────────────────────────────
@@ -244,6 +289,10 @@ public class ProfileViewModel extends ViewModel {
 
     public void toggleFelt(@NonNull Post post) {
         felt.toggle(post);
+    }
+
+    public void react(@NonNull Post post, @NonNull String reaction) {
+        felt.react(post, reaction);
     }
 
     public void delete(@NonNull Post post) {

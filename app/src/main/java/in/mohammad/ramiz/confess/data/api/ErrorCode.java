@@ -15,6 +15,7 @@ public final class ErrorCode {
     public static final String INVALID_CREDENTIALS = "INVALID_CREDENTIALS";
     public static final String NOT_REGISTERED = "NOT_REGISTERED";
     public static final String ALIAS_TAKEN = "ALIAS_TAKEN";
+    public static final String ALIAS_NOT_ALLOWED = "ALIAS_NOT_ALLOWED";
     public static final String ACCOUNT_EXISTS = "ACCOUNT_EXISTS";
     public static final String PASSWORD_NOT_SET = "PASSWORD_NOT_SET";
     public static final String PASSWORD_ALREADY_SET = "PASSWORD_ALREADY_SET";

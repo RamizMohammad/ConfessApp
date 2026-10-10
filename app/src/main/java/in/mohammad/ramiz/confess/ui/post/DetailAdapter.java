@@ -140,6 +140,7 @@ public class DetailAdapter extends ListAdapter<DetailAdapter.Row, RecyclerView.V
         String alias = c.author != null && c.author.alias != null ? c.author.alias : "";
         String avatar = c.author != null ? c.author.avatar : null;
         b.avatar.setAvatar(avatar);
+        b.avatar.setStoryAlias(alias);
         b.alias.setText("@" + alias);
         b.authorTag.setVisibility(c.isPostAuthor ? View.VISIBLE : View.GONE);
         String when = Formats.relative(c.createdAt);
@@ -200,7 +201,8 @@ public class DetailAdapter extends ListAdapter<DetailAdapter.Row, RecyclerView.V
             switch (a.type) {
                 case T_POST:
                     return a.post != null && b.post != null && samePostExceptFelt(a.post, b.post)
-                            && a.post.likedByMe == b.post.likedByMe && a.post.likeCount == b.post.likeCount;
+                            && a.post.likedByMe == b.post.likedByMe && a.post.likeCount == b.post.likeCount
+                            && Objects.equals(a.post.myReaction, b.post.myReaction) && Objects.equals(a.post.reactions, b.post.reactions);
                 case T_HEADER:
                     return a.count == b.count;
                 case T_RESPONSE:
