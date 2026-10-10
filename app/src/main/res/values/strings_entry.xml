@@ -37,8 +37,13 @@
     <string name="guidelines_subtitle">To keep this room kind, safe and anonymous, please read these before you write.</string>
     <string name="guidelines_quote">“Here, write as if speaking only to a flame that will never repeat your voice.”</string>
     <string name="guidelines_points">%1$d points</string>
-    <string name="guidelines_accept">I\'ve read and accept the guidelines</string>
+    <string name="guidelines_accept">I\'m 18 or older, and I accept the guidelines</string>
     <string name="guidelines_continue">Continue to alias</string>
+    <string name="guidelines_updated_title">We\'ve updated our community guidelines</string>
+    <string name="guidelines_reminder_title">A quick reminder</string>
+    <string name="guidelines_reminder_body">Confess stays safe because everyone keeps to the community guidelines: no revealing who anyone is, no hate or threats, nothing sexual involving minors, and no encouraging self-harm. Breaking them can get confessions removed and accounts banned. You can block or report anyone from the flag menu.</string>
+    <string name="guidelines_reminder_read">Read guidelines</string>
+    <string name="guidelines_reminder_ok">Got it</string>
     <string name="guidelines_expired">Your sign-in timed out. Please continue with Google again.</string>
 
     <!-- Placeholders until later sections land -->

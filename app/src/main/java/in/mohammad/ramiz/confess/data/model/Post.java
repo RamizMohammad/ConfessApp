@@ -20,6 +20,11 @@ public class Post {
     @Nullable public Map<String, Integer> reactions;
     public boolean isMine;
     public String createdAt;
+    /** vent · advice · listen · happy · heartbreak, or null. */
+    @Nullable public String mood;
+    /** Unsent letter addressee, or null. */
+    @Nullable public String letterTo;
+    @Nullable public Poll poll;
 
     /** Shallow copy — lists hand out copies so DiffUtil can see what changed. */
     public Post copy() {
@@ -35,6 +40,9 @@ public class Post {
         p.reactions = reactions == null ? null : new HashMap<>(reactions);
         p.isMine = isMine;
         p.createdAt = createdAt;
+        p.mood = mood;
+        p.letterTo = letterTo;
+        p.poll = poll;
         return p;
     }
 }

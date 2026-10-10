@@ -15,7 +15,11 @@ public final class DeepLink {
     /** "X started following you" → their profile. */
     public static final String EXTRA_ALIAS = "deeplink_alias";
 
+    /** "While you were away" → the activity screen. */
+    public static final String EXTRA_ACTIVITY = "deeplink_activity";
+
     @Nullable private static String postId;
+    private static boolean activity;
     @Nullable private static String alias;
     private static boolean toResponses;
 
@@ -27,6 +31,7 @@ public final class DeepLink {
         // Our own notifications use EXTRA_*; ones Android shows while the app is closed carry the raw
         // FCM data keys ("type", "postId", "alias") as extras instead.
         String type = intent.getStringExtra("type");
+        if (intent.getBooleanExtra(EXTRA_ACTIVITY, false) || "digest".equals(type)) activity = true;
         String who = intent.getStringExtra(EXTRA_ALIAS);
         if (who == null && "follow".equals(type)) who = intent.getStringExtra("alias");
         if (who != null) alias = who;
@@ -49,6 +54,13 @@ public final class DeepLink {
         postId = null;
         toResponses = false;
         return r;
+    }
+
+    /** The activity screen should open (from a digest push), cleared on read. */
+    public static boolean consumeActivity() {
+        boolean a = activity;
+        activity = false;
+        return a;
     }
 
     /** A profile to open (from a follow push), cleared on read. */

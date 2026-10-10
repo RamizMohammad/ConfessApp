@@ -24,7 +24,7 @@ import in.mohammad.ramiz.confess.data.repo.UserRepository;
 import in.mohammad.ramiz.confess.databinding.SheetReportBinding;
 
 /**
- * Pick why a confession — or a person ({@link #showUser}) — is being reported.
+ * Pick why a confession — a person ({@link #showUser}) or a response ({@link #showComment}) — is being reported.
  * The answer goes back to the parent fragment through the Fragment Result API, so it
  * survives rotation / process death.
  */
@@ -34,6 +34,8 @@ public class ReportSheet extends BottomSheetDialogFragment {
     public static final String KEY_POST_ID = "post_id";
     /** Set (instead of a post id) when a person is being reported. */
     public static final String KEY_ALIAS = "alias";
+    /** Set (instead of a post id) when a response is being reported. */
+    public static final String KEY_COMMENT_ID = "comment_id";
     public static final String KEY_REASON = "reason";
     private static final String TAG = "report_sheet";
 
@@ -54,6 +56,16 @@ public class ReportSheet extends BottomSheetDialogFragment {
         sheet.show(fm, TAG);
     }
 
+    /** Report a response. Listen exactly like a post report; the screen hears {@link Outcome#commentReported}. */
+    public static void showComment(@NonNull FragmentManager fm, @NonNull String commentId) {
+        if (fm.findFragmentByTag(TAG) != null) return;
+        ReportSheet sheet = new ReportSheet();
+        Bundle args = new Bundle();
+        args.putString(KEY_COMMENT_ID, commentId);
+        sheet.setArguments(args);
+        sheet.show(fm, TAG);
+    }
+
     /** From an activity: listen with getSupportFragmentManager().setFragmentResultListener(RESULT, …). */
     public static void showIn(@NonNull FragmentManager fm, @NonNull String postId) {
         if (fm.findFragmentByTag(TAG) != null) return;
@@ -70,6 +82,9 @@ public class ReportSheet extends BottomSheetDialogFragment {
 
         /** A short message for the screen's snackbar. */
         void say(@NonNull String text);
+
+        /** A response was reported — drop it from the list (it's hidden for me now). */
+        default void commentReported(@NonNull String commentId) { }
     }
 
     /** Call from the RESULT listener. */
@@ -83,6 +98,17 @@ public class ReportSheet extends BottomSheetDialogFragment {
                 @Override public void onSuccess(JsonObject data) { o.say(app.getString(R.string.reported_user)); }
                 @Override public void onError(ApiException e) { o.say(e.userMessage(app)); }
             });
+            return;
+        }
+        String commentId = result.getString(KEY_COMMENT_ID);
+        if (commentId != null) {
+            Context app = ctx.getApplicationContext();
+            o.commentReported(commentId);
+            new in.mohammad.ramiz.confess.data.repo.PostRepository().reportComment(commentId, reason,
+                    new ApiCallback<JsonObject>() {
+                        @Override public void onSuccess(JsonObject data) { o.say(app.getString(R.string.reported_response)); }
+                        @Override public void onError(ApiException e) { o.say(e.userMessage(app)); }
+                    });
             return;
         }
         String postId = result.getString(KEY_POST_ID);
@@ -103,6 +129,9 @@ public class ReportSheet extends BottomSheetDialogFragment {
             b.title.setText(R.string.report_user_title);
             b.subtitle.setText(R.string.report_user_subtitle);
             b.send.setText(R.string.report_user_send);
+        } else if (requireArguments().getString(KEY_COMMENT_ID) != null) {
+            b.title.setText(R.string.report_response_title);
+            b.subtitle.setText(R.string.report_response_subtitle);
         }
         b.reasons.setOnCheckedChangeListener((group, id) -> {
             Haptics.tick(requireContext());
@@ -115,6 +144,7 @@ public class ReportSheet extends BottomSheetDialogFragment {
             Bundle result = new Bundle();
             result.putString(KEY_POST_ID, requireArguments().getString(KEY_POST_ID));
             result.putString(KEY_ALIAS, requireArguments().getString(KEY_ALIAS));
+            result.putString(KEY_COMMENT_ID, requireArguments().getString(KEY_COMMENT_ID));
             result.putString(KEY_REASON, reason);
             getParentFragmentManager().setFragmentResult(RESULT, result);
             Haptics.click(requireContext());
@@ -128,6 +158,7 @@ public class ReportSheet extends BottomSheetDialogFragment {
         if (checkedId == R.id.reasonHate) return "hate_or_harassment";
         if (checkedId == R.id.reasonPersonal) return "reveals_identity";
         if (checkedId == R.id.reasonThreat) return "threat_or_self_harm";
+        if (checkedId == R.id.reasonSexual) return "sexual_or_minor";       // child safety — reviewed first
         if (checkedId == R.id.reasonSpam) return "spam";
         if (checkedId == R.id.reasonOther) return "other";
         return null;

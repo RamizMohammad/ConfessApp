@@ -152,6 +152,17 @@ public final class UserRepository {
         return Calls.enqueue(ApiClient.api().reportUser(alias, new ReportRequest(reason)), cb);
     }
 
+    // ── Blocking ─────────────────────────────────────────────────────────────
+
+    /** Block / unblock (both idempotent on the server). */
+    public Call<JsonObject> setBlocked(@NonNull String alias, boolean block, @NonNull ApiCallback<JsonObject> cb) {
+        return Calls.enqueue(block ? ApiClient.api().block(alias) : ApiClient.api().unblock(alias), cb);
+    }
+
+    public Call<PersonPage> blocked(@Nullable String cursor, @NonNull ApiCallback<PersonPage> cb) {
+        return Calls.enqueue(ApiClient.api().blocked(cursor), cb);
+    }
+
     /** followers == true → people who follow me; false → people I follow. */
     public Call<PersonPage> people(boolean followers, @Nullable String cursor, @NonNull ApiCallback<PersonPage> cb) {
         return Calls.enqueue(followers ? ApiClient.api().followers(cursor) : ApiClient.api().following(cursor), cb);

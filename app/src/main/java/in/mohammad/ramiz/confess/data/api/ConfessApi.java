@@ -19,6 +19,7 @@ import in.mohammad.ramiz.confess.data.model.FollowState;
 import in.mohammad.ramiz.confess.data.model.GoogleTokenRequest;
 import in.mohammad.ramiz.confess.data.model.IntegrityNonce;
 import in.mohammad.ramiz.confess.data.model.LikeRequest;
+import in.mohammad.ramiz.confess.data.model.VoteRequest;
 import in.mohammad.ramiz.confess.data.model.LikeState;
 import in.mohammad.ramiz.confess.data.model.LikerPage;
 import in.mohammad.ramiz.confess.data.model.MarkReadRequest;
@@ -146,6 +147,16 @@ public interface ConfessApi {
     @POST("api/v2/users/{alias}/report")
     Call<JsonObject> reportUser(@Path("alias") String alias, @Body ReportRequest body);
 
+    @POST("api/v2/users/{alias}/block")
+    Call<JsonObject> block(@Path("alias") String alias);
+
+    @DELETE("api/v2/users/{alias}/block")
+    Call<JsonObject> unblock(@Path("alias") String alias);
+
+    /** People I blocked: users = [{alias, avatar, blockedAt}] (read as Person). */
+    @GET("api/v2/users/me/blocked")
+    Call<PersonPage> blocked(@Query("cursor") @Nullable String cursor);
+
     @GET("api/v2/users/me/followers")
     Call<PersonPage> followers(@Query("cursor") @Nullable String cursor);
 
@@ -164,6 +175,9 @@ public interface ConfessApi {
     // ── Confessions ───────────────────────────────────────────────────────
     @POST("api/v2/posts")
     Call<Post> createPost(@Body CreatePostRequest body);
+
+    @POST("api/v2/posts/{postId}/vote")
+    Call<Post> vote(@Path("postId") String postId, @Body VoteRequest body);
 
     /** sort: "latest" | "top" (most felt, last 7 days) · scope: "all" | "following". */
     @GET("api/v2/posts/feed")
@@ -202,6 +216,9 @@ public interface ConfessApi {
 
     @POST("api/v2/posts/{postId}/comments")
     Call<Comment> addComment(@Path("postId") String postId, @Body TextRequest body);
+
+    @POST("api/v2/comments/{commentId}/report")
+    Call<JsonObject> reportComment(@Path("commentId") String commentId, @Body ReportRequest body);
 
     @DELETE("api/v2/comments/{commentId}")
     Call<JsonObject> deleteComment(@Path("commentId") String commentId);

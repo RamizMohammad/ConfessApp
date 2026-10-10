@@ -2,6 +2,7 @@ package in.mohammad.ramiz.confess.ui.feed;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -10,8 +11,10 @@ import androidx.core.content.ContextCompat;
 import in.mohammad.ramiz.confess.R;
 import in.mohammad.ramiz.confess.core.Formats;
 import in.mohammad.ramiz.confess.core.Haptics;
+import in.mohammad.ramiz.confess.data.model.Poll;
 import in.mohammad.ramiz.confess.data.model.Post;
 import in.mohammad.ramiz.confess.databinding.ItemConfessionCardBinding;
+import in.mohammad.ramiz.confess.databinding.ItemPollOptionBinding;
 
 /**
  * Fills the paper card (item_confession_card) from a {@link Post}.
@@ -23,6 +26,9 @@ public final class PostCardBinder {
         void onOpen(@NonNull Post post, boolean toResponses);
 
         void onFelt(@NonNull Post post);
+
+        /** Tapped a poll choice (only offered before voting, while it's open). */
+        default void onVote(@NonNull Post post, int option) { }
 
         /** Picked from the long-press reaction bar (felt · hug · same · strength · tears). */
         default void onReact(@NonNull Post post, @NonNull String reaction) { }
@@ -45,6 +51,9 @@ public final class PostCardBinder {
         String when = Formats.relative(post.createdAt);
         b.time.setText(post.isMine ? when + " · " + ctx.getString(R.string.feed_you) : when);
         b.text.setText(post.text == null ? "" : post.text.trim());
+        bindMood(b, post);
+        bindLetter(b, post);
+        bindPoll(b, post, l);
         bindResponses(b, post);
         b.responses.setText(post.commentCount > 0 ? Formats.count(post.commentCount) : "");
         bindFelt(b, post, false);
@@ -213,6 +222,171 @@ public final class PostCardBinder {
                             .setInterpolator(new android.view.animation.DecelerateInterpolator())
                             .withEndAction(() -> layer.removeView(s)).start()).start();
         }
+    }
+
+    // ── Mood, unsent letter, poll ────────────────────────────────────────────
+
+    private static void bindMood(@NonNull ItemConfessionCardBinding b, @NonNull Post post) {
+        if (!Moods.known(post.mood)) {
+            b.mood.setVisibility(View.GONE);
+            return;
+        }
+        Context ctx = b.getRoot().getContext();
+        b.mood.setText(Moods.emoji(post.mood) + "  " + ctx.getString(Moods.label(post.mood)));
+        b.mood.setVisibility(View.VISIBLE);
+    }
+
+    private static void bindLetter(@NonNull ItemConfessionCardBinding b, @NonNull Post post) {
+        boolean letter = post.letterTo != null && !post.letterTo.trim().isEmpty();
+        b.letterTo.setVisibility(letter ? View.VISIBLE : View.GONE);
+        b.airmail.setVisibility(letter ? View.VISIBLE : View.GONE);
+        if (!letter) return;
+        Context ctx = b.getRoot().getContext();
+        b.letterTo.setText(ctx.getString(R.string.letter_to, post.letterTo.trim()));
+        android.graphics.drawable.Drawable env = ContextCompat.getDrawable(ctx, R.drawable.ic_mail_open);
+        if (env != null) {
+            env = env.mutate();
+            int px = Math.round(16 * ctx.getResources().getDisplayMetrics().density);
+            env.setBounds(0, 0, px, px);
+            env.setTint(ContextCompat.getColor(ctx, R.color.paper_meta));
+        }
+        b.letterTo.setCompoundDrawablesRelative(env, null, null, null);
+        if (b.airmail.getBackground() == null) b.airmail.setBackground(airmail(ctx));
+    }
+
+    @androidx.annotation.Nullable private static android.graphics.Bitmap airmailTile;
+
+    /** Classic airmail edge: brick / paper / navy diagonal stripes, tiled across the card. */
+    private static android.graphics.drawable.Drawable airmail(@NonNull Context ctx) {
+        float d = ctx.getResources().getDisplayMetrics().density;
+        if (airmailTile == null) {
+            int w = Math.round(36 * d), h = Math.round(6 * d);
+            android.graphics.Bitmap bmp = android.graphics.Bitmap.createBitmap(w, h, android.graphics.Bitmap.Config.ARGB_8888);
+            android.graphics.Canvas c = new android.graphics.Canvas(bmp);
+            c.drawColor(ContextCompat.getColor(ctx, R.color.paper));
+            android.graphics.Paint p = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+            int[] cols = {ContextCompat.getColor(ctx, R.color.brick), 0xFF2F4A6D};
+            float stripe = w / 4f;
+            for (int i = -1; i < 5; i++) {
+                p.setColor(cols[(i + 2) % 2]);
+                android.graphics.Path path = new android.graphics.Path();
+                float x = i * stripe * 2;
+                path.moveTo(x, h);
+                path.lineTo(x + h, 0);
+                path.lineTo(x + h + stripe * 0.75f, 0);
+                path.lineTo(x + stripe * 0.75f, h);
+                path.close();
+                c.drawPath(path, p);
+            }
+            airmailTile = bmp;
+        }
+        android.graphics.drawable.BitmapDrawable bd = new android.graphics.drawable.BitmapDrawable(ctx.getResources(), airmailTile);
+        bd.setTileModeX(android.graphics.Shader.TileMode.REPEAT);
+        return bd;
+    }
+
+    private static void bindPoll(@NonNull ItemConfessionCardBinding b, @NonNull Post post, @NonNull Listener l) {
+        Poll poll = post.poll;
+        if (poll == null || poll.options == null || poll.options.isEmpty()) {
+            b.poll.setVisibility(View.GONE);
+            b.pollOptions.removeAllViews();
+            b.poll.setTag(null);
+            return;
+        }
+        Context ctx = b.getRoot().getContext();
+        b.poll.setVisibility(View.VISIBLE);
+        b.pollOptions.removeAllViews();
+        boolean results = poll.resultsVisible();
+        String sig = post.postId + "|" + poll.signature();
+        boolean animate = results && !sig.equals(b.poll.getTag());
+        b.poll.setTag(sig);
+
+        int total = Math.max(0, poll.totalVotes);
+        int best = -1, bestVotes = -1;
+        for (int i = 0; i < poll.options.size(); i++) {
+            Integer v = poll.options.get(i).votes;
+            if (v != null && v > bestVotes) { bestVotes = v; best = i; }
+        }
+        LayoutInflater inf = LayoutInflater.from(ctx);
+        for (int i = 0; i < poll.options.size(); i++) {
+            Poll.Option o = poll.options.get(i);
+            ItemPollOptionBinding r = ItemPollOptionBinding.inflate(inf, b.pollOptions, false);
+            r.label.setText(o.text);
+            int index = i;
+            if (results) {
+                int votes = o.votes == null ? 0 : o.votes;
+                float share = total > 0 ? votes / (float) total : 0f;
+                int pct = Math.round(share * 100);
+                r.pct.setText(pct + "%");
+                r.fill.setVisibility(View.VISIBLE);
+                r.fill.setPivotX(0f);
+                if (i == best && votes > 0) r.fill.getBackground().mutate().setAlpha(255);
+                else r.fill.getBackground().mutate().setAlpha(150);
+                if (animate) {
+                    r.fill.setScaleX(0f);
+                    r.fill.animate().scaleX(share).setStartDelay(60L * i).setDuration(420)
+                            .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
+                } else {
+                    r.fill.setScaleX(share);
+                }
+                boolean mine = poll.myVote != null && poll.myVote == i;
+                r.label.setTypeface(null, mine ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
+                if (mine) {
+                    android.graphics.drawable.Drawable tick = ContextCompat.getDrawable(ctx, R.drawable.ic_check);
+                    if (tick != null) {
+                        tick = tick.mutate();
+                        int px = Math.round(16 * ctx.getResources().getDisplayMetrics().density);
+                        tick.setBounds(0, 0, px, px);
+                        tick.setTint(ContextCompat.getColor(ctx, R.color.amber));
+                    }
+                    r.label.setCompoundDrawablesRelative(tick, null, null, null);
+                }
+                r.row.setClickable(false);
+                r.row.setForeground(null);
+                r.row.setContentDescription(ctx.getString(R.string.cd_poll_result, o.text, pct));
+            } else {
+                r.pct.setText("");
+                r.fill.setVisibility(View.INVISIBLE);
+                r.row.setContentDescription(ctx.getString(R.string.cd_poll_option, o.text, i + 1, poll.options.size()));
+                r.row.setOnClickListener(v -> {
+                    Haptics.tick(ctx);
+                    v.animate().scaleX(0.97f).scaleY(0.97f).setDuration(80)
+                            .withEndAction(() -> v.animate().scaleX(1f).scaleY(1f).setDuration(120).start()).start();
+                    l.onVote(post, index);
+                });
+            }
+            b.pollOptions.addView(r.getRoot());
+        }
+
+        String votes = ctx.getResources().getQuantityString(R.plurals.poll_votes, total, Formats.count(total));
+        if (poll.closed) {
+            b.pollMeta.setText(ctx.getString(R.string.poll_final) + " · " + votes);
+        } else {
+            String left = timeLeft(ctx, poll.closesAt);
+            b.pollMeta.setText((results ? votes : ctx.getString(R.string.poll_vote_to_see))
+                    + (left.isEmpty() ? "" : " · " + left));
+        }
+    }
+
+    private static String timeLeft(@NonNull Context ctx, @androidx.annotation.Nullable String iso) {
+        if (iso == null) return "";
+        try {
+            long mins = java.time.Duration.between(java.time.OffsetDateTime.now(),
+                    java.time.OffsetDateTime.parse(iso)).toMinutes();
+            if (mins <= 0) return ctx.getString(R.string.poll_left_soon);
+            long hours = mins / 60;
+            if (hours >= 48) return ctx.getString(R.string.poll_left_days, (int) (hours / 24));
+            if (hours >= 24) return ctx.getString(R.string.poll_left_day);
+            if (hours >= 1) return ctx.getString(R.string.poll_left_hours, (int) hours);
+            return ctx.getString(R.string.poll_left_soon);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /** For DiffUtil: anything about mood / letter / poll that the card shows. */
+    public static String extrasSignature(@NonNull Post p) {
+        return p.mood + "|" + p.letterTo + "|" + (p.poll == null ? "" : p.poll.signature());
     }
 
     /** Responses closed → the bubble is struck through (no "comments closed" label). */

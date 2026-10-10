@@ -22,9 +22,11 @@ import in.mohammad.ramiz.confess.data.session.SessionManager;
 import in.mohammad.ramiz.confess.ui.entry.LauncherActivity;
 
 /**
- * Receives the server's data-only FCM messages: {title, body, type, postId?}
- * (type = like | comment | new_post | nudge). Shows a notification on the matching
- * channel; tapping it opens the app at that confession.
+ * Builds the notification while the app is open (when it's closed Android shows the server's
+ * notification block itself). {title, body, type, postId?, alias?}; type = like · milestone ·
+ * comment · follow · story_reaction · poll_result (activity) · following_post · new_post
+ * (new confessions) · nudge · digest (reminders). Tapping opens the confession / profile /
+ * activity screen. Activity on my own words is hidden on a secure lock screen.
  */
 public class PushService extends FirebaseMessagingService {
 
@@ -53,8 +55,11 @@ public class PushService extends FirebaseMessagingService {
         String postId = data.get("postId");
         String alias = data.get("alias");
         boolean activity = "like".equals(type) || "comment".equals(type) || "follow".equals(type)
-                || "story_reaction".equals(type);
-        if (activity) ActivityEvents.ping();                       // bell dot refreshes if the app is open
+                || "story_reaction".equals(type) || "poll_result".equals(type) || "milestone".equals(type);
+        boolean digest = "digest".equals(type);
+        if (activity || digest) ActivityEvents.ping();             // bell dot refreshes if the app is open
+        // About my own words → hidden on a secure lock screen (same as the server's PRIVATE visibility).
+        boolean personal = activity && !"follow".equals(type);
 
         String channel = activity ? Push.CHANNEL_ACTIVITY
                 : "new_post".equals(type) || "following_post".equals(type) ? Push.CHANNEL_NEW_POSTS
@@ -68,7 +73,10 @@ public class PushService extends FirebaseMessagingService {
                     .putExtra(DeepLink.EXTRA_TO_RESPONSES, "comment".equals(type));
         }
         if ("follow".equals(type) && alias != null) open.putExtra(DeepLink.EXTRA_ALIAS, alias);
-        int id = (type + ":" + (postId != null ? postId : alias != null ? alias : title)).hashCode();
+        if (digest) open.putExtra(DeepLink.EXTRA_ACTIVITY, true);
+        // Same id as the server's tag: a milestone replaces that letter's reaction notification.
+        String tagType = "milestone".equals(type) ? "like" : type;
+        int id = (tagType + ":" + (postId != null ? postId : alias != null ? alias : title)).hashCode();
         PendingIntent tap = PendingIntent.getActivity(this, id, open,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
@@ -79,12 +87,35 @@ public class PushService extends FirebaseMessagingService {
                 .setContentText(body)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setAutoCancel(true)
+                .setShowWhen(true)
                 .setContentIntent(tap)
+                .setGroup(channel)                                   // activity · new posts · reminders stack separately
                 .setCategory(activity ? NotificationCompat.CATEGORY_SOCIAL : NotificationCompat.CATEGORY_REMINDER)
                 .setPriority(activity ? NotificationCompat.PRIORITY_HIGH : NotificationCompat.PRIORITY_DEFAULT);
+        if (personal) {
+            n.setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+                    .setPublicVersion(new NotificationCompat.Builder(this, channel)
+                            .setSmallIcon(R.drawable.ic_stat_confess)
+                            .setColor(ContextCompat.getColor(this, R.color.amber))
+                            .setContentTitle(getString(R.string.push_default_title))
+                            .setContentText(getString(R.string.push_private_body))
+                            .build());
+        }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED) return;
-        NotificationManagerCompat.from(this).notify(id, n.build());
+        NotificationManagerCompat nm = NotificationManagerCompat.from(this);
+        nm.notify(id, n.build());
+        // The group needs a summary so several stack into one expandable entry.
+        nm.notify(channel.hashCode(), new NotificationCompat.Builder(this, channel)
+                .setSmallIcon(R.drawable.ic_stat_confess)
+                .setColor(ContextCompat.getColor(this, R.color.amber))
+                .setStyle(new NotificationCompat.InboxStyle().setSummaryText(getString(R.string.push_default_title)))
+                .setGroup(channel)
+                .setGroupSummary(true)
+                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
+                .setAutoCancel(true)
+                .setVisibility(personal ? NotificationCompat.VISIBILITY_PRIVATE : NotificationCompat.VISIBILITY_PUBLIC)
+                .build());
     }
 }

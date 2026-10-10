@@ -37,11 +37,27 @@ public class ProfileActivity extends BaseActivity implements ProfileScreen.Host 
         b.profile.back.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         b.profile.tag.setText(vm.isMe() ? R.string.profile_mine_tag : R.string.profile_tag);
 
-        new ProfileScreen(this, b.profile, this, vm, getSupportFragmentManager(), this);
+        screen = new ProfileScreen(this, b.profile, this, vm, getSupportFragmentManager(), this);
+        this.vm = vm;
+        this.alias = alias;
+        if (!vm.isMe()) {
+            // Someone else: the top-bar button is their flag menu (report · block).
+            b.profile.action.setVisibility(View.VISIBLE);
+            b.profile.action.setIconResource(R.drawable.ic_flag);
+            b.profile.action.setContentDescription(getString(R.string.cd_profile_more));
+        }
     }
+
+    private ProfileScreen screen;
+    private ProfileViewModel vm;
+    private String alias;
 
     @Override
     public void onSettings(@NonNull View anchor) {
+        if (vm != null && !vm.isMe()) {
+            screen.personMenu(anchor, alias);
+            return;
+        }
         Nav.settings(this);
     }
 

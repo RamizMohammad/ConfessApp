@@ -11,4 +11,6 @@ public class PublicProfile {
     public int following;
     public boolean isFollowing;
     public boolean isMe;
+    /** I blocked them (their letters come back empty until I unblock). */
+    public boolean blockedByMe;
 }

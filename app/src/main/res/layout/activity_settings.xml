@@ -177,6 +177,16 @@
                     android:id="@+id/editProfile"
                     layout="@layout/view_setting_row" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hairline"
+                    android:layout_marginStart="56dp"
+                    android:background="@color/hairline" />
+
+                <include
+                    android:id="@+id/blocked"
+                    layout="@layout/view_setting_row" />
+
             </LinearLayout>
 
             <TextView
@@ -203,6 +213,16 @@
 
                 <include
                     android:id="@+id/guidelines"
+                    layout="@layout/view_setting_row" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hairline"
+                    android:layout_marginStart="56dp"
+                    android:background="@color/hairline" />
+
+                <include
+                    android:id="@+id/privacy"
                     layout="@layout/view_setting_row" />
 
 

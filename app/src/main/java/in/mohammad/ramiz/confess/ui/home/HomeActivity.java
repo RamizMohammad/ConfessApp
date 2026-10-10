@@ -108,7 +108,9 @@ public class HomeActivity extends BaseActivity {
             if (link != null) Nav.post(this, link[0], "1".equals(link[1]));
             String who = DeepLink.consumeAlias();
             if (who != null) Nav.profile(this, who);
+            if (DeepLink.consumeActivity()) Nav.notifications(this);
             checkBiometricAfterReset();
+            in.mohammad.ramiz.confess.core.GuidelinesReminder.maybeShow(this);
         }
     }
 

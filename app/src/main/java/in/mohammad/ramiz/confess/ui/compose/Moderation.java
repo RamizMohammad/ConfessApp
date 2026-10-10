@@ -25,6 +25,9 @@ public final class Moderation {
         if (m.contains("religious hate")) return R.string.mod_religious_hate;
         if (m.contains("sexual threat")) return R.string.mod_sexual_threat;
         if (m.contains("national offense")) return R.string.mod_national_offense;
+        if (m.contains("child safety")) return R.string.mod_child_safety;
+        if (m.contains("violent threat")) return R.string.mod_violent_threat;
+        if (m.contains("self harm")) return R.string.mod_self_harm;
         return R.string.mod_generic;
     }
 

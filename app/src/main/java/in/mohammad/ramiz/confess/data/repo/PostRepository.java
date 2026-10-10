@@ -12,6 +12,7 @@ import in.mohammad.ramiz.confess.data.model.Comment;
 import in.mohammad.ramiz.confess.data.model.CommentPage;
 import in.mohammad.ramiz.confess.data.model.CreatePostRequest;
 import in.mohammad.ramiz.confess.data.model.LikeRequest;
+import in.mohammad.ramiz.confess.data.model.VoteRequest;
 import in.mohammad.ramiz.confess.data.model.LikeState;
 import in.mohammad.ramiz.confess.data.model.LikerPage;
 import in.mohammad.ramiz.confess.data.model.Post;
@@ -44,6 +45,16 @@ public final class PostRepository {
     /** 451 CONTENT_FLAGGED / 503 MODERATION_UNAVAILABLE are expected — show the moderation card. */
     public Call<Post> create(@NonNull String text, boolean commentsEnabled, @NonNull ApiCallback<Post> cb) {
         return Calls.enqueue(ApiClient.api().createPost(new CreatePostRequest(text, commentsEnabled)), cb);
+    }
+
+    /** With a mood, an unsent-letter addressee and/or a poll (any may be null). */
+    public Call<Post> create(@NonNull CreatePostRequest body, @NonNull ApiCallback<Post> cb) {
+        return Calls.enqueue(ApiClient.api().createPost(body), cb);
+    }
+
+    /** One vote per person; the answer is the updated confession (with results). */
+    public Call<Post> vote(@NonNull String postId, int option, @NonNull ApiCallback<Post> cb) {
+        return Calls.enqueue(ApiClient.api().vote(postId, new VoteRequest(option)), cb);
     }
 
     public Call<JsonObject> delete(@NonNull String postId, @NonNull ApiCallback<JsonObject> cb) {
@@ -83,5 +94,11 @@ public final class PostRepository {
 
     public Call<JsonObject> deleteComment(@NonNull String commentId, @NonNull ApiCallback<JsonObject> cb) {
         return Calls.enqueue(ApiClient.api().deleteComment(commentId), cb);
+    }
+
+    /** Report a response (hidden for me at once; for everyone at the threshold). */
+    public Call<JsonObject> reportComment(@NonNull String commentId, @NonNull String reason,
+                                          @NonNull ApiCallback<JsonObject> cb) {
+        return Calls.enqueue(ApiClient.api().reportComment(commentId, new ReportRequest(reason)), cb);
     }
 }

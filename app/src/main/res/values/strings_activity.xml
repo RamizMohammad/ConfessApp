@@ -20,12 +20,13 @@
     <string name="notif_empty_filtered">Nothing of this kind yet.</string>
 
     <!-- Push -->
-    <string name="channel_activity">Felt &amp; responses</string>
-    <string name="channel_activity_desc">When someone feels or responds to your confessions</string>
+    <string name="channel_activity">Reactions &amp; replies</string>
+    <string name="channel_activity_desc">When someone reacts to or replies to your confessions, reacts to your story, follows you, or your poll closes</string>
     <string name="channel_new_posts">New confessions</string>
-    <string name="channel_new_posts_desc">When someone posts a new confession</string>
-    <string name="channel_reminders">Gentle reminders</string>
-    <string name="channel_reminders_desc">An occasional nudge to check in</string>
+    <string name="channel_new_posts_desc">From people you follow, and the occasional new confession from everyone else</string>
+    <string name="channel_reminders">Daily check-ins</string>
+    <string name="channel_reminders_desc">A gentle nudge a few times a day, and a recap when things happened while you were away</string>
     <string name="push_default_title">Confess</string>
     <string name="push_default_body">Something new is waiting for you.</string>
+    <string name="push_private_body">New activity on your confessions</string>
 </resources>

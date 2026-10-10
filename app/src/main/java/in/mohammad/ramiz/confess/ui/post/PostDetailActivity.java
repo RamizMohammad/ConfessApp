@@ -2,9 +2,7 @@ package in.mohammad.ramiz.confess.ui.post;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -130,6 +128,7 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
         getSupportFragmentManager().setFragmentResultListener(ReportSheet.RESULT, this, (key, result) ->
                 ReportSheet.deliver(this, result, new ReportSheet.Outcome() {
                     @Override public void reportPost(@NonNull String postId, @NonNull String reason) { vm.report(reason); }
+                    @Override public void commentReported(@NonNull String commentId) { vm.hideComment(commentId); }
                     @Override public void say(@NonNull String text) {
                         if (isFinishing() || isDestroyed()) return;
                         Snackbar.make(b.getRoot(), text, Snackbar.LENGTH_SHORT).setAnchorView(b.bottom).show();
@@ -283,6 +282,9 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
             @Override public void onReportUser(@NonNull Post p, @NonNull String alias) {
                 ReportSheet.showUser(getSupportFragmentManager(), alias);
             }
+            @Override public void onBlocked(@NonNull String alias) {
+                if (!isFinishing()) finish();
+            }
         });
     }
 
@@ -324,24 +326,34 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
     }
 
     @Override
+    public void onVote(@NonNull Post post, int option) {
+        vm.vote(option);
+    }
+
+    @Override
     public void onMore(@NonNull Post post, @NonNull View anchor) {
         postMenu(anchor);
     }
 
     @Override
     public void onResponseMore(@NonNull Comment c, @NonNull View anchor) {
-        PopupMenu menu = new PopupMenu(this, anchor);
-        menu.getMenu().add(Menu.NONE, 1, Menu.NONE, R.string.response_delete);
-        menu.setOnMenuItemClickListener(item -> {
-            new MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.response_delete_title)
-                    .setMessage(R.string.response_delete_body)
-                    .setNegativeButton(R.string.action_cancel, null)
-                    .setPositiveButton(R.string.action_delete, (d, w) -> vm.deleteComment(c))
-                    .show();
-            return true;
+        String alias = c.author != null && c.author.alias != null ? c.author.alias : "";
+        PostMenu.showResponse(anchor, alias, c.isMine, vm.canDelete(c), new PostMenu.ResponseListener() {
+            @Override public void onDelete() {
+                new MaterialAlertDialogBuilder(PostDetailActivity.this)
+                        .setTitle(R.string.response_delete_title)
+                        .setMessage(R.string.response_delete_body)
+                        .setNegativeButton(R.string.action_cancel, null)
+                        .setPositiveButton(R.string.action_delete, (d, w) -> vm.deleteComment(c))
+                        .show();
+            }
+            @Override public void onReport() {
+                ReportSheet.showComment(getSupportFragmentManager(), c.commentId);
+            }
+            @Override public void onBlock(@NonNull String a) {
+                in.mohammad.ramiz.confess.ui.people.BlockFlow.confirm(PostDetailActivity.this, a, null);
+            }
         });
-        menu.show();
     }
 
     @Override

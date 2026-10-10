@@ -20,6 +20,14 @@
     app:rippleColor="@color/paper_rule"
     app:strokeWidth="0dp">
 
+    <!-- Unsent letter: an airmail edge along the top of the card -->
+    <View
+        android:id="@+id/airmail"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_gravity="top"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,7 +76,39 @@
                     tools:text="2h ago" />
             </LinearLayout>
 
+            <!-- Mood: "🫂 Just listen" -->
+            <TextView
+                android:id="@+id/mood"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_sm"
+                android:layout_marginEnd="@dimen/space_sm"
+                android:background="@drawable/bg_tag_paper"
+                android:maxLines="1"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:textColor="@color/paper_ink"
+                android:visibility="gone"
+                tools:text="🫂 Just listen"
+                tools:visibility="visible" />
         </LinearLayout>
+
+        <!-- Unsent letter: "To: my dad" -->
+        <TextView
+            android:id="@+id/letterTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:drawablePadding="8dp"
+            android:fontFamily="@font/newsreader"
+            android:gravity="center_vertical"
+            android:textColor="@color/paper_meta"
+            android:textSize="17sp"
+            android:textStyle="italic"
+            android:visibility="gone"
+            tools:text="To: my dad"
+            tools:visibility="visible" />
 
         <!-- The confession (plain, no quote marks) -->
         <TextView
@@ -82,6 +122,33 @@
             android:textAppearance="@style/TextAppearance.Confess.Confession.Card"
             android:textColor="@color/paper_ink"
             tools:text="I still look for your car at every red light, even though I moved three states away two years ago." />
+
+        <!-- Poll: options (filled in code) + "37 votes · 2 days left" -->
+        <LinearLayout
+            android:id="@+id/poll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:layout_marginEnd="@dimen/space_md"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/pollOptions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/pollMeta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:textColor="@color/paper_meta"
+                tools:text="37 votes · 2 days left" />
+        </LinearLayout>
 
         <!-- Footer: felt · responses (spacing follows the counts) ·············· ⋯ -->
         <LinearLayout

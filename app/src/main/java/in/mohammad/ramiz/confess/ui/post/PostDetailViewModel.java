@@ -96,6 +96,8 @@ public class PostDetailViewModel extends ViewModel {
     private final FeltSync felt = new FeltSync(
             id -> id.equals(postId) ? post : null,
             e -> say(0, e));
+    private final in.mohammad.ramiz.confess.ui.feed.PollSync polls =
+            new in.mohammad.ramiz.confess.ui.feed.PollSync(e -> say(0, e));
     private final Observer<PostEvents.Change> changes = this::apply;
 
     public PostDetailViewModel() {
@@ -206,6 +208,10 @@ public class PostDetailViewModel extends ViewModel {
         if (post != null) felt.react(post, reaction);
     }
 
+    public void vote(int option) {
+        if (post != null) polls.vote(post, option);
+    }
+
     public void deletePost() {
         if (post == null) return;
         repo.delete(post.postId, new ApiCallback<JsonObject>() {
@@ -294,6 +300,11 @@ public class PostDetailViewModel extends ViewModel {
         });
     }
 
+    /** I reported it — it's hidden for me now. */
+    public void hideComment(@NonNull String commentId) {
+        removeComment(commentId);
+    }
+
     private void removeComment(String commentId) {
         int i = indexOf(loaded, commentId);
         if (i >= 0) loaded.remove(i);
@@ -315,6 +326,20 @@ public class PostDetailViewModel extends ViewModel {
     // ── Shared changes ───────────────────────────────────────────────────────
 
     private void apply(@Nullable PostEvents.Change c) {
+        if (c != null && c.kind == PostEvents.Kind.BLOCKED && c.alias != null) {
+            if (post != null && c.hides(post) && screen == Screen.CONTENT) {
+                screen = Screen.GONE;               // I blocked the writer
+                publish();
+                return;
+            }
+            boolean changed = false;                // or someone who answered here
+            for (int i = loaded.size() - 1; i >= 0; i--) {
+                Comment x = loaded.get(i);
+                if (x.author != null && c.alias.equalsIgnoreCase(x.author.alias)) { loaded.remove(i); changed = true; }
+            }
+            if (changed) publish();
+            return;
+        }
         if (c == null || postId == null || !postId.equals(c.postId)) return;
         if (c.kind == PostEvents.Kind.UPDATED && c.post != null && post != null) {
             post = c.post.copy();

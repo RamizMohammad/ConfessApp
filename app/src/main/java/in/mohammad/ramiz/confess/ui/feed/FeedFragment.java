@@ -372,6 +372,11 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     }
 
     @Override
+    public void onVote(@NonNull Post post, int option) {
+        vm.vote(post, option);
+    }
+
+    @Override
     public void onMore(@NonNull Post post, @NonNull View anchor) {
         PostMenu.show(anchor, post, new PostMenu.Listener() {
             @Override public void onDelete(@NonNull Post p) { confirmDelete(p); }
@@ -379,6 +384,7 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
             @Override public void onReportUser(@NonNull Post p, @NonNull String alias) {
                 ReportSheet.showUser(getChildFragmentManager(), alias);
             }
+            @Override public void onBlocked(@NonNull String alias) { loadStories(); }
         });
     }
 

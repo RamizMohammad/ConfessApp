@@ -57,6 +57,7 @@ public class FeedViewModel extends ViewModel {
     private final MutableLiveData<Event<Message>> messages = new MutableLiveData<>();
 
     private final FeltSync felt = new FeltSync(this::find, e -> say(0, e));
+    private final PollSync polls = new PollSync(e -> say(0, e));
 
     private final Observer<PostEvents.Change> changeObserver = this::apply;
     private final Observer<FollowEvents.Change> followObserver = c -> { if (c != null) resetFollowing(); };
@@ -218,6 +219,11 @@ public class FeedViewModel extends ViewModel {
         felt.react(post, reaction);
     }
 
+    public void vote(@NonNull Post post, int option) {
+        Post current = find(post.postId);
+        polls.vote(current != null ? current : post, option);
+    }
+
     // ── Delete / report ──────────────────────────────────────────────────────
 
     public void delete(@NonNull Post post) {
@@ -276,6 +282,19 @@ public class FeedViewModel extends ViewModel {
 
     private void apply(@Nullable PostEvents.Change c) {
         if (c == null) return;
+        if (c.kind == PostEvents.Kind.BLOCKED) {
+            for (Tab t : tabs.values()) {
+                boolean changed = false;
+                for (int i = t.posts.size() - 1; i >= 0; i--) {
+                    if (c.hides(t.posts.get(i))) { t.posts.remove(i); changed = true; }
+                }
+                if (!changed) continue;
+                if (t.posts.isEmpty() && t.footer == FeedState.Footer.END) t.screen = FeedState.Screen.EMPTY;
+                t.publish();
+                if (t.posts.isEmpty()) loadMore(t.key);
+            }
+            return;
+        }
         for (Tab t : tabs.values()) {
             int i = indexOf(t.posts, c.postId);
             switch (c.kind) {

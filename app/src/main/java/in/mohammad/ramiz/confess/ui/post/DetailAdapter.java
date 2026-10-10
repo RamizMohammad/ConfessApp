@@ -149,9 +149,10 @@ public class DetailAdapter extends ListAdapter<DetailAdapter.Row, RecyclerView.V
         b.stripe.setBackgroundColor(ColorUtils.setAlphaComponent(Aura.resolve(avatar).glow, 0xCC));
         b.avatar.setOnClickListener(v -> listener.onResponseAuthor(c));
         b.alias.setOnClickListener(v -> listener.onResponseAuthor(c));
-        b.more.setVisibility(deletable ? View.VISIBLE : View.GONE);
+        // Everyone gets the menu: delete (mine / on my confession), report and block (anyone else's).
+        b.more.setVisibility(View.VISIBLE);
         b.more.setOnClickListener(v -> listener.onResponseMore(c, v));
-        b.card.setOnLongClickListener(deletable ? v -> { listener.onResponseMore(c, b.more); return true; } : null);
+        b.card.setOnLongClickListener(v -> { listener.onResponseMore(c, b.more); return true; });
     }
 
     private void bindFooter(ItemResponsesFooterBinding b, Row row) {
@@ -224,7 +225,8 @@ public class DetailAdapter extends ListAdapter<DetailAdapter.Row, RecyclerView.V
 
         private boolean samePostExceptFelt(Post x, Post y) {
             return Objects.equals(x.text, y.text) && x.commentsEnabled == y.commentsEnabled
-                    && x.commentCount == y.commentCount && x.isMine == y.isMine;
+                    && x.commentCount == y.commentCount && x.isMine == y.isMine
+                    && PostCardBinder.extrasSignature(x).equals(PostCardBinder.extrasSignature(y));
         }
     };
 }

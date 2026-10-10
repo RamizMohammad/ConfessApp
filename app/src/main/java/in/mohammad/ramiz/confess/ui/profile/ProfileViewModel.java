@@ -57,10 +57,18 @@ public class ProfileViewModel extends ViewModel {
         public final int followers;
         public final int following;
         public final boolean isFollowing;
+        /** I blocked this person. */
+        public final boolean blocked;
 
         Header(boolean isMe, @NonNull String alias, @Nullable String about, @Nullable String avatar,
                @Nullable String createdAt, int postCount, @Nullable Integer feltCount,
                int followers, int following, boolean isFollowing) {
+            this(isMe, alias, about, avatar, createdAt, postCount, feltCount, followers, following, isFollowing, false);
+        }
+
+        Header(boolean isMe, @NonNull String alias, @Nullable String about, @Nullable String avatar,
+               @Nullable String createdAt, int postCount, @Nullable Integer feltCount,
+               int followers, int following, boolean isFollowing, boolean blocked) {
             this.isMe = isMe;
             this.alias = alias;
             this.about = about;
@@ -71,16 +79,24 @@ public class ProfileViewModel extends ViewModel {
             this.followers = followers;
             this.following = following;
             this.isFollowing = isFollowing;
+            this.blocked = blocked;
         }
 
         Header withPostCount(int n) {
             return new Header(isMe, alias, about, avatar, createdAt, Math.max(0, n), feltCount,
-                    followers, following, isFollowing);
+                    followers, following, isFollowing, blocked);
         }
 
         Header withFollow(boolean nowFollowing, int nowFollowers) {
             return new Header(isMe, alias, about, avatar, createdAt, postCount, feltCount,
-                    Math.max(0, nowFollowers), following, nowFollowing);
+                    Math.max(0, nowFollowers), following, nowFollowing, blocked);
+        }
+
+        /** Blocking also ends any follow between us (the server removes it both ways). */
+        Header withBlocked(boolean nowBlocked) {
+            boolean f = !nowBlocked && isFollowing;
+            int n = nowBlocked && isFollowing ? Math.max(0, followers - 1) : followers;
+            return new Header(isMe, alias, about, avatar, createdAt, postCount, feltCount, n, following, f, nowBlocked);
         }
     }
 
@@ -130,6 +146,8 @@ public class ProfileViewModel extends ViewModel {
     @Nullable private Call<PostPage> postsCall;
 
     private final FeltSync felt = new FeltSync(this::find, e -> say(0, e));
+    private final in.mohammad.ramiz.confess.ui.feed.PollSync polls =
+            new in.mohammad.ramiz.confess.ui.feed.PollSync(e -> say(0, e));
     private final Observer<PostEvents.Change> changes = this::apply;
 
     public ProfileViewModel() {
@@ -182,7 +200,7 @@ public class ProfileViewModel extends ViewModel {
             users.profile(alias, new ApiCallback<PublicProfile>() {
                 @Override public void onSuccess(PublicProfile p) {
                     header = new Header(false, p.alias, p.about, p.avatar, p.createdAt, p.postCount, null,
-                            p.followers, p.following, p.isFollowing);
+                            p.followers, p.following, p.isFollowing, p.blockedByMe);
                     screen = Screen.CONTENT;
                     error = null;
                     publish();
@@ -232,6 +250,31 @@ public class ProfileViewModel extends ViewModel {
             @Override public void onError(ApiException e) {
                 followBusy = false;
                 header = h;                         // back to how it was
+                publish();
+                say(0, e);
+            }
+        });
+    }
+
+    // ── Blocking ─────────────────────────────────────────────────────────────
+
+    public boolean blocked() {
+        return header != null && header.blocked;
+    }
+
+    /** Unblock from the profile; their letters come back. */
+    public void unblock() {
+        Header h = header;
+        if (isMe || h == null || !h.blocked) return;
+        header = h.withBlocked(false);
+        publish();
+        users.setBlocked(h.alias, false, new ApiCallback<com.google.gson.JsonObject>() {
+            @Override public void onSuccess(com.google.gson.JsonObject r) {
+                say(R.string.unblocked_toast, null);
+                loadPosts(null);
+            }
+            @Override public void onError(ApiException e) {
+                header = h;
                 publish();
                 say(0, e);
             }
@@ -295,6 +338,11 @@ public class ProfileViewModel extends ViewModel {
         felt.react(post, reaction);
     }
 
+    public void vote(@NonNull Post post, int option) {
+        Post current = find(post.postId);
+        polls.vote(current != null ? current : post, option);
+    }
+
     public void delete(@NonNull Post post) {
         postsRepo.delete(post.postId, new ApiCallback<JsonObject>() {
             @Override public void onSuccess(JsonObject data) {
@@ -320,6 +368,15 @@ public class ProfileViewModel extends ViewModel {
 
     private void apply(@Nullable PostEvents.Change c) {
         if (c == null) return;
+        if (c.kind == PostEvents.Kind.BLOCKED) {
+            if (header != null && !isMe && c.alias != null && c.alias.equalsIgnoreCase(header.alias)) {
+                header = header.withBlocked(true);
+                posts.clear();
+                footer = Footer.END;
+                publish();
+            }
+            return;
+        }
         int i = indexOf(c.postId);
         switch (c.kind) {
             case UPDATED:

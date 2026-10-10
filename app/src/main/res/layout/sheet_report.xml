@@ -66,6 +66,11 @@
                 android:text="@string/report_threat" />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/reasonSexual"
+                style="@style/Widget.Confess.Radio"
+                android:text="@string/report_sexual_minor" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
                 android:id="@+id/reasonSpam"
                 style="@style/Widget.Confess.Radio"
                 android:text="@string/report_spam" />

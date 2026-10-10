@@ -127,7 +127,9 @@ public class GuidelinesActivity extends BaseActivity {
         mark.setText(parts[0].isEmpty() ? "•" : parts[0]);
         mark.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         mark.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
-        mark.setLayoutParams(new LinearLayout.LayoutParams(dp(28), LinearLayout.LayoutParams.WRAP_CONTENT));
+        mark.setMinWidth(dp(28));
+        mark.setPadding(0, 0, dp(4), 0);
+        mark.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         row.addView(mark);
 
         TextView text = new TextView(this);
@@ -147,6 +149,7 @@ public class GuidelinesActivity extends BaseActivity {
         int space = t.indexOf(' ');
         if (space > 0) {
             String first = t.substring(0, space);
+            if (first.indexOf('\u20E3') >= 0) return new String[]{first, t.substring(space + 1).trim()};   // keycap 1️⃣
             boolean hasLetterOrDigit = false;
             for (int i = 0; i < first.length(); i++) {
                 if (Character.isLetterOrDigit(first.charAt(i))) { hasLetterOrDigit = true; break; }
@@ -174,6 +177,7 @@ public class GuidelinesActivity extends BaseActivity {
             return;
         }
         draft.guidelinesAccepted = true;
+        in.mohammad.ramiz.confess.core.GuidelinesReminder.markSeen(this);
         Haptics.click(this);
         startActivity(new Intent(this, AliasActivity.class));
     }

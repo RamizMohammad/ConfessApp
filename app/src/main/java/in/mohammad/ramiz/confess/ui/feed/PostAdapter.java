@@ -144,6 +144,7 @@ public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewH
 
         private boolean sameExceptFelt(Post x, Post y) {
             return Objects.equals(x.text, y.text)
+                    && PostCardBinder.extrasSignature(x).equals(PostCardBinder.extrasSignature(y))
                     && x.commentsEnabled == y.commentsEnabled
                     && x.commentCount == y.commentCount
                     && x.isMine == y.isMine

@@ -143,6 +143,10 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.people.BlockedActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.people.PeopleActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

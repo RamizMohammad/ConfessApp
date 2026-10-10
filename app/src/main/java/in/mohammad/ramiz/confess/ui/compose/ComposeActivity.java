@@ -5,8 +5,16 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.format.DateFormat;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -16,12 +24,17 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.chip.Chip;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import in.mohammad.ramiz.confess.R;
 import in.mohammad.ramiz.confess.core.Haptics;
@@ -30,6 +43,7 @@ import in.mohammad.ramiz.confess.data.api.ApiCallback;
 import in.mohammad.ramiz.confess.data.api.ApiException;
 import in.mohammad.ramiz.confess.data.api.ErrorCode;
 import in.mohammad.ramiz.confess.data.drafts.Drafts;
+import in.mohammad.ramiz.confess.data.model.CreatePostRequest;
 import in.mohammad.ramiz.confess.data.model.Me;
 import in.mohammad.ramiz.confess.data.model.Post;
 import in.mohammad.ramiz.confess.data.repo.PostRepository;
@@ -38,6 +52,7 @@ import in.mohammad.ramiz.confess.data.session.SessionManager;
 import in.mohammad.ramiz.confess.databinding.ActivityComposeBinding;
 import in.mohammad.ramiz.confess.ui.base.BaseActivity;
 import in.mohammad.ramiz.confess.ui.entry.GuidelinesActivity;
+import in.mohammad.ramiz.confess.ui.feed.Moods;
 import in.mohammad.ramiz.confess.ui.util.EdgeInsets;
 import in.mohammad.ramiz.confess.ui.util.SimpleTextWatcher;
 import retrofit2.Call;
@@ -59,6 +74,11 @@ public class ComposeActivity extends BaseActivity {
     /** Open this draft (from Me → Drafts) instead of a blank page. */
     public static final String EXTRA_DRAFT_ID = "draft_id";
     private static final String STATE_DRAFT_ID = "draft_id";
+    private static final String STATE_LETTER = "letter_on";
+    private static final String STATE_POLL = "poll_on";
+    private static final String STATE_CHOICES = "poll_choices";
+    private static final String STATE_MOOD = "mood";
+    private static final int POLL_MIN = 2, POLL_MAX = 4, CHOICE_MAX = 60;
 
     public static final int MAX_CHARS = 2000;
     private static final int WARN_AT = 1800;
@@ -75,6 +95,9 @@ public class ComposeActivity extends BaseActivity {
     @Nullable private Call<Post> pending;
     private boolean working = false;
     private boolean finished = false;
+    @Nullable private String mood;
+    /** "Allow responses" as the writer left it, before "just listen" turned it off. */
+    private boolean allowBeforeListen = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +121,7 @@ public class ComposeActivity extends BaseActivity {
         b.countMax.setText(getString(R.string.compose_counter_max, MAX_CHARS));
 
         if (savedInstanceState == null) restoreDraft();
+        setUpExtras(savedInstanceState);
         updateCounter();
         updateAllowText();
 
@@ -174,7 +198,200 @@ public class ComposeActivity extends BaseActivity {
     }
 
     private void updateAllowText() {
+        if (Moods.LISTEN.equals(mood)) {
+            b.allowSub.setText(R.string.compose_allow_listen);
+            return;
+        }
         b.allowSub.setText(b.allow.isChecked() ? R.string.compose_allow_on : R.string.compose_allow_off);
+    }
+
+    // ── Extras: unsent letter · poll · mood ──────────────────────────────────
+
+    private void setUpExtras(@Nullable Bundle state) {
+        buildMoodChips();
+
+        b.letterToggle.addOnCheckedChangeListener((btn, on) -> {
+            b.letterRow.setVisibility(on ? View.VISIBLE : View.GONE);
+            if (on && btn.isPressed()) {
+                Haptics.tick(this);
+                b.letterInput.requestFocus();
+                WindowCompat.getInsetsController(getWindow(), b.letterInput).show(WindowInsetsCompat.Type.ime());
+            }
+        });
+        b.letterInput.addTextChangedListener(new SimpleTextWatcher(t -> {
+            if (b.moderation.getVisibility() == View.VISIBLE && !working) hideNotice();
+        }));
+
+        b.pollToggle.addOnCheckedChangeListener((btn, on) -> {
+            b.pollEditor.setVisibility(on ? View.VISIBLE : View.GONE);
+            if (on && b.pollOptions.getChildCount() == 0) {
+                for (int i = 0; i < POLL_MIN; i++) addChoice(null);
+            }
+            if (on && btn.isPressed()) {
+                Haptics.tick(this);
+                b.scroll.post(() -> b.scroll.smoothScrollTo(0, b.pollEditor.getTop()));
+                if (b.pollOptions.getChildCount() > 0) choiceInput(0).requestFocus();
+            }
+        });
+        b.addOption.setOnClickListener(v -> {
+            if (b.pollOptions.getChildCount() >= POLL_MAX) return;
+            Haptics.tick(this);
+            addChoice(null).requestFocus();
+        });
+
+        if (state != null) {
+            ArrayList<String> choices = state.getStringArrayList(STATE_CHOICES);
+            if (choices != null) for (String c : choices) addChoice(c);
+            String m = state.getString(STATE_MOOD);
+            if (m != null) selectMood(m);
+            b.letterToggle.setChecked(state.getBoolean(STATE_LETTER));
+            b.pollToggle.setChecked(state.getBoolean(STATE_POLL));
+        }
+        refreshChoices();
+    }
+
+    private void buildMoodChips() {
+        for (String key : Moods.KEYS) {
+            Chip chip = new Chip(this, null, com.google.android.material.R.attr.chipStyle);
+            chip.setId(View.generateViewId());
+            chip.setTag(key);
+            chip.setText(Moods.emoji(key) + "  " + getString(Moods.label(key)));
+            chip.setCheckable(true);
+            chip.setCheckedIconVisible(false);
+            chip.setOnClickListener(v -> {
+                Haptics.tick(this);
+                applyMood(chip.isChecked() ? key : null);
+            });
+            b.moods.addView(chip);
+        }
+    }
+
+    private void selectMood(@NonNull String key) {
+        for (int i = 0; i < b.moods.getChildCount(); i++) {
+            View c = b.moods.getChildAt(i);
+            if (c instanceof Chip && key.equals(c.getTag())) ((Chip) c).setChecked(true);
+        }
+        applyMood(key);
+    }
+
+    /** "Just listen" means no replies — the switch turns off and locks until another mood is picked. */
+    private void applyMood(@Nullable String key) {
+        boolean wasListen = Moods.LISTEN.equals(mood);
+        mood = key;
+        boolean listen = Moods.LISTEN.equals(key);
+        if (listen && !wasListen) {
+            allowBeforeListen = b.allow.isChecked();
+            b.allow.setChecked(false);
+        } else if (!listen && wasListen) {
+            b.allow.setChecked(allowBeforeListen);
+        }
+        b.allow.setEnabled(!working && !listen);
+        b.allowText.setEnabled(!listen);
+        updateAllowText();
+    }
+
+    @NonNull
+    private EditText addChoice(@Nullable String value) {
+        int index = b.pollOptions.getChildCount();
+        float d = getResources().getDisplayMetrics().density;
+
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams rowLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        rowLp.topMargin = Math.round(8 * d);
+        row.setLayoutParams(rowLp);
+
+        EditText input = new EditText(this);
+        input.setBackgroundResource(R.drawable.bg_input_pill);
+        input.setPadding(Math.round(16 * d), Math.round(12 * d), Math.round(16 * d), Math.round(12 * d));
+        input.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+        input.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
+        input.setHintTextColor(ContextCompat.getColor(this, R.color.text_muted));
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        input.setSingleLine(true);
+        input.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(CHOICE_MAX)});
+        input.setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO);
+        if (value != null) input.setText(value);
+        input.addTextChangedListener(new SimpleTextWatcher(t -> {
+            if (b.moderation.getVisibility() == View.VISIBLE && !working) hideNotice();
+        }));
+        row.addView(input, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        ImageButton remove = new ImageButton(this);
+        remove.setImageResource(R.drawable.ic_close);
+        remove.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.text_secondary)));
+        TypedValue ripple = new TypedValue();
+        getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, ripple, true);
+        remove.setBackgroundResource(ripple.resourceId);
+        remove.setContentDescription(getString(R.string.compose_poll_remove));
+        int size = Math.round(40 * d);
+        LinearLayout.LayoutParams removeLp = new LinearLayout.LayoutParams(size, size);
+        removeLp.setMarginStart(Math.round(4 * d));
+        remove.setOnClickListener(v -> {
+            if (b.pollOptions.getChildCount() <= POLL_MIN) return;
+            Haptics.tick(this);
+            b.pollOptions.removeView(row);
+            refreshChoices();
+        });
+        row.addView(remove, removeLp);
+
+        b.pollOptions.addView(row, index);
+        refreshChoices();
+        return input;
+    }
+
+    @NonNull
+    private EditText choiceInput(int i) {
+        return (EditText) ((LinearLayout) b.pollOptions.getChildAt(i)).getChildAt(0);
+    }
+
+    /** Re-number hints, show ✕ only above two choices, hide "Add" at four. */
+    private void refreshChoices() {
+        int n = b.pollOptions.getChildCount();
+        for (int i = 0; i < n; i++) {
+            LinearLayout row = (LinearLayout) b.pollOptions.getChildAt(i);
+            ((EditText) row.getChildAt(0)).setHint(getString(R.string.compose_poll_hint, i + 1));
+            row.getChildAt(1).setVisibility(n > POLL_MIN ? View.VISIBLE : View.GONE);
+        }
+        b.addOption.setVisibility(n < POLL_MAX ? View.VISIBLE : View.GONE);
+    }
+
+    @NonNull
+    private ArrayList<String> rawChoices() {
+        ArrayList<String> out = new ArrayList<>();
+        for (int i = 0; i < b.pollOptions.getChildCount(); i++) {
+            CharSequence t = choiceInput(i).getText();
+            out.add(t == null ? "" : t.toString());
+        }
+        return out;
+    }
+
+    /** The poll to send, or null when the choices aren't valid (fewer than two distinct, non-empty). */
+    @Nullable
+    private CreatePostRequest.PollIn pollOrNull() {
+        Set<String> seen = new LinkedHashSet<>();
+        List<String> choices = new ArrayList<>();
+        for (String raw : rawChoices()) {
+            String c = raw.trim().replaceAll("\\s+", " ");
+            if (c.isEmpty()) continue;
+            if (!seen.add(c.toLowerCase(Locale.ROOT))) return null;
+            choices.add(c);
+        }
+        if (choices.size() < POLL_MIN) return null;
+        int checked = b.pollDuration.getCheckedChipId();
+        int hours = checked == R.id.dur7 ? 168 : checked == R.id.dur3 ? 72 : 24;
+        return new CreatePostRequest.PollIn(choices, hours);
+    }
+
+    @Nullable
+    private String letterTo() {
+        if (!b.letterToggle.isChecked()) return null;
+        CharSequence t = b.letterInput.getText();
+        String to = t == null ? "" : t.toString().trim();
+        return to;
     }
 
     // ── Draft ────────────────────────────────────────────────────────────────
@@ -215,13 +432,35 @@ public class ComposeActivity extends BaseActivity {
     private void release() {
         String body = text().trim();
         if (working || body.isEmpty() || body.length() > MAX_CHARS) return;
+
+        String to = letterTo();
+        if (to != null && to.isEmpty()) {
+            Haptics.reject(this);
+            b.letterInput.setError(getString(R.string.compose_letter_invalid));
+            b.letterInput.requestFocus();
+            return;
+        }
+        CreatePostRequest.PollIn poll = null;
+        if (b.pollToggle.isChecked()) {
+            poll = pollOrNull();
+            if (poll == null) {
+                Haptics.reject(this);
+                Snackbar.make(b.getRoot(), R.string.compose_poll_invalid, Snackbar.LENGTH_LONG)
+                        .setAnchorView(b.bottom)
+                        .show();
+                return;
+            }
+        }
+        boolean allow = b.allow.isChecked() && !Moods.LISTEN.equals(mood);
+        CreatePostRequest request = new CreatePostRequest(body, allow, mood, to, poll);
+
         handler.removeCallbacks(saveDraft);
         saveDraftNow();                         // safe even if the app dies mid-request
         hideNotice();
         setWorking(true);
         Haptics.click(this);
 
-        pending = posts.create(body, b.allow.isChecked(), new ApiCallback<Post>() {
+        pending = posts.create(request, new ApiCallback<Post>() {
             @Override
             public void onSuccess(Post post) {
                 finished = true;
@@ -294,8 +533,19 @@ public class ComposeActivity extends BaseActivity {
         b.release.setText(on ? R.string.compose_checking : R.string.compose_release);
         b.release.setIconResource(on ? 0 : R.drawable.ic_send);
         b.input.setEnabled(!on);
-        b.allow.setEnabled(!on);
+        b.allow.setEnabled(!on && !Moods.LISTEN.equals(mood));
         b.discard.setEnabled(!on);
+        b.letterInput.setEnabled(!on);
+        b.letterToggle.setEnabled(!on);
+        b.pollToggle.setEnabled(!on);
+        b.addOption.setEnabled(!on);
+        for (int i = 0; i < b.pollOptions.getChildCount(); i++) {
+            LinearLayout row = (LinearLayout) b.pollOptions.getChildAt(i);
+            row.getChildAt(0).setEnabled(!on);
+            row.getChildAt(1).setEnabled(!on);
+        }
+        for (int i = 0; i < b.moods.getChildCount(); i++) b.moods.getChildAt(i).setEnabled(!on);
+        for (int i = 0; i < b.pollDuration.getChildCount(); i++) b.pollDuration.getChildAt(i).setEnabled(!on);
         b.paper.animate().alpha(on ? 0.7f : 1f).setDuration(200).start();
         updateButton();
     }
@@ -350,6 +600,10 @@ public class ComposeActivity extends BaseActivity {
     protected void onSaveInstanceState(@NonNull Bundle out) {
         super.onSaveInstanceState(out);
         out.putString(STATE_DRAFT_ID, draftId);
+        out.putBoolean(STATE_LETTER, b.letterToggle.isChecked());
+        out.putBoolean(STATE_POLL, b.pollToggle.isChecked());
+        out.putStringArrayList(STATE_CHOICES, rawChoices());
+        out.putString(STATE_MOOD, mood);
     }
 
     @Override

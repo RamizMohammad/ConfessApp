@@ -165,6 +165,11 @@ public final class ProfileScreen implements ProfileAdapter.Listener {
     }
 
     @Override
+    public void onVote(@NonNull Post post, int option) {
+        vm.vote(post, option);
+    }
+
+    @Override
     public void onMore(@NonNull Post post, @NonNull View anchor) {
         PostMenu.show(anchor, post, new PostMenu.Listener() {
             @Override public void onDelete(@NonNull Post p) {
@@ -177,6 +182,21 @@ public final class ProfileScreen implements ProfileAdapter.Listener {
             }
             @Override public void onReportPost(@NonNull Post p) { ReportSheet.showIn(fm, p.postId); }
             @Override public void onReportUser(@NonNull Post p, @NonNull String alias) { ReportSheet.showUser(fm, alias); }
+        });
+    }
+
+    @Override
+    public void onUnblock(@NonNull String alias) {
+        Haptics.tick(ctx);
+        vm.unblock();
+    }
+
+    /** Someone else's profile: the flag in the top bar → Report / Block / Unblock. */
+    public void personMenu(@NonNull View anchor, @NonNull String alias) {
+        PostMenu.showPerson(anchor, alias, vm.blocked(), new PostMenu.PersonListener() {
+            @Override public void onReportUser(@NonNull String a) { ReportSheet.showUser(fm, a); }
+            @Override public void onBlock(@NonNull String a) { in.mohammad.ramiz.confess.ui.people.BlockFlow.confirm(ctx, a, null); }
+            @Override public void onUnblock(@NonNull String a) { vm.unblock(); }
         });
     }
 

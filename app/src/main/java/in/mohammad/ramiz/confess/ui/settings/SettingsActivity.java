@@ -75,8 +75,10 @@ public class SettingsActivity extends BaseActivity {
         setup(b.push, R.drawable.ic_bell, R.string.settings_push);
         setup(b.pushSystem, R.drawable.ic_settings, R.string.settings_notif_types);
         setup(b.editProfile, R.drawable.ic_user, R.string.settings_edit_profile);
+        setup(b.blocked, R.drawable.ic_ban, R.string.blocked_title);
         setup(b.feature, R.drawable.ic_mail_open, R.string.settings_feature);
         setup(b.guidelines, R.drawable.ic_shield, R.string.settings_guidelines);
+        setup(b.privacy, R.drawable.ic_lock, R.string.settings_privacy_policy);
         setup(b.signOut, R.drawable.ic_log_out, R.string.settings_sign_out);
         setup(b.design, R.drawable.ic_help, R.string.settings_design);
 
@@ -89,8 +91,10 @@ public class SettingsActivity extends BaseActivity {
         chevron(b.changePassword);
         chevron(b.pushSystem);
         chevron(b.editProfile);
+        chevron(b.blocked);
         chevron(b.feature);
         chevron(b.guidelines);
+        chevron(b.privacy);
         subtitle(b.pushSystem, R.string.settings_notif_types_sub);
         subtitle(b.editProfile, R.string.settings_edit_profile_sub);
         subtitle(b.feature, R.string.settings_feature_sub);
@@ -111,11 +115,14 @@ public class SettingsActivity extends BaseActivity {
             Haptics.tick(this);
             applySecureFlag();
         });
+        b.blocked.row.setOnClickListener(v -> startActivity(
+                new Intent(this, in.mohammad.ramiz.confess.ui.people.BlockedActivity.class)));
         b.pushSystem.row.setOnClickListener(v -> startActivity(new Intent(this, NotificationSettingsActivity.class)));
         b.editProfile.row.setOnClickListener(v -> startActivity(new Intent(this, EditProfileActivity.class)));
         b.feature.row.setOnClickListener(v -> startActivity(new Intent(this, FeatureRequestActivity.class)));
         b.guidelines.row.setOnClickListener(v -> startActivity(new Intent(this, GuidelinesActivity.class)
                 .putExtra(GuidelinesActivity.EXTRA_READ_ONLY, true)));
+        b.privacy.row.setOnClickListener(v -> openWeb("privacy"));
         b.signOut.row.setOnClickListener(v -> confirmSignOut());
         b.deleteAccount.setOnClickListener(v -> confirmDelete());
 
@@ -371,5 +378,18 @@ public class SettingsActivity extends BaseActivity {
 
     private void sayError(ApiException e) {
         Snackbar.make(b.getRoot(), e.userMessage(this), Snackbar.LENGTH_LONG).show();
+    }
+
+    /** The Confess website — privacy policy, guidelines, child safety, delete account. */
+    public static final String WEBSITE_URL = "https://confess.mohammadramiz.in/";
+
+    /** A page on the Confess website in the browser. */
+    private void openWeb(@androidx.annotation.NonNull String path) {
+        String base = WEBSITE_URL;
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(base + path)));
+        } catch (android.content.ActivityNotFoundException e) {
+            android.widget.Toast.makeText(this, base + path, android.widget.Toast.LENGTH_LONG).show();
+        }
     }
 }

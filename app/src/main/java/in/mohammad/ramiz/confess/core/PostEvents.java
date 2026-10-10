@@ -15,18 +15,30 @@ import in.mohammad.ramiz.confess.data.model.Post;
  */
 public final class PostEvents {
 
-    public enum Kind { CREATED, UPDATED, REMOVED }
+    public enum Kind { CREATED, UPDATED, REMOVED, BLOCKED }
 
     public static final class Change {
         @NonNull public final Kind kind;
         @NonNull public final String postId;
         /** The new state for CREATED / UPDATED; null for REMOVED. */
         public final Post post;
+        /** BLOCKED: the person I just blocked (postId is "" then). */
+        public final String alias;
 
         Change(@NonNull Kind kind, @NonNull String postId, Post post) {
+            this(kind, postId, post, null);
+        }
+
+        Change(@NonNull Kind kind, @NonNull String postId, Post post, String alias) {
             this.kind = kind;
             this.postId = postId;
             this.post = post;
+            this.alias = alias;
+        }
+
+        /** BLOCKED and this post is by the blocked person. */
+        public boolean hides(@NonNull Post p) {
+            return kind == Kind.BLOCKED && alias != null && p.author != null && alias.equalsIgnoreCase(p.author.alias);
         }
     }
 
@@ -44,6 +56,11 @@ public final class PostEvents {
 
     public static void updated(@NonNull Post post) {
         CHANGES.setValue(new Change(Kind.UPDATED, post.postId, post.copy()));
+    }
+
+    /** I blocked someone: every confession of theirs disappears from my lists. */
+    public static void blocked(@NonNull String alias) {
+        CHANGES.setValue(new Change(Kind.BLOCKED, "", null, alias));
     }
 
     /** Deleted by me, or reported by me (hidden for me). */

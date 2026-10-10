@@ -180,6 +180,47 @@
                         android:layout_marginTop="@dimen/space_md"
                         android:background="@drawable/divider_paper" />
 
+                    <!-- Unsent letter: "To: …" -->
+                    <LinearLayout
+                        android:id="@+id/letterRow"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/space_12"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/newsreader"
+                            android:text="@string/compose_to"
+                            android:textColor="@color/paper_meta"
+                            android:textSize="20sp"
+                            android:textStyle="italic" />
+
+                        <EditText
+                            android:id="@+id/letterInput"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_sm"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:fontFamily="@font/newsreader"
+                            android:hint="@string/compose_to_hint"
+                            android:importantForAutofill="no"
+                            android:inputType="textCapSentences"
+                            android:maxLength="40"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/paper_ink"
+                            android:textColorHint="@color/paper_meta"
+                            android:textCursorDrawable="@drawable/cursor_amber"
+                            android:textSize="20sp"
+                            android:textStyle="italic" />
+                    </LinearLayout>
+
                     <in.mohammad.ramiz.confess.ui.components.LinedEditText
                         android:id="@+id/input"
                         android:layout_width="match_parent"
@@ -221,6 +262,140 @@
                         android:textColor="@color/paper_meta" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Add to it: unsent letter · poll -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/letterToggle"
+                    style="@style/Widget.Confess.Button.Outlined"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:minHeight="44dp"
+                    android:text="@string/compose_letter"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    app:icon="@drawable/ic_mail_open"
+                    app:iconGravity="textStart"
+                    app:iconSize="@dimen/icon_size_sm" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/pollToggle"
+                    style="@style/Widget.Confess.Button.Outlined"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:minHeight="44dp"
+                    android:text="@string/compose_poll"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    app:icon="@drawable/ic_check_check"
+                    app:iconGravity="textStart"
+                    app:iconSize="@dimen/icon_size_sm" />
+            </LinearLayout>
+
+            <!-- Poll editor -->
+            <LinearLayout
+                android:id="@+id/pollEditor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/bg_plate"
+                android:orientation="vertical"
+                android:padding="@dimen/space_md"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/compose_poll_title"
+                    android:textAppearance="@style/TextAppearance.Confess.Body"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/compose_poll_sub"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_secondary" />
+
+                <LinearLayout
+                    android:id="@+id/pollOptions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:orientation="vertical" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/addOption"
+                    style="@style/Widget.Confess.Button.Link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/compose_poll_add"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    app:icon="@drawable/ic_plus"
+                    app:iconGravity="textStart"
+                    app:iconSize="@dimen/icon_size_sm" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/pollDuration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/dur1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:checked="true"
+                        android:text="@string/compose_poll_1d" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/dur3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/compose_poll_3d" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/dur7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/compose_poll_7d" />
+                </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
+
+            <!-- How should people respond? (mood) -->
+            <TextView
+                style="@style/Confess.SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/compose_mood_label" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/moods"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+            </HorizontalScrollView>
 
             <!-- Responses switch · counter -->
             <LinearLayout

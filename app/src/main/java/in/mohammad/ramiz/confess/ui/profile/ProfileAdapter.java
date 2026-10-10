@@ -36,6 +36,9 @@ public class ProfileAdapter extends ListAdapter<ProfileAdapter.Row, RecyclerView
         void onFollow(boolean currentlyFollowing, @NonNull String alias);
 
         void onRetryMore();
+
+        /** The Unblock button on a profile I blocked. */
+        default void onUnblock(@NonNull String alias) { }
     }
 
     private static final int T_HEADER = 1, T_POST = 2, T_FOOTER = 3;
@@ -147,7 +150,13 @@ public class ProfileAdapter extends ListAdapter<ProfileAdapter.Row, RecyclerView
 
         b.actions.setVisibility(h.isMe ? View.VISIBLE : View.GONE);
         b.followBox.setVisibility(h.isMe ? View.GONE : View.VISIBLE);
-        if (!h.isMe) {
+        if (!h.isMe && h.blocked) {
+            b.followBtn.setVisibility(View.VISIBLE);
+            b.followingBtn.setVisibility(View.GONE);
+            b.followBtn.setText(R.string.unblock_btn);
+            b.followBtn.setOnClickListener(v -> listener.onUnblock(h.alias));
+        } else if (!h.isMe) {
+            b.followBtn.setText(R.string.follow);
             b.followBtn.setVisibility(h.isFollowing ? View.GONE : View.VISIBLE);
             b.followingBtn.setVisibility(h.isFollowing ? View.VISIBLE : View.GONE);
             b.followBtn.setOnClickListener(v -> listener.onFollow(false, h.alias));
@@ -179,7 +188,11 @@ public class ProfileAdapter extends ListAdapter<ProfileAdapter.Row, RecyclerView
         if (f != ProfileViewModel.Footer.END) return;
 
         boolean me = lastHeader != null && lastHeader.isMe;
-        if (row.count == 0) {
+        if (row.count == 0 && lastHeader != null && lastHeader.blocked) {
+            b.endTitle.setText(R.string.profile_blocked_title);
+            b.endBody.setText(ctx.getString(R.string.profile_blocked_body, "@" + lastHeader.alias));
+            b.endBody.setVisibility(View.VISIBLE);
+        } else if (row.count == 0) {
             b.endTitle.setText(me ? R.string.profile_no_letters_me : R.string.profile_no_letters);
             b.endBody.setText(me ? ctx.getString(R.string.profile_no_letters_me_body)
                     : ctx.getString(R.string.profile_no_letters_body, lastHeader != null ? "@" + lastHeader.alias : ""));
@@ -230,7 +243,8 @@ public class ProfileAdapter extends ListAdapter<ProfileAdapter.Row, RecyclerView
 
         private boolean same(Post x, Post y) {
             return Objects.equals(x.text, y.text) && x.commentsEnabled == y.commentsEnabled
-                    && x.commentCount == y.commentCount;
+                    && x.commentCount == y.commentCount
+                    && PostCardBinder.extrasSignature(x).equals(PostCardBinder.extrasSignature(y));
         }
     };
 }

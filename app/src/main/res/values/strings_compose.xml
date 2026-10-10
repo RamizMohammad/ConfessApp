@@ -32,6 +32,9 @@
     <string name="mod_religious_hate">It targets people for their religion.</string>
     <string name="mod_sexual_threat">It reads as sexual harassment, a threat or blackmail.</string>
     <string name="mod_national_offense">It promotes hatred against a nation or terrorism.</string>
+    <string name="mod_child_safety">It involves a minor in a sexual way. This is never allowed on Confess.</string>
+    <string name="mod_violent_threat">It reads as a threat to hurt someone.</string>
+    <string name="mod_self_harm">It encourages self-harm. If you\'re struggling, Tele-MANAS is free and open 24×7 on 14416.</string>
     <string name="mod_generic">It breaks our community guidelines.</string>
     <string name="compose_empty_after_clean">Nothing is left once formatting is removed. Write it in plain words.</string>
     <string name="mod_review">Review guidelines</string>
@@ -43,4 +46,21 @@
     <string name="compose_saved_to_drafts">Saved to drafts</string>
     <string name="compose_discard_title">Discard this confession?</string>
     <string name="compose_discard_body">It won\'t be kept in your drafts.</string>
+    <!-- Post types -->
+    <string name="compose_to">To:</string>
+    <string name="compose_to_hint">someone who\'ll never read this</string>
+    <string name="compose_letter">Unsent letter</string>
+    <string name="compose_poll">Poll</string>
+    <string name="compose_poll_title">Ask them</string>
+    <string name="compose_poll_sub">2–4 choices · votes are anonymous · results show after voting</string>
+    <string name="compose_poll_hint">Choice %1$d</string>
+    <string name="compose_poll_add">Add a choice</string>
+    <string name="compose_poll_remove">Remove choice</string>
+    <string name="compose_poll_1d">1 day</string>
+    <string name="compose_poll_3d">3 days</string>
+    <string name="compose_poll_7d">1 week</string>
+    <string name="compose_poll_invalid">Give your poll at least two different choices.</string>
+    <string name="compose_letter_invalid">Who is the letter to?</string>
+    <string name="compose_mood_label">HOW SHOULD PEOPLE RESPOND?</string>
+    <string name="compose_allow_listen">Just listen — people can react, not reply</string>
 </resources>
