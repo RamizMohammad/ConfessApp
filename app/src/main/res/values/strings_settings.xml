@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Section 10 — Settings (S12), Edit profile (S13), Password (S14), Feature request, Delete account.
+     Old: the settings grid in ProfileFragment, UpdateAbout, ProfilePage, UpdatePassBio,
+     ChangePassword, FeatureDemand. -->
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="settings_tag">YOUR ACCOUNT</string>
+    <string name="settings_headline">Lock, notices &amp; account</string>
+    <string name="settings_sub">Control who can open your letters and what reaches you.</string>
+
+    <string name="settings_section_security">SECURITY</string>
+    <string name="settings_lock">Password lock</string>
+    <string name="settings_lock_on">Asks for your password when Confess opens</string>
+    <string name="settings_lock_off">Anyone holding this phone can open Confess</string>
+    <string name="settings_autolock">Lock again after</string>
+    <string name="settings_bio">Fingerprint unlock</string>
+    <string name="settings_bio_sub">Unlock with this phone\'s biometrics</string>
+    <string name="settings_bio_unavailable">No fingerprint set up on this phone</string>
+    <string name="settings_change_password">Change password</string>
+    <string name="settings_privacy_screen">Private screen</string>
+    <string name="settings_privacy_screen_sub">Hide Confess in recent apps and block screenshots</string>
+
+    <string name="autolock_immediately">Immediately</string>
+    <string name="autolock_1m">1 minute</string>
+    <string name="autolock_5m">5 minutes</string>
+    <string name="autolock_15m">15 minutes</string>
+
+    <string name="settings_section_notifications">NOTIFICATIONS</string>
+    <string name="settings_push">Push notifications</string>
+    <string name="settings_push_sub">Felt, responses and gentle reminders</string>
+    <string name="settings_push_system">Notification types</string>
+    <string name="settings_push_system_sub">Choose which kinds reach you in Android settings</string>
+
+    <string name="settings_section_profile">PROFILE</string>
+    <string name="settings_edit_profile">Aura &amp; about</string>
+    <string name="settings_edit_profile_sub">Change how you appear</string>
+
+    <string name="settings_section_support">SUPPORT</string>
+    <string name="settings_feature">Request a feature</string>
+    <string name="settings_feature_sub">Tell us what would make Confess better</string>
+    <string name="settings_guidelines">Community guidelines</string>
+    <string name="settings_design">Design &amp; server check</string>
+
+    <string name="settings_section_account">ACCOUNT</string>
+    <string name="settings_sign_out">Sign out</string>
+
+    <string name="settings_danger">DANGER ZONE</string>
+    <string name="settings_delete_title">Delete account</string>
+    <string name="settings_delete_body">Permanently removes your alias, aura, letters, responses and felt. This can\'t be undone.</string>
+    <string name="settings_delete_button">Delete my account</string>
+    <string name="settings_version">Confess %1$s</string>
+
+    <!-- Remove lock -->
+    <string name="lock_off_title">Turn off the password lock?</string>
+    <string name="lock_off_body">Enter your current password. Fingerprint unlock turns off too.</string>
+    <string name="lock_off_confirm">Turn off</string>
+    <string name="lock_off_done">Password lock is off.</string>
+    <string name="lock_on_done">Password lock is on.</string>
+    <string name="bio_on_done">Fingerprint unlock is on.</string>
+    <string name="bio_off_done">Fingerprint unlock is off.</string>
+    <string name="push_on_done">Notifications are on.</string>
+    <string name="push_off_done">Notifications are off.</string>
+
+    <!-- Delete account -->
+    <string name="delete_account_title">Delete your account?</string>
+    <string name="delete_account_body">Everything you\'ve written, felt and responded with disappears for everyone. To confirm, type your alias: %1$s</string>
+    <string name="delete_account_hint">Your alias</string>
+    <string name="delete_account_confirm">Delete forever</string>
+    <string name="delete_account_working">Deleting…</string>
+    <string name="delete_account_done">Your account is gone. Take care.</string>
+
+    <!-- Password screen (S14) -->
+    <string name="password_set_title">Set a password</string>
+    <string name="password_change_title">Change password</string>
+    <string name="password_set_lead">Lock Confess so only you can open your letters on this phone.</string>
+    <string name="password_change_lead">Pick a new password. You\'ll use it the next time Confess locks.</string>
+    <string name="password_current">CURRENT PASSWORD</string>
+    <string name="password_new">NEW PASSWORD</string>
+    <string name="password_confirm">CONFIRM NEW PASSWORD</string>
+    <string name="password_current_hint">Your current password</string>
+    <string name="password_new_hint">At least 8 characters</string>
+    <string name="password_confirm_hint">Type it again</string>
+    <string name="password_rule_length">8+ characters</string>
+    <string name="password_rule_mix">Letters &amp; numbers</string>
+    <string name="password_rule_symbol">A symbol</string>
+    <string name="password_mismatch">The passwords don\'t match.</string>
+    <string name="password_same">Pick a password different from the current one.</string>
+    <string name="password_note_title">Good to know</string>
+    <string name="password_note_body">Your password only locks the app. If you forget it, you can reset it by email from the unlock screen.</string>
+    <string name="password_save_set">Turn on lock</string>
+    <string name="password_save_change">Change password</string>
+    <string name="password_saving">Saving…</string>
+    <string name="password_changed">Password changed.</string>
+
+    <!-- Edit profile (S13) -->
+    <string name="edit_title">Aura &amp; about</string>
+    <string name="edit_lead">“Change how you appear in the dark. Your letters stay yours.”</string>
+    <string name="edit_preview">PREVIEW</string>
+    <string name="edit_about_label">ABOUT</string>
+    <string name="edit_about_hint">A line about you (optional)</string>
+    <string name="edit_alias_label">ALIAS</string>
+    <string name="edit_alias_note">Aliases can\'t be changed — they keep your letters and responses linked.</string>
+    <string name="edit_aura_label">OR CHOOSE AN AURA</string>
+    <string name="edit_photo_label">PROFILE PHOTO</string>
+    <string name="edit_photo_pick">Choose a photo</string>
+    <string name="edit_photo_change">Change photo</string>
+    <string name="edit_photo_remove">Remove</string>
+    <string name="edit_photo_name">Your photo</string>
+    <string name="edit_photo_note">Confess is anonymous — avoid your face or anything that shows who you are. Photos are checked before they appear, and location data is removed.</string>
+    <string name="edit_photo_failed">Couldn\'t open that photo. Try another one.</string>
+    <string name="edit_uploading">Checking your photo…</string>
+    <string name="photo_flag_sexual">This photo can\'t be used — it contains sexual content.</string>
+    <string name="photo_flag_violent">This photo can\'t be used — it shows violence.</string>
+    <string name="photo_flag_hateful">This photo can\'t be used — it contains hateful symbols.</string>
+    <string name="photo_flag_personal">This photo can\'t be used — it shows personal details like a document, number or address.</string>
+    <string name="photo_flag_generic">This photo can\'t be used — it breaks our guidelines.</string>
+    <string name="photo_unavailable">We couldn\'t check or store your photo just now. Nothing changed — try again in a moment.</string>
+    <string name="edit_save">Save changes</string>
+    <string name="edit_saving">Saving…</string>
+    <string name="edit_saved">Saved.</string>
+    <string name="edit_discard_title">Discard your changes?</string>
+    <string name="edit_discard_confirm">Discard</string>
+
+    <!-- Feature request -->
+    <string name="feature_title">Request a feature</string>
+    <string name="feature_lead">What would make Confess better for you?</string>
+    <string name="feature_category">ABOUT</string>
+    <string name="feature_cat_feed">Feed</string>
+    <string name="feature_cat_privacy">Privacy</string>
+    <string name="feature_cat_comments">Responses</string>
+    <string name="feature_cat_other">Something else</string>
+    <string name="feature_hint">Describe the idea…</string>
+    <string name="feature_send">Send idea</string>
+    <string name="feature_sending">Sending…</string>
+    <string name="feature_sent">Thank you — we read every one.</string>
+</resources>

@@ -1,78 +1,65 @@
 [versions]
-agp = "9.2.1"
+browser = "1.8.0"
+agp = "9.4.1"
+googleServices = "4.4.2"
+
+# AndroidX
+appcompat = "1.7.1"
+activity = "1.10.1"
+constraintlayout = "2.2.1"
+coreSplashscreen = "1.0.1"
+recyclerview = "1.4.0"
+swiperefreshlayout = "1.1.0"
+lifecycle = "2.9.1"
 biometric = "1.1.0"
-checkout = "1.6.41"
-cloudinaryAndroid = "3.1.1"
-datastorePreferences = "1.1.7"
-firebaseBom = "34.0.0"
-firebaseAuth = "24.0.0"
-firebaseMessaging = "25.0.0"
+credentials = "1.5.0"
+googleid = "1.1.1"
+material = "1.12.0"
+
+# Networking / images / misc
+retrofit = "3.0.0"
+okhttp = "5.1.0"
 glide = "4.16.0"
+shimmer = "0.5.0"
+firebaseBom = "34.0.0"
+playIntegrity = "1.4.0"
+
+# Tests
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
-appcompat = "1.7.1"
-kotlinxCoroutinesCore = "1.10.2"
-material = "1.12.0"
-activity = "1.10.1"
-constraintlayout = "2.2.1"
-okhttp = "5.1.0"
-playServicesAuth = "21.4.0"
-playServicesAuthVersion = "21.4.0"
-playServicesSafetynet = "18.1.0"
-retrofit = "3.0.0"
-roomCompiler = "2.7.2"
-roomGuava = "2.7.2"
-roomKtx = "2.7.2"
-roomPaging = "2.7.2"
-roomRuntime = "2.7.2"
-roomRxjava2 = "2.7.2"
-roomRxjava3 = "2.7.2"
-roomTesting = "2.7.2"
-securityCrypto = "1.1.0"
-shimmer = "0.5.0"
-swiperefreshlayout = "1.1.0"
 
 [libraries]
-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
-checkout = { module = "com.razorpay:checkout", version.ref = "checkout" }
-cloudinary-android = { module = "com.cloudinary:cloudinary-android", version.ref = "cloudinaryAndroid" }
-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
-firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebaseMessaging" }
-firebase-storage = { module = "com.google.firebase:firebase-storage" }
-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesCore" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-play-services-safetynet = { module = "com.google.android.gms:play-services-safetynet", version.ref = "playServicesSafetynet" }
-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
-firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuth" }
-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycle" }
+lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata", version.ref = "lifecycle" }
+biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+credentials-core = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+glide-core = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
+
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
-play-services-auth-v2100 = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuthVersion" }
-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
-room-guava = { module = "androidx.room:room-guava", version.ref = "roomGuava" }
-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
-room-paging = { module = "androidx.room:room-paging", version.ref = "roomPaging" }
-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
-room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "roomRxjava2" }
-room-rxjava3 = { module = "androidx.room:room-rxjava3", version.ref = "roomRxjava3" }
-room-testing = { module = "androidx.room:room-testing", version.ref = "roomTesting" }
-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
-shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }

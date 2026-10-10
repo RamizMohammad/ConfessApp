@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Report a confession: pick a reason → it is hidden for you and sent to moderators. -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:paddingBottom="@dimen/space_lg">
+
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_icon_tile"
+            android:importantForAccessibility="no"
+            android:padding="13dp"
+            android:src="@drawable/ic_flag"
+            app:tint="@color/brick" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="@string/report_title"
+            android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:text="@string/report_subtitle"
+            android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+            android:textColor="@color/text_secondary" />
+
+        <RadioGroup
+            android:id="@+id/reasons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/reasonHate"
+                style="@style/Widget.Confess.Radio"
+                android:text="@string/report_hate" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/reasonPersonal"
+                style="@style/Widget.Confess.Radio"
+                android:text="@string/report_personal" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/reasonThreat"
+                style="@style/Widget.Confess.Radio"
+                android:text="@string/report_threat" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/reasonSpam"
+                style="@style/Widget.Confess.Radio"
+                android:text="@string/report_spam" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/reasonOther"
+                style="@style/Widget.Confess.Radio"
+                android:text="@string/report_other" />
+        </RadioGroup>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/send"
+            style="@style/Widget.Confess.Button.Danger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:enabled="false"
+            android:text="@string/report_send"
+            app:icon="@drawable/ic_flag"
+            app:iconGravity="textStart" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

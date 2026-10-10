@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Amber circle send button; dims when disabled. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false">
+        <shape android:shape="oval"><solid android:color="@color/amber_disabled" /></shape>
+    </item>
+    <item>
+        <ripple android:color="@color/amber_pressed">
+            <item><shape android:shape="oval"><solid android:color="@color/amber" /></shape></item>
+        </ripple>
+    </item>
+</selector>

@@ -1,100 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!--
+        allowBackup=false: the session token must never land in a cloud
+        backup or device transfer. Nothing else on-device needs backing up.
+    -->
     <application
-        android:allowBackup="true"
+        android:name=".ConfessApp"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ConfessMain">
+        android:theme="@style/Theme.Confess">
+
+        <!-- Entry: splash + router (Section 2) -->
         <activity
-            android:name=".User_LookUp"
-            android:exported="false" />
-        <activity
-            android:name=".FeatureDemand"
-            android:exported="false" />
-        <activity
-            android:name=".CommentSection"
+            android:name=".ui.entry.LauncherActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Confess.AdjustResize"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".NotificationPage"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".YourConfession"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ChangePassword"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".UpdatePassBio"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".UpdateAbout"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".CreatePost"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateVisible" />
-        <activity
-            android:name=".ProfilePage"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".HomePage"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".WelcomeUser"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Password_Page"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".AlaisPage"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".TermsAndCondition"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Launcher"
-            android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.Confess">
+            android:theme="@style/Theme.Confess.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- Reset-email App Link → in-app Chrome tab; confess://reset-done → back to unlock -->
+        <activity
+            android:name=".ui.entry.LinkActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:theme="@style/Theme.Confess.Link">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="${serverHost}" />
+                <data android:pathPrefix="/reset-password" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="confess" />
+                <data android:host="reset-done" />
+                <data android:host="open" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.entry.WelcomeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.entry.GuidelinesActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- Onboarding (Section 3) -->
+        <activity
+            android:name=".ui.onboarding.AliasActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.onboarding.AvatarActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Unlock (Section 4) -->
+        <activity
+            android:name=".ui.unlock.UnlockActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Home (Section 5) -->
+        <activity
+            android:name=".ui.home.HomeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- Composer (Section 6) -->
+        <activity
+            android:name=".ui.compose.ComposeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <!-- Confession + responses (Section 7) -->
+        <activity
+            android:name=".ui.post.PostDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <!-- Notifications (Section 8) -->
+        <activity
+            android:name=".ui.activity.NotificationsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- Profiles + search (Section 9) -->
+        <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.search.SearchActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <activity
+            android:name=".ui.me.LettersActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.me.ReceivedActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- Settings (Section 10) -->
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.settings.PasswordActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.settings.EditProfileActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.settings.FeatureRequestActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Push (FCM data messages from the server) -->
         <service
-            android:name=".notifications.FirebaseMessaging"
+            android:name=".core.push.PushService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -102,8 +166,21 @@
         </service>
 
         <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_confess" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/amber" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="activity" />
+
+        <!-- Dev: design + server check (reachable from the Me tab) -->
+        <activity
+            android:name=".ui.dev.DesignCheckActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

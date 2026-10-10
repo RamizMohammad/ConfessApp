@@ -1,19 +1,27 @@
-import java.util.Properties
 import java.io.FileInputStream
+import java.net.URI
+import java.util.Properties
 
-// Load properties safely
+// ── Build-time config from secrets.properties (git-ignored) ─────────────────
+// Only values that are SAFE to ship inside the APK belong here. Server-side
+// secrets (Telegram bot token, Cloudinary secret, …) must never be added.
 val secretProperties = Properties()
 val secretPropertiesFile = rootProject.file("secrets.properties")
-
 if (secretPropertiesFile.exists()) {
     FileInputStream(secretPropertiesFile).use { secretProperties.load(it) }
 } else {
     println("⚠️ Warning: secrets.properties file not found!")
 }
 
+fun secret(key: String): String = secretProperties.getProperty(key, "").trim()
+
+if (secret("CERT_PINS").isEmpty()) {
+    println("⚠️ Warning: CERT_PINS is empty — release builds will NOT pin the API certificate.")
+}
+
 plugins {
     alias(libs.plugins.android.application)
-    id("com.google.gms.google-services")
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -24,100 +32,90 @@ android {
         applicationId = "in.mohammad.ramiz.confess"
         minSdk = 31
         targetSdk = 36
-        versionCode = 16
-        versionName = "4.2.0"
+        versionCode = 18
+        versionName = "5.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val webClientId = secretProperties.getProperty("WEB_CLIENT_ID", "")
-        val serverUrl = secretProperties.getProperty("SERVER_URL", "")
-        val botToken = secretProperties.getProperty("BOT_TOKEN", "")
-        val chatId = secretProperties.getProperty("CHAT_ID", "")
-        val clientApi = secretProperties.getProperty("CLIENT_API", "")
-        val aesMode = secretProperties.getProperty("AES_MODE", "")
-        val aesKeySize = secretProperties.getProperty("AES_KEY_SIZE", "")
-        val gcmIvLength = secretProperties.getProperty("GCM_IV_LENGTH", "")
-        val gcmTagLength = secretProperties.getProperty("GCM_TAG_LENGTH", "")
-        val hmacAlgo = secretProperties.getProperty("HMAC_ALGO", "")
-        val razerKeyId = secretProperties.getProperty("RAZER_KEY_ID", "")
-        val captchaKey = secretProperties.getProperty("CAPTCHA_KEY", "")
-        val cloudSaveApi = secretProperties.getProperty("CLOUD_SAVE_API", "")
-        val cloudSaveKey = secretProperties.getProperty("CLOUD_SAVE_KEY", "")
-        val cloudSaveName = secretProperties.getProperty("CLOUD_SAVE_NAME", "")
-        val backupServer = secretProperties.getProperty("BACKUP_URL", "")
+        // Google Sign-In (OAuth Web client id — the server verifies tokens against it)
+        buildConfigField("String", "WEB_CLIENT_ID", "\"${secret("WEB_CLIENT_ID")}\"")
+        // v3 server (Postgres). Must end with "/". Routes live under api/v2/.
+        buildConfigField("String", "SERVER_URL", "\"${secret("SERVER_URL")}\"")
+        // Reset-email links (https://<server>/reset-password) open in the app.
+        manifestPlaceholders["serverHost"] = URI(secret("SERVER_URL").ifEmpty { "https://localhost/" }).host ?: "localhost"
+        buildConfigField("String", "BACKUP_URL", "\"${secret("BACKUP_URL")}\"")
+        // Sent as x-api-key. Identifies the app; it is NOT a secret (it ships in the APK).
+        buildConfigField("String", "CLIENT_API", "\"${secret("CLIENT_API")}\"")
 
-        buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
-        buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
-        buildConfigField("String", "BOT_TOKEN", "\"$botToken\"")
-        buildConfigField("String", "CHAT_ID", "\"$chatId\"")
-        buildConfigField("String", "CLIENT_API", "\"$clientApi\"")
-        buildConfigField("String", "AES_MODE", "\"$aesMode\"")
-        buildConfigField("int", "AES_KEY_SIZE", "$aesKeySize")
-        buildConfigField("int", "GCM_IV_LENGTH", "$gcmIvLength")
-        buildConfigField("int", "GCM_TAG_LENGTH", "$gcmTagLength")
-        buildConfigField("String", "HMAC_ALGO", "\"$hmacAlgo\"")
-        buildConfigField("String", "RAZER_KEY_ID", "\"$razerKeyId\"")
-        buildConfigField("String", "CAPTCHA_KEY", "\"$captchaKey\"")
-        buildConfigField("String", "CLOUD_SAVE_API", "\"$cloudSaveApi\"")
-        buildConfigField("String", "CLOUD_SAVE_KEY", "\"$cloudSaveKey\"")
-        buildConfigField("String", "CLOUD_SAVE_NAME", "\"$cloudSaveName\"")
-        buildConfigField("String", "BACKUP_URL", "\"$backupServer\"")
+        // ── Security (see SECURITY.md) ──────────────────────────────────────
+        // TLS certificate pins for SERVER_URL / BACKUP_URL: "sha256/…=,sha256/…=" (≥ 2, one backup).
+        buildConfigField("String", "CERT_PINS", "\"${secret("CERT_PINS")}\"")
+        // Debug builds only: skip pinning so you can inspect your own traffic with a proxy.
+        buildConfigField("boolean", "DEBUG_ALLOW_PROXY", secret("DEBUG_ALLOW_PROXY").ifEmpty { "false" })
+        // Google Cloud project number with the Play Integrity API enabled (0 = off).
+        buildConfigField("long", "CLOUD_PROJECT_NUMBER", "${secret("CLOUD_PROJECT_NUMBER").ifEmpty { "0" }}L")
+        // SHA-256 of the certificate(s) allowed to sign this app (Play app-signing key, upload key).
+        buildConfigField("String", "SIGNING_CERT_SHA256", "\"${secret("SIGNING_CERT_SHA256")}\"")
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
-        buildFeatures{
-            dataBinding = true
-            buildConfig = true
-            viewBinding = true
-        }
     }
+
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 dependencies {
-    implementation(libs.cloudinary.android)
-    implementation(libs.firebase.storage)
-    implementation(libs.play.services.safetynet)
-    implementation(libs.checkout)
-    implementation(libs.datastore.preferences)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.swiperefreshlayout)
-    implementation(libs.shimmer)
-    implementation(libs.firebase.messaging)
-    implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
-    implementation(libs.room.ktx)
-    implementation(libs.room.rxjava2)
-    implementation(libs.room.rxjava3)
-    implementation(libs.room.guava)
-    testImplementation(libs.room.testing)
-    implementation(libs.room.paging)
-    implementation(libs.biometric)
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.firebase.auth)
-    implementation(libs.play.services.auth)
-    implementation(libs.okhttp)
-    implementation(libs.logging.interceptor)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation(libs.glide)
-    annotationProcessor(libs.compiler)
+    // AndroidX + Material
     implementation(libs.appcompat)
-    implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.core.splashscreen)
+    implementation(libs.recyclerview)
+    implementation(libs.androidx.browser)
+    implementation(libs.swiperefreshlayout)
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.livedata)
+    implementation(libs.material)
+    implementation(libs.play.integrity)
+
+    // Sign-in + unlock
+    implementation(libs.credentials.core)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.biometric)
+
+    // Networking
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)   // attached only in debug builds (ApiClient)
+
+    // Images / loading skeletons
+    implementation(libs.glide.core)
+    annotationProcessor(libs.glide.compiler)
+    implementation(libs.shimmer)
+
+    // Push (Firebase is used ONLY for FCM)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

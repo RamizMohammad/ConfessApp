@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- S13 · Aura & about. Old: ProfilePage (avatar) + UpdateAbout. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ink"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingHorizontal="@dimen/space_xs">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/back"
+            style="@style/Widget.Confess.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:contentDescription="@string/action_back"
+            app:icon="@drawable/ic_arrow_left" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/newsreader"
+            android:text="@string/edit_title"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
+            android:textStyle="italic" />
+    </FrameLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_screen"
+            android:paddingBottom="@dimen/space_lg">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:fontFamily="@font/newsreader"
+                android:gravity="center"
+                android:text="@string/edit_lead"
+                android:textColor="@color/amber"
+                android:textSize="19sp"
+                android:textStyle="italic" />
+
+            <!-- Preview -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:background="@drawable/bg_plate"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="@dimen/space_md">
+
+                <TextView
+                    style="@style/Confess.Tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:text="@string/edit_preview" />
+
+                <FrameLayout
+                    android:layout_width="124dp"
+                    android:layout_height="124dp"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:background="@drawable/bg_avatar_ring">
+
+                    <in.mohammad.ramiz.confess.ui.components.AuraAvatarView
+                        android:id="@+id/preview"
+                        android:layout_width="104dp"
+                        android:layout_height="104dp"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/auraName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall"
+                    android:textColor="@color/text_primary"
+                    tools:text="Aura 04 · Eclipsed Amber" />
+
+                <TextView
+                    android:id="@+id/previewAlias"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Confess.Alias"
+                    android:textColor="@color/amber"
+                    tools:text="\@quiet_wanderer" />
+
+                <TextView
+                    android:id="@+id/previewAbout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:fontFamily="@font/newsreader"
+                    android:gravity="center"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="17sp"
+                    android:textStyle="italic"
+                    tools:text="“Writing what I can only say when the city sleeps.”" />
+            </LinearLayout>
+
+            <!-- About -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:layout_marginBottom="@dimen/space_sm"
+                android:drawableStart="@drawable/dot_amber"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:text="@string/edit_about_label"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:textColor="@color/text_secondary" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/aboutLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:counterEnabled="true"
+                app:counterMaxLength="50">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/aboutInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/edit_about_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapSentences"
+                    android:maxLength="50"
+                    android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.Confess.Quote" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Alias (fixed) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_sm"
+                android:drawableStart="@drawable/dot_amber"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:text="@string/edit_alias_label"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:textColor="@color/text_secondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_plate"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/space_md">
+
+                <TextView
+                    android:id="@+id/alias"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/TextAppearance.Confess.Alias"
+                    android:textColor="@color/text_primary"
+                    tools:text="\@quiet_wanderer" />
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size_sm"
+                    android:layout_height="@dimen/icon_size_sm"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_lock_small"
+                    app:tint="@color/text_muted" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:text="@string/edit_alias_note"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/text_muted" />
+
+            <!-- Photo -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:layout_marginBottom="@dimen/space_sm"
+                android:drawableStart="@drawable/dot_amber"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:text="@string/edit_photo_label"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:textColor="@color/text_secondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_plate"
+                android:orientation="vertical"
+                android:padding="@dimen/space_md">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/pickPhoto"
+                        style="@style/Widget.Confess.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="44dp"
+                        android:text="@string/edit_photo_pick"
+                        android:textAppearance="@style/TextAppearance.Confess.Meta"
+                        app:icon="@drawable/ic_image"
+                        app:iconGravity="textStart"
+                        app:iconSize="@dimen/icon_size_sm" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/removePhoto"
+                        style="@style/Widget.Confess.Button.Ghost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_sm"
+                        android:minHeight="44dp"
+                        android:text="@string/edit_photo_remove"
+                        android:textAppearance="@style/TextAppearance.Confess.Meta"
+                        android:visibility="gone"
+                        app:icon="@drawable/ic_close"
+                        app:iconGravity="textStart"
+                        app:iconSize="@dimen/icon_size_sm"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12"
+                    android:drawableStart="@drawable/ic_shield"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/amber"
+                    android:text="@string/edit_photo_note"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_muted" />
+
+                <TextView
+                    android:id="@+id/photoError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12"
+                    android:background="@drawable/bg_plate_error"
+                    android:padding="@dimen/space_12"
+                    android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                    android:textColor="@color/text_primary"
+                    android:visibility="gone"
+                    tools:text="This photo can't be used — it shows personal details."
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <!-- Aura grid -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:layout_marginBottom="@dimen/space_sm"
+                android:drawableStart="@drawable/dot_amber"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:text="@string/edit_aura_label"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:textColor="@color/text_secondary" />
+
+            <GridLayout
+                android:id="@+id/grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="-5dp"
+                android:columnCount="3" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_bar"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:paddingTop="@dimen/space_12"
+        android:paddingBottom="@dimen/space_md">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/save"
+            style="@style/Widget.Confess.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/edit_save"
+            app:icon="@drawable/ic_check" />
+    </LinearLayout>
+</LinearLayout>

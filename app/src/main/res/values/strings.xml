@@ -1,87 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Shared strings. Each section adds its screen strings in its own
+    strings_<feature>.xml file so the sections stay easy to review.
+-->
 <resources>
     <string name="app_name">Confess</string>
-    <string name="confess">Confess</string>
-    <string name="app_logo">App Logo</string>
-    <string name="illus">illus</string>
-    <string name="share_your_thoughts_without_guilt">Share your thoughts without guilt</string>
-    <string name="because_we_are_not_the_society">Because we are not the society</string>
-    <string name="join_the_world">Join the world</string>
-    <string name="googlelogo">googleLogo</string>
-    <string name="sign_in_with_google">Continue with google</string>
-    <string name="termlogo">termlogo</string>
-    <string name="terms_and_condition">Terms and Condition</string>
-    <string name="check_the_box_to_accept_the_terms_and_condition">Check the box to accept the Terms and Condition</string>
-    <string name="read_carefully_and_accept_these_terms_and_condition_to_begin_with_us">Read carefully and accept these terms and condition to begin with us.</string>
-    <string name="enter_the_details">Enter the details</string>
-    <string name="enter_the_details_correctly_to_join_the_world">Enter the details correctly to join the world.</string>
-    <string name="create_account">Create Account</string>
-    <string name="enter_the_alias_name">Enter the alias name</string>
-    <string name="alias_name">alias name</string>
-    <string name="lock_icon">lock icon</string>
-    <string name="enter_your_alias_name">Enter your alias name</string>
-    <string name="alias_name_can_t_be_chnaged_once_done">Alias name can\'t be changed once done.</string>
-    <string name="do_you_need_your_account_password_protected">Password protected account?</string>
-    <string name="enter_your_password">Enter your password</string>
-    <string name="password">password</string>
-    <string name="password_will_be_required_at_each_login">Password will be required at each login</string>
-    <string name="enter_your_correct_password_to_proceed_over_the_home_page">Enter your correct password to proceed over the home page.</string>
-    <string name="check_password">Check Password</string>
-    <string name="homelogo">homeLogo</string>
-    <string name="home">Home</string>
-    <string name="profile">Profile</string>
-    <string name="profilelogo">profileLogo</string>
-    <string name="pick_a_image_from_the_set_of_given_images_which_reflects_your_personality">Pick a image from the set of given images which reflects your personality</string>
-    <string name="add_profile_picture">Add Profile Picture</string>
-    <string name="createPost">Oh so you have something melting you down, Tells us and make your heart lighter 😊</string>
-    <string name="something_melting_you_tell_us">Something melting you, tell us</string>
-    <string name="_0_2000">0/2000</string>
-    <string name="update_about">Update about</string>
-    <string name="write_the_bold_message_as_you_are_because_no_one_knows_who_you_are">Write the bold message as you are, because no one knows who you are.</string>
-    <string name="about">About....</string>
-    <string name="express_your_statement">Express your statement</string>
-    <string name="_0_50">0/50</string>
-    <string name="update_about_btn">Update About</string>
-    <string name="_0_15">0/15</string>
-    <string name="enable_fingerprint_login">Enable biometric login</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="explore_the_confession_world">Explore the confession world</string>
-    <string name="fun_fact">Fun Fact</string>
-    <string name="your_confessions">Your Confessions</string>
-    <string name="change_your_about">Change your about</string>
-    <string name="biometric_login">Biometric login</string>
-    <string name="edit_about">Edit about</string>
-    <string name="rate_us">Rate us</string>
-    <string name="developer_rights">Developer profile</string>
-    <string name="delete_account">Delete account</string>
-    <string name="all_rights_reserver_mohammad_ramiz">All rights reserved | Mohammad Ramiz</string>
-    <string name="enter_your_new_password">Enter your new password</string>
-    <string name="enter_your_old_password">Enter your old password</string>
-    <string name="old_password">old password</string>
-    <string name="new_password">new password</string>
-    <string name="change_password">Change Password</string>
-    <string name="enter_the_new_account_password">Enter the new account password.</string>
-    <string name="you_are_all_caught_up">You are all caught up</string>
-    <string name="no_posts_found">No Posts Found</string>
-    <string name="enter_a_secure_password_by_which_you_can_secure_your_account_and_data">Enter a secure password by which you can secure your account and data.</string>
-    <string name="update_password">Update password</string>
-    <string name="your_posts">Your Posts</string>
-    <string name="get_a_visuals_over_all_the_confessions_u_have_made_till_now">Get a visuals over all the confessions you have made till now.</string>
-    <string name="notifications">Notifications</string>
-    <string name="clear_all">Clear all</string>
-    <string name="title">Notification Title</string>
-    <string name="body">Notification Body</string>
-    <string name="enable_comments">Enable Comments</string>
-    <string name="commnets">Comments</string>
-    <string name="post">Post</string>
-    <string name="like">Like</string>
-    <string name="comment">Comment</string>
-    <string name="write_comment">write comment</string>
-    <string name="banner">Everyone deserves a good treatment so be polite. Any non social thing will not be forgiven</string>
-    <string name="no_commnets_on_post">No comments on post</string>
-    <string name="feature_description">Feature description</string>
-    <string name="submit">Submit</string>
-    <string name="demand_feature">Demand Feature</string>
-    <string name="enter_the_details_of_any_new_feature_suggestion_in_application_or_any_feedback_you_think_can_be_improved">Enter the details of any new feature suggestion in application or any feedback you think can be improved.</string>
-    <string name="feature_demand_feedback">Feature demand / Feedback</string>
+
+    <!-- Brand voice -->
+    <string name="tagline_line1">Share your thoughts</string>
+    <string name="tagline_line2">without guilt.</string>
+    <string name="tagline_sub">Because we are not the society.</string>
+
+    <!-- Common actions -->
+    <string name="action_back">Back</string>
+    <string name="action_close">Close</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_retry">Try again</string>
+    <string name="action_more">More options</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+
+    <!-- Confession card -->
+    <string name="cd_felt">Felt</string>
+    <string name="cd_responses">Responses</string>
+    <string name="comments_closed">Comments closed</string>
+    <string name="read_more">Read more</string>
+
+    <!-- Common states -->
+    <string name="error_generic">Something went quiet on our side. Try again.</string>
+    <string name="error_offline">You\'re offline. Your words will wait.</string>
 </resources>

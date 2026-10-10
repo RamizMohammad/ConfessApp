@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Section 3 — Alias (S4), Avatar (S5), registration. -->
+<resources>
+    <string name="onb_step">Step %1$d of %2$d</string>
+
+    <!-- S4 Alias -->
+    <string name="alias_title">Choose your alias.</string>
+    <string name="alias_subtitle">This is the only name the world will ever know you by.</string>
+    <string name="alias_label">Alias</string>
+    <string name="alias_hint">your_alias</string>
+    <string name="alias_rules">3–15 letters, numbers or _</string>
+    <string name="alias_checking">Checking…</string>
+    <string name="alias_available">Available</string>
+    <string name="alias_taken">Taken</string>
+    <string name="alias_offline">Can\'t check right now</string>
+    <string name="alias_permanent">Alias can\'t be changed once confirmed. Choose with intention.</string>
+    <string name="alias_suggestions">Suggestions</string>
+    <string name="alias_shuffle">Shuffle</string>
+    <string name="lock_title">Lock my account with a password</string>
+    <string name="lock_subtitle">Recommended for shared devices</string>
+    <string name="lock_hint">Password</string>
+    <string name="lock_min">Min. 8 chars</string>
+    <string name="lock_helper">You\'ll enter it each time you open Confess.</string>
+    <string name="strength_weak">Weak</string>
+    <string name="strength_fair">Fair</string>
+    <string name="strength_strong">Strong</string>
+    <string name="bio_title">Also unlock with fingerprint</string>
+    <string name="bio_subtitle">Uses this phone\'s biometrics</string>
+    <string name="bio_prompt_title">Confirm it\'s you</string>
+    <string name="bio_prompt_subtitle">Use your fingerprint to unlock Confess</string>
+    <string name="bio_failed">Biometric unlock wasn\'t turned on.</string>
+    <string name="alias_next">Next: choose aura</string>
+
+    <!-- S5 Avatar -->
+    <string name="avatar_title">Pick a face that isn\'t yours.</string>
+    <string name="avatar_subtitle">An abstract aura to carry your words into the dark.</string>
+    <string name="avatar_assigned">Your aura</string>
+    <string name="avatar_label">Aura %1$02d · %2$s</string>
+    <string name="avatar_short">Aura %1$02d</string>
+    <string name="avatar_random">Random aura</string>
+    <string name="avatar_collection">Aura collection (12)</string>
+    <string name="about_label">A line about you · optional</string>
+    <string name="about_hint">Writing what I can only say at night…</string>
+    <string name="avatar_privacy">Your aura isn\'t linked to your Google account. Everyone else only ever sees this and your alias.</string>
+    <string name="avatar_enter">Enter Confess</string>
+    <string name="avatar_creating">Creating your space…</string>
+    <string name="register_alias_taken">Someone just took that alias. Pick another one.</string>
+    <string name="register_expired">Your sign-in timed out. Please continue with Google again.</string>
+</resources>

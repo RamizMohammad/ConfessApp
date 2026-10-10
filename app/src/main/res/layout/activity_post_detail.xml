@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    S9 · A confession and its responses. Old: PostDetails + comment list.
+    Paper letter → RESPONSES (n) → dark response cards → kindness line,
+    with a sticky "Respond with kindness…" bar (or a "closed" bar).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ink"
+    android:orientation="vertical">
+
+    <!-- Top bar: back · ✉ LETTER · share · more -->
+    <FrameLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingHorizontal="@dimen/space_xs">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/back"
+            style="@style/Widget.Confess.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:contentDescription="@string/action_back"
+            app:icon="@drawable/ic_arrow_left" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableStart="@drawable/ic_mail_open"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/amber"
+            android:gravity="center_vertical"
+            android:text="@string/detail_title"
+            android:textAppearance="@style/TextAppearance.Confess.Meta"
+            android:textColor="@color/text_secondary" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/share"
+                style="@style/Widget.Confess.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/cd_share"
+                android:enabled="false"
+                app:icon="@drawable/ic_share" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/more"
+                style="@style/Widget.Confess.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/action_more"
+                android:enabled="false"
+                app:icon="@drawable/ic_more_vertical" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hairline"
+        android:background="@color/hairline" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingTop="@dimen/space_md"
+            android:visibility="invisible" />
+
+        <!-- First load -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:shimmer_auto_start="true"
+            app:shimmer_base_alpha="0.6"
+            app:shimmer_duration="1400"
+            app:shimmer_highlight_alpha="1.0">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/space_md">
+
+                <include layout="@layout/item_feed_skeleton" />
+
+                <include layout="@layout/item_feed_skeleton" />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <!-- Gone / error -->
+        <LinearLayout
+            android:id="@+id/state"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/space_xl"
+            android:paddingBottom="@dimen/space_xl"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/stateIcon"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_icon_tile"
+                android:importantForAccessibility="no"
+                android:padding="16dp"
+                android:src="@drawable/ic_mail_open"
+                app:tint="@color/amber" />
+
+            <TextView
+                android:id="@+id/stateTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall"
+                android:textColor="@color/text_primary"
+                tools:text="@string/detail_gone_title" />
+
+            <TextView
+                android:id="@+id/stateBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                android:textColor="@color/text_secondary"
+                tools:text="@string/detail_gone_body" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/stateAction"
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:paddingHorizontal="@dimen/space_lg"
+                tools:text="@string/action_retry" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Bottom: notice + response bar / closed bar -->
+    <LinearLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_bar"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/space_md"
+            android:layout_marginTop="@dimen/space_12"
+            android:background="@drawable/bg_plate_error"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/space_sm"
+            android:paddingStart="@dimen/space_12"
+            android:paddingEnd="@dimen/space_xs"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/noticeIcon"
+                android:layout_width="@dimen/icon_size_sm"
+                android:layout_height="@dimen/icon_size_sm"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_alert"
+                app:tint="@color/brick" />
+
+            <TextView
+                android:id="@+id/noticeText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                android:textColor="@color/text_primary"
+                tools:text="This response can't be posted. It reveals someone's private details." />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/noticeClose"
+                style="@style/Widget.Confess.IconButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/cd_dismiss"
+                android:minWidth="40dp"
+                android:minHeight="40dp"
+                app:icon="@drawable/ic_close"
+                app:iconSize="@dimen/icon_size_sm"
+                app:iconTint="@color/text_secondary" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/space_sm"
+            android:layout_marginEnd="76dp"
+            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+            android:textColor="@color/text_muted"
+            android:visibility="gone"
+            tools:text="432 / 500"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/inputBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/space_md"
+            android:paddingVertical="@dimen/space_12">
+
+            <in.mohammad.ramiz.confess.ui.components.AuraAvatarView
+                android:id="@+id/myAvatar"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_pill"
+                android:hint="@string/response_hint"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLines="5"
+                android:minHeight="44dp"
+                android:paddingHorizontal="18dp"
+                android:paddingVertical="10dp"
+                android:textAppearance="@style/TextAppearance.Confess.Body"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_muted"
+                android:textCursorDrawable="@drawable/cursor_amber" />
+
+            <FrameLayout
+                android:layout_width="44dp"
+                android:layout_height="44dp">
+
+                <ImageButton
+                    android:id="@+id/send"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_send_button"
+                    android:contentDescription="@string/cd_send_response"
+                    android:enabled="false"
+                    android:src="@drawable/ic_arrow_up"
+                    app:tint="@color/paper_ink" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/sending"
+                    style="@style/Widget.Confess.Progress.Circular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:visibility="gone"
+                    app:indicatorColor="@color/paper_ink"
+                    app:indicatorSize="20dp" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/closedBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_lock_small"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/text_muted"
+            android:gravity="center"
+            android:padding="@dimen/space_md"
+            android:text="@string/responses_closed_bar"
+            android:textAppearance="@style/TextAppearance.Confess.Meta"
+            android:textColor="@color/text_secondary"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

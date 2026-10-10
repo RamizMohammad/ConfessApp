@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Midnight Letters — color tokens.
+    Source of truth: new_ui/midnight_letters/DESIGN.md (prose values).
+    Rule: amber is used sparingly — primary action, "felt" state, focus, unread.
+-->
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="grey">#737373</color>
-    <color name="buttonGrey">#F5F5F5</color>
-    <color name="extraColor">#222831</color>
-    <color name="falseRed">#F93827</color>
-    <color name="navColor">#121212</color>
-    <color name="yellow">#FFC107</color>
-    <color name="postBg">#0B0B0B</color>
-    <color name="dateColor">#3E3E3E</color>
+    <!-- Canvas (dark) -->
+    <color name="ink">#0F0E13</color>                 <!-- level 0: app background -->
+    <color name="surface_raised">#17161D</color>      <!-- level 1: plates, inputs, sheets, nav -->
+    <color name="surface_high">#201F27</color>        <!-- pressed / highlighted rows -->
+    <color name="hairline">#2A2832</color>            <!-- borders + dividers -->
+
+    <!-- Paper (the confession card) -->
+    <color name="paper">#EDE6DA</color>
+    <color name="paper_ink">#1B1A20</color>           <!-- text on paper -->
+    <color name="paper_meta">#A61B1A20</color>        <!-- 65% paper_ink: metadata on paper -->
+    <color name="paper_rule">#261B1A20</color>        <!-- 15% paper_ink: dividers on paper -->
+
+    <!-- Text on dark -->
+    <color name="text_primary">#ECE8E1</color>
+    <color name="text_secondary">#8E8A96</color>
+    <color name="text_muted">#5A5763</color>
+
+    <!-- Accent + semantics -->
+    <color name="amber">#E8A04C</color>
+    <color name="amber_pressed">#D08A38</color>
+    <color name="amber_disabled">#59E8A04C</color>    <!-- 35% -->
+    <color name="amber_tint">#14E8A04C</color>        <!-- 8%: active chip background -->
+    <color name="brick">#D2553F</color>
+    <color name="brick_tint">#1FD2553F</color>        <!-- 12%: error card background -->
+    <color name="sage">#8FB39A</color>
+    <color name="sage_tint">#1F8FB39A</color>
+
+    <!-- Misc -->
+    <color name="scrim">#B30F0E13</color>
+    <color name="transparent">#00000000</color>
 </resources>

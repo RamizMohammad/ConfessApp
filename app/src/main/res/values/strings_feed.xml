@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Section 5 — Home shell + Feed (S7). -->
+<resources>
+    <string name="tab_feed">Feed</string>
+    <string name="tab_confess">Confess</string>
+    <string name="tab_me">Me</string>
+    <string name="cd_search">Search people</string>
+    <string name="cd_notifications">Notifications</string>
+    <string name="cd_compose">Write a confession</string>
+
+    <string name="sort_latest">Latest</string>
+    <string name="sort_top">Most felt</string>
+    <string name="sort_top_hint">Most felt this week</string>
+
+    <string name="feed_you">you</string>
+    <string name="feed_caught_up">You\'re all caught up.</string>
+    <string name="feed_caught_up_sub">Sit with it for a moment.</string>
+    <string name="feed_more_failed">Couldn\'t load more.</string>
+    <string name="feed_empty_title">No confessions yet.</string>
+    <string name="feed_empty_body">Be the first to say the thing out loud.</string>
+    <string name="feed_empty_top">Nothing has been felt this week yet.</string>
+    <string name="feed_empty_action">Write a confession</string>
+    <string name="feed_error_title">The room is quiet right now.</string>
+
+    <string name="menu_delete">Delete confession</string>
+    <string name="menu_report">Report</string>
+    <string name="delete_title">Delete this confession?</string>
+    <string name="delete_body">It disappears for everyone, along with its responses. This can\'t be undone.</string>
+    <string name="deleted">Confession deleted.</string>
+
+    <string name="report_title">Report this confession</string>
+    <string name="report_subtitle">It will be hidden for you right away. Our moderators review reports.</string>
+    <string name="report_hate">Hate or harassment</string>
+    <string name="report_personal">Reveals someone\'s identity</string>
+    <string name="report_threat">Threats or self-harm risk</string>
+    <string name="report_spam">Spam or promotion</string>
+    <string name="report_other">Something else</string>
+    <string name="report_send">Report and hide</string>
+    <string name="reported">Reported. You won\'t see it again.</string>
+
+    <!-- Profile -->
+    <string name="me_since">MEMBER SINCE %1$s</string>
+
+    <string name="cd_felt_on">Felt. Tap to take it back</string>
+    <string name="cd_card">Confession by %1$s, %2$s</string>
+</resources>

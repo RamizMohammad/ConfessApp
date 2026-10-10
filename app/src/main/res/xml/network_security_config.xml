@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    TLS policy for every connection the app makes (OkHttp, Glide, Firebase):
+      * HTTPS only — plain HTTP is refused.
+      * Only the phone's built-in CAs are trusted. Certificates a user (or an
+        interception proxy) installs are ignored in release builds.
+    The API host is additionally pinned in code (CertPins, CERT_PINS).
+    debug-overrides only applies to debuggable builds.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>

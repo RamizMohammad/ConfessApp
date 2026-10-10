@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tag pill on paper ("COMMENTS CLOSED"). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/transparent" />
+    <stroke android:width="@dimen/hairline" android:color="@color/paper_rule" />
+    <corners android:radius="100dp" />
+</shape>

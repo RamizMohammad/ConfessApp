@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Section 9 — Me / public profile / search (S11). Old: ProfileFragment, YourConfession, User_LookUp. -->
+<resources>
+    <string name="profile_mine_tag">YOUR PROFILE</string>
+    <string name="profile_tag">PROFILE</string>
+    <string name="cd_settings">Settings</string>
+    <string name="profile_add_about">Add a line about yourself</string>
+    <string name="profile_edit_aura">Edit aura</string>
+    <string name="profile_edit_about">Edit about</string>
+    <string name="profile_letters">LETTERS</string>
+    <string name="profile_letters_sub">Written</string>
+    <string name="profile_felt">FELT</string>
+    <string name="profile_felt_sub">Received</string>
+    <string name="profile_my_letters">MY LETTERS (%1$s)</string>
+    <string name="profile_their_letters">LETTERS (%1$s)</string>
+    <string name="profile_no_letters_me">You haven\'t written anything yet.</string>
+    <string name="profile_no_letters_me_body">Your letters will live here — only your alias is shown.</string>
+    <string name="profile_no_letters">No letters yet.</string>
+    <string name="profile_no_letters_body">%1$s hasn\'t written anything that you can see.</string>
+    <string name="profile_all_letters">That\'s every letter.</string>
+    <string name="profile_gone_title">No one goes by that alias.</string>
+    <string name="profile_gone_body">They may have changed it or left Confess.</string>
+    <!-- Me page cards -->
+    <string name="me_card_letters">Letters</string>
+    <string name="me_card_letters_sub">Everything you\'ve written</string>
+    <string name="me_card_felt">Felt</string>
+    <string name="me_card_responses">Responses</string>
+    <string name="me_given">GIVEN</string>
+    <string name="me_received">RECEIVED</string>
+    <string name="me_made">MADE</string>
+    <string name="me_card_settings">Settings</string>
+    <string name="me_card_settings_sub">Lock, notifications, account</string>
+
+    <!-- Letters / received screens -->
+    <string name="letters_title">MY LETTERS</string>
+    <string name="felt_title">FELT ON YOUR LETTERS</string>
+    <string name="responses_title">RESPONSES TO YOUR LETTERS</string>
+    <string name="received_felt_summary">%1$s felt received · %2$s given</string>
+    <string name="received_responses_summary">%1$s responses received · %2$s made</string>
+    <string name="received_felt_empty">No one has felt your letters yet.</string>
+    <string name="received_responses_empty">No one has responded yet.</string>
+    <string name="received_empty_body">When they do, you\'ll see who — letter by letter.</string>
+    <string name="received_show_more">Show more</string>
+    <string name="received_open_letter">Open letter</string>
+    <string name="received_load_failed">Couldn\'t load. Tap to try again.</string>
+    <string name="cd_expand">Show who</string>
+    <string name="cd_collapse">Hide</string>
+
+    <string name="cd_author">Open %1$s\'s profile</string>
+
+
+    <!-- Search -->
+    <string name="search_hint">Search by alias</string>
+    <string name="search_intro_title">Find someone.</string>
+    <string name="search_intro_body">Type the start of an alias. Only aliases are searchable — never names or emails.</string>
+    <string name="search_none_title">No one goes by “%1$s”.</string>
+    <string name="search_none_body">Check the spelling — aliases are matched from the start.</string>
+    <string name="cd_clear">Clear</string>
+</resources>

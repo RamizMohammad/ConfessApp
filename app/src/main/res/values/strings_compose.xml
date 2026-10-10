@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Section 6 — Composer (S8). Old: CreatePost. -->
+<resources>
+    <string name="compose_discard">Discard</string>
+    <string name="compose_status">UNSENT NOTE</string>
+    <string name="cd_compose_help">Community guidelines</string>
+    <string name="compose_prompt">Oh so you have something melting you down?</string>
+    <string name="compose_prompt_sub">Tell us and make your heart lighter.</string>
+    <string name="compose_hint">Something melting you, tell us…</string>
+    <string name="compose_cd_editor">Your confession</string>
+    <string name="compose_tonight">Tonight · %1$s</string>
+    <string name="compose_today">Today · %1$s</string>
+    <string name="compose_stamp">ONLY YOUR ALIAS IS SHOWN</string>
+    <string name="compose_draft_kept">Draft kept</string>
+    <string name="compose_draft_restored">Draft restored</string>
+
+    <string name="compose_allow">Allow responses</string>
+    <string name="compose_allow_on">Others can respond with gentle words</string>
+    <string name="compose_allow_off">No one can respond to this one</string>
+    <string name="compose_counter">%1$d</string>
+    <string name="compose_counter_max">/ %1$d</string>
+    <string name="compose_too_long">%1$d characters over the limit</string>
+
+    <string name="compose_release">Release into the dark</string>
+    <string name="compose_checking">Reading your words…</string>
+    <string name="compose_footnote">Only your alias and aura are shown.\nYou can delete it anytime.</string>
+    <string name="compose_released">Released. Your words are out there now.</string>
+
+    <!-- Moderation -->
+    <string name="mod_flagged_title">This can\'t be posted.</string>
+    <string name="mod_personal_info">It reveals someone\'s private details — a number, an address or a real name.</string>
+    <string name="mod_religious_hate">It targets people for their religion.</string>
+    <string name="mod_sexual_threat">It reads as sexual harassment, a threat or blackmail.</string>
+    <string name="mod_national_offense">It promotes hatred against a nation or terrorism.</string>
+    <string name="mod_generic">It breaks our community guidelines.</string>
+    <string name="compose_empty_after_clean">Nothing is left once formatting is removed. Write it in plain words.</string>
+    <string name="mod_review">Review guidelines</string>
+    <string name="mod_unavailable_title">We couldn\'t read it just now.</string>
+    <string name="mod_unavailable_body">Every confession is checked before it goes out. Nothing was posted — try again in a moment.</string>
+
+    <!-- Leaving -->
+    <string name="compose_leave_title">Leave this confession?</string>
+    <string name="compose_leave_body">You can keep it as a draft on this phone and finish it later.</string>
+    <string name="compose_leave_keep">Keep draft</string>
+    <string name="compose_leave_discard">Discard</string>
+</resources>

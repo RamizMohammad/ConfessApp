@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Section 7 — Confession + responses (S9). Old: PostDetails / CommentActivity. -->
+<resources>
+    <string name="detail_title">LETTER</string>
+    <string name="cd_share">Share</string>
+    <string name="detail_felt_count">%1$s felt</string>
+    <plurals name="detail_responses">
+        <item quantity="one">%1$s response</item>
+        <item quantity="other">%1$s responses</item>
+    </plurals>
+    <string name="detail_responses_header">RESPONSES (%1$s)</string>
+    <string name="detail_responses_order">OLDEST FIRST</string>
+    <string name="detail_gone_title">This confession is gone.</string>
+    <string name="detail_gone_body">Its author deleted it, or it was hidden after reports.</string>
+    <string name="detail_back_to_feed">Back</string>
+    <string name="detail_share_footer">— shared from Confess</string>
+
+    <string name="responses_empty_title">No responses yet.</string>
+    <string name="responses_empty_body">Be the first gentle voice.</string>
+    <string name="responses_kindness">“Respond with kindness. Words linger longer in the dark.”</string>
+    <string name="responses_closed_end">The author closed responses on this one.</string>
+    <string name="responses_more_failed">Couldn\'t load more responses.</string>
+
+    <string name="response_author">AUTHOR</string>
+    <string name="response_hint">Respond with kindness…</string>
+    <string name="cd_send_response">Send response</string>
+    <string name="response_counter">%1$d / %2$d</string>
+    <string name="responses_closed_bar">Responses are closed for this confession.</string>
+    <string name="response_delete">Delete response</string>
+    <string name="response_delete_title">Delete this response?</string>
+    <string name="response_delete_body">It disappears for everyone. This can\'t be undone.</string>
+    <string name="response_deleted">Response deleted.</string>
+    <string name="response_flagged">This response can\'t be posted. %1$s</string>
+    <string name="response_unavailable">We couldn\'t check your words just now. Nothing was sent — try again.</string>
+    <string name="cd_dismiss">Dismiss</string>
+</resources>

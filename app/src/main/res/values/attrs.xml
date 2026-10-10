@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AuraAvatarView">
+        <!-- Avatar value, e.g. "aura_04". -->
+        <attr name="aura" format="string" />
+        <!-- Draw the amber selection ring. -->
+        <attr name="auraSelected" format="boolean" />
+    </declare-styleable>
+</resources>

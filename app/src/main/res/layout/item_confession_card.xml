@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The paper confession card (S7 feed / S11 my letters / S9 detail header).
+    Bound in code by the feed adapter (Section 5). Ids are the contract.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/margin_screen"
+    android:layout_marginVertical="@dimen/space_sm"
+    android:outlineSpotShadowColor="#000000"
+    android:outlineAmbientShadowColor="#000000"
+    app:cardBackgroundColor="@color/paper"
+    app:cardCornerRadius="@dimen/radius_card"
+    app:cardElevation="@dimen/paper_elevation"
+    app:rippleColor="@color/paper_rule"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/paper_padding"
+        android:paddingTop="@dimen/space_md"
+        android:paddingEnd="@dimen/space_sm"
+        android:paddingBottom="@dimen/space_sm">
+
+        <!-- Header: aura · @alias / time · overflow -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <in.mohammad.ramiz.confess.ui.components.AuraAvatarView
+                android:id="@+id/avatar"
+                android:layout_width="@dimen/avatar_sm"
+                android:layout_height="@dimen/avatar_sm"
+                app:aura="aura_04" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_12"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/alias"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.Confess.Alias"
+                    android:textColor="@color/paper_ink"
+                    tools:text="\@solitary_star" />
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/paper_meta"
+                    tools:text="2h ago" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/commentsClosed"
+                style="@style/Confess.Tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_xs"
+                android:background="@drawable/bg_tag_paper"
+                android:text="@string/comments_closed"
+                android:textColor="@color/paper_meta"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/more"
+                style="@style/Widget.Confess.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/action_more"
+                app:icon="@drawable/ic_more"
+                app:iconTint="@color/paper_meta"
+                app:rippleColor="@color/paper_rule" />
+        </LinearLayout>
+
+        <!-- The confession -->
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:layout_marginEnd="@dimen/space_md"
+            android:ellipsize="end"
+            android:maxLines="6"
+            android:textAppearance="@style/TextAppearance.Confess.Confession.Card"
+            android:textColor="@color/paper_ink"
+            tools:text="“I still look for your car at every red light, even though I moved three states away two years ago.”" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/space_md"
+            android:layout_marginEnd="@dimen/space_md"
+            android:background="@drawable/divider_paper" />
+
+        <!-- Footer: felt · responses -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/felt"
+                style="@style/Widget.Confess.Button.Ghost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="-12dp"
+                android:contentDescription="@string/cd_felt"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/paper_meta"
+                app:icon="@drawable/ic_heart"
+                app:iconGravity="start"
+                app:iconPadding="6dp"
+                app:iconSize="@dimen/icon_size_sm"
+                app:iconTint="@color/paper_meta"
+                app:rippleColor="@color/paper_rule"
+                tools:text="1.4k" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/responses"
+                style="@style/Widget.Confess.Button.Ghost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/cd_responses"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/paper_meta"
+                app:icon="@drawable/ic_message"
+                app:iconGravity="start"
+                app:iconPadding="6dp"
+                app:iconSize="@dimen/icon_size_sm"
+                app:iconTint="@color/paper_meta"
+                app:rippleColor="@color/paper_rule"
+                tools:text="86" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

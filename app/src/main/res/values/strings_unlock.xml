@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Section 4 — Unlock (S6). -->
+<resources>
+    <string name="unlock_tag">Locked</string>
+    <string name="unlock_welcome">Welcome back,</string>
+    <string name="unlock_subtitle">Enter your password to open your letters.</string>
+    <string name="unlock_label">Password</string>
+    <string name="unlock_hint">Your password</string>
+    <string name="unlock_button">Unlock</string>
+    <string name="unlock_checking">Checking…</string>
+    <string name="unlock_wrong">That\'s not it. Try again.</string>
+    <string name="unlock_wrong_left">That\'s not it. %1$d tries before a short pause.</string>
+    <string name="unlock_cooldown">Too many tries. Breathe — try again in %1$ds.</string>
+    <string name="unlock_or">or</string>
+    <string name="unlock_biometric">Use fingerprint</string>
+    <string name="unlock_bio_title">Unlock Confess</string>
+    <string name="unlock_bio_subtitle">Confirm it\'s you</string>
+    <string name="unlock_forgot">Forgot password?</string>
+    <string name="unlock_sign_out">Not you? Sign out</string>
+    <string name="unlock_relock_note">Locks again when you\'ve been away</string>
+
+    <string name="forgot_title">Reset your password?</string>
+    <string name="forgot_body">We\'ll email a reset link to the Google account you signed in with. The link works for one hour.</string>
+    <string name="forgot_send">Send link</string>
+    <string name="forgot_sent">Check your inbox — the link works for one hour.</string>
+
+    <!-- After an emailed password reset -->
+    <string name="reset_notice_title">Your password was just reset.</string>
+    <string name="reset_notice_plain">Unlock with your new password.</string>
+    <string name="reset_notice_bio">Fingerprint unlock was turned off because of the recent password change. Unlock with your new password — you can set it up again right after.</string>
+    <string name="bio_again_title">Set up fingerprint unlock again?</string>
+    <string name="bio_again_body">You used fingerprint unlock before. It was turned off when your password was reset, to keep your letters safe.</string>
+    <string name="bio_again_yes">Set it up</string>
+    <string name="bio_again_no">Not now</string>
+    <string name="forgot_signed_out">Check your inbox. You\'ve been signed out — sign in again after you reset your password.</string>
+    <string name="forgot_logout_body">We\'ll email a reset link to your Google account and sign you out of this phone. After resetting, sign in and unlock with the new password.</string>
+    <string name="forgot_logout_confirm">Send &amp; sign out</string>
+
+    <string name="signout_title">Sign out of Confess?</string>
+    <string name="signout_body">Your account and confessions stay safe. You\'ll sign in with Google next time.</string>
+    <string name="signout_confirm">Sign out</string>
+</resources>

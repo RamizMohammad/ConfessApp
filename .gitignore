@@ -1,16 +1,42 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# ── Build output ──────────────────────────────────────────────────────────────
+.gradle/
+.kotlin/
+build/
+/app/build/
+/app/release/
+/app/debug/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.dm
+output-metadata.json
+
+# ── Secrets & signing (never commit) ─────────────────────────────────────────
 local.properties
 secrets.properties
+keystore.properties
+*.jks
+*.keystore
+*.p12
+*.pem
+google-services.json
+service-account*.json
+
+# ── IDE / OS ──────────────────────────────────────────────────────────────────
+*.iml
+.idea/
+.DS_Store
+Thumbs.db
+
+# ── Local-only material (not part of the build) ──────────────────────────────
+project.old/
+new_ui/
+stitch-prompt-v2.md
+_deliveries/
+.tmp/
+.tmp.driveupload/
+Screenshots/

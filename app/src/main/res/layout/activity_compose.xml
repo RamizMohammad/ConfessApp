@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    S8 · Write a confession. Old: CreatePost (activity_create_post).
+    Prompt → paper note with ruled lines → responses switch + counter →
+    moderation notice (when rejected) → "Release into the dark".
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ink"
+    android:orientation="vertical">
+
+    <!-- Top bar: Discard · UNSENT NOTE · help -->
+    <FrameLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingHorizontal="@dimen/space_xs">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/discard"
+            style="@style/Widget.Confess.Button.Ghost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:text="@string/compose_discard"
+            android:textColor="@color/text_primary"
+            app:icon="@drawable/ic_close"
+            app:iconGravity="start"
+            app:iconSize="@dimen/icon_size_sm"
+            app:iconTint="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_status_pill"
+            android:drawableStart="@drawable/dot_amber"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/space_12"
+            android:paddingVertical="6dp"
+            android:text="@string/compose_status"
+            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+            android:textColor="@color/text_secondary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/help"
+            style="@style/Widget.Confess.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:contentDescription="@string/cd_compose_help"
+            app:icon="@drawable/ic_help"
+            app:iconTint="@color/text_secondary" />
+    </FrameLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_screen"
+            android:paddingBottom="@dimen/space_md">
+
+            <!-- Prompt (old copy, kept) -->
+            <TextView
+                android:id="@+id/prompt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:gravity="center"
+                android:text="@string/compose_prompt"
+                android:textAppearance="@style/TextAppearance.Confess.Display"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:id="@+id/promptSub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:fontFamily="@font/newsreader"
+                android:gravity="center"
+                android:text="@string/compose_prompt_sub"
+                android:textColor="@color/amber"
+                android:textSize="20sp"
+                android:textStyle="italic" />
+
+            <!-- The paper note -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/paper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:outlineAmbientShadowColor="#000000"
+                android:outlineSpotShadowColor="#000000"
+                app:cardBackgroundColor="@color/paper"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="@dimen/paper_elevation"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/paper_padding"
+                    android:paddingTop="@dimen/space_md"
+                    android:paddingBottom="@dimen/space_md">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <in.mohammad.ramiz.confess.ui.components.AuraAvatarView
+                            android:id="@+id/avatar"
+                            android:layout_width="@dimen/avatar_md"
+                            android:layout_height="@dimen/avatar_md" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_12"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/alias"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textAppearance="@style/TextAppearance.Confess.Alias"
+                                android:textColor="@color/paper_ink"
+                                tools:text="\@quiet_wanderer" />
+
+                            <TextView
+                                android:id="@+id/time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                                android:textColor="@color/paper_meta"
+                                tools:text="Tonight · 02:48" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/draftStamp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_stamp_paper"
+                            android:drawableStart="@drawable/ic_save"
+                            android:drawablePadding="6dp"
+                            android:drawableTint="@color/paper_meta"
+                            android:gravity="center_vertical"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="@string/compose_draft_kept"
+                            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                            android:textColor="@color/paper_meta"
+                            android:visibility="invisible"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:background="@drawable/divider_paper" />
+
+                    <in.mohammad.ramiz.confess.ui.components.LinedEditText
+                        android:id="@+id/input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:contentDescription="@string/compose_cd_editor"
+                        android:fontFamily="@font/newsreader"
+                        android:gravity="top|start"
+                        android:hint="@string/compose_hint"
+                        android:importantForAutofill="no"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:lineSpacingExtra="10sp"
+                        android:minLines="6"
+                        android:paddingTop="@dimen/space_md"
+                        android:paddingBottom="@dimen/space_sm"
+                        android:scrollbars="none"
+                        android:textColor="@color/paper_ink"
+                        android:textColorHint="@color/paper_meta"
+                        android:textCursorDrawable="@drawable/cursor_amber"
+                        android:textSize="20sp"
+                        android:textStyle="italic"
+                        tools:text="I bought two train tickets to the coast this morning." />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@drawable/divider_paper" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_12"
+                        android:drawableStart="@drawable/ic_lock_small"
+                        android:drawablePadding="8dp"
+                        android:drawableTint="@color/paper_meta"
+                        android:gravity="center_vertical"
+                        android:text="@string/compose_stamp"
+                        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                        android:textColor="@color/paper_meta" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Responses switch · counter -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:background="@drawable/bg_plate"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/space_12"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_md">
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/allow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:contentDescription="@string/compose_allow" />
+
+                <LinearLayout
+                    android:id="@+id/allowText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_12"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/compose_allow"
+                        android:textAppearance="@style/TextAppearance.Confess.Body"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:id="@+id/allowSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/compose_allow_on"
+                        android:textAppearance="@style/TextAppearance.Confess.Meta"
+                        android:textColor="@color/text_secondary" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="@dimen/hairline"
+                    android:layout_height="36dp"
+                    android:layout_marginHorizontal="@dimen/space_12"
+                    android:background="@color/hairline" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/jetbrainsmono"
+                        android:textColor="@color/amber"
+                        android:textSize="18sp"
+                        tools:text="138" />
+
+                    <TextView
+                        android:id="@+id/countMax"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                        android:textColor="@color/text_muted"
+                        tools:text="/ 2000" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tooLong"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/space_xs"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/brick"
+                android:visibility="gone"
+                tools:text="12 characters over the limit"
+                tools:visibility="visible" />
+
+            <!-- Moderation notice -->
+            <LinearLayout
+                android:id="@+id/moderation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:background="@drawable/bg_plate_error"
+                android:orientation="horizontal"
+                android:padding="@dimen/space_md"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/modIcon"
+                    android:layout_width="@dimen/icon_size"
+                    android:layout_height="@dimen/icon_size"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_alert"
+                    app:tint="@color/brick" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_12"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/modTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Confess.Body"
+                        android:textColor="@color/text_primary"
+                        tools:text="@string/mod_flagged_title" />
+
+                    <TextView
+                        android:id="@+id/modBody"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                        android:textColor="@color/text_secondary"
+                        tools:text="@string/mod_personal_info" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/modAction"
+                        style="@style/Widget.Confess.Button.Link"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="-12dp"
+                        android:text="@string/mod_review"
+                        app:icon="@drawable/ic_arrow_right"
+                        app:iconSize="@dimen/icon_size_sm" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Sticky release -->
+    <LinearLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ink"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:paddingTop="@dimen/space_12"
+        android:paddingBottom="@dimen/space_md">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/release"
+            style="@style/Widget.Confess.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/compose_release"
+            app:icon="@drawable/ic_send" />
+
+        <TextView
+            android:id="@+id/footnote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:gravity="center"
+            android:text="@string/compose_footnote"
+            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+            android:textColor="@color/text_muted" />
+    </LinearLayout>
+</LinearLayout>

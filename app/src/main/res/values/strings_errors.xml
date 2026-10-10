@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Friendly text for ApiException.userMessage(). Keyed by server error code. -->
+<resources>
+    <string name="error_rate_limited">Slow down a little — try again in a minute.</string>
+    <string name="error_content_flagged">This can\'t be posted. It breaks our guidelines.</string>
+    <string name="error_moderation_unavailable">We couldn\'t check your words just now. Try again in a moment.</string>
+    <string name="error_alias_taken">That alias is already taken.</string>
+    <string name="error_account_exists">This Google account already has a Confess account.</string>
+    <string name="error_wrong_password">That\'s not it. Try again.</string>
+    <string name="error_comments_disabled">The author has closed responses on this confession.</string>
+    <string name="error_not_found">This no longer exists.</string>
+    <string name="error_session">Your session ended. Please sign in again.</string>
+    <string name="error_insecure_connection">This connection couldn\'t be verified, so nothing was sent or shown. A proxy, VPN or public Wi-Fi may be interfering. Try another network.</string>
+    <string name="error_integrity_failed">This phone or this copy of Confess couldn\'t be verified. Install Confess from Google Play to continue.</string>
+    <string name="error_blocked">Too many unusual requests came from here. Try again in a while.</string>
+    <string name="tampered_title">This copy of Confess was changed</string>
+    <string name="tampered_body">It isn\'t signed by us, so it can\'t be trusted with your account. Install Confess from Google Play.</string>
+    <string name="tampered_action">Open Google Play</string>
+</resources>

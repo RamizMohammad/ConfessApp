@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Section 2 — Welcome (S1), sign-in sheet (S2), guidelines (S3). -->
+<resources>
+    <!-- S1 Welcome -->
+    <string name="welcome_join">Join the world</string>
+    <string name="welcome_footer">No names · No photos · Just you</string>
+    <string name="welcome_have_account">Already have an account? Sign in</string>
+    <string name="note_1_text">“Sometimes I pretend I didn\'t see the message just to feel in control.”</string>
+    <string name="note_1_alias">silent_frequency</string>
+    <string name="note_2_text">“I told everyone I was proud of them, but I cried on the way home.”</string>
+    <string name="note_2_alias">folded_paper</string>
+    <string name="note_3_text">“I still look for your car at every red light.”</string>
+    <string name="note_3_alias">quiet_wanderer</string>
+    <string name="note_anonymous">Anonymous</string>
+
+    <!-- S2 Sign-in sheet -->
+    <string name="signin_tag">Anonymous doorway</string>
+    <string name="signin_title">Enter the room</string>
+    <string name="signin_subtitle">A safe haven for your untold stories.</string>
+    <string name="signin_google">Continue with Google</string>
+    <string name="signin_working">Opening the door…</string>
+    <string name="signin_promise">Our promise</string>
+    <string name="signin_p1_title">Your email is never shown</string>
+    <string name="signin_p1_body">Google only proves it\'s you. Others see an alias and an aura, nothing else.</string>
+    <string name="signin_p2_title">You\'ll pick an alias next</string>
+    <string name="signin_p2_body">Known only by a name you choose and an abstract avatar.</string>
+    <string name="signin_p3_title">You can delete everything anytime</string>
+    <string name="signin_p3_body">Your account, confessions and responses — gone in one step.</string>
+    <string name="signin_terms_prefix">By continuing, you agree to our</string>
+    <string name="signin_terms_link">Community guidelines</string>
+    <string name="signin_failed">Google sign-in didn\'t go through. Try again.</string>
+
+    <!-- S3 Guidelines -->
+    <string name="guidelines_step">Before you begin</string>
+    <string name="guidelines_tag">Community covenant</string>
+    <string name="guidelines_title">Community guidelines</string>
+    <string name="guidelines_subtitle">To keep this room kind, safe and anonymous, please read these before you write.</string>
+    <string name="guidelines_quote">“Here, write as if speaking only to a flame that will never repeat your voice.”</string>
+    <string name="guidelines_points">%1$d points</string>
+    <string name="guidelines_accept">I\'ve read and accept the guidelines</string>
+    <string name="guidelines_continue">Continue to alias</string>
+    <string name="guidelines_expired">Your sign-in timed out. Please continue with Google again.</string>
+
+    <!-- Placeholders until later sections land -->
+</resources>

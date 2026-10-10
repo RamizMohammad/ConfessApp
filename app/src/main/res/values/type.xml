@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Type scale (DESIGN.md "typography").
+      Newsreader   — headlines + confession text (editorial, intimate)
+      Manrope      — UI: labels, inputs, buttons, body
+      JetBrains    — metadata: aliases, timestamps, counts, tags
+    Colors are NOT set here (except where a style is color-specific) so the
+    same appearance works on dark canvas and on paper.
+-->
+<resources>
+
+    <!-- ── Newsreader ─────────────────────────────────────────────────── -->
+    <style name="TextAppearance.Confess.Display" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">@font/newsreader_headline</item>
+        <item name="fontFamily">@font/newsreader_headline</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:lineHeight">40sp</item>
+        <item name="lineHeight">40sp</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="TextAppearance.Confess.Headline" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/newsreader_headline</item>
+        <item name="fontFamily">@font/newsreader_headline</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:lineHeight">36sp</item>
+        <item name="lineHeight">36sp</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="TextAppearance.Confess.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">@font/newsreader</item>
+        <item name="fontFamily">@font/newsreader</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:lineHeight">30sp</item>
+        <item name="lineHeight">30sp</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <!-- The confession itself: italic serif, generous leading. -->
+    <style name="TextAppearance.Confess.Confession" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/newsreader</item>
+        <item name="fontFamily">@font/newsreader</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineHeight">32sp</item>
+        <item name="lineHeight">32sp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <!-- Feed-card variant: a little smaller so 6 lines fit comfortably. -->
+    <style name="TextAppearance.Confess.Confession.Card">
+        <item name="android:textSize">18sp</item>
+        <item name="android:lineHeight">28sp</item>
+        <item name="lineHeight">28sp</item>
+    </style>
+
+    <style name="TextAppearance.Confess.Quote" parent="TextAppearance.Confess.Confession">
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineHeight">24sp</item>
+        <item name="lineHeight">24sp</item>
+    </style>
+
+    <!-- ── Manrope ────────────────────────────────────────────────────── -->
+    <style name="TextAppearance.Confess.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="fontFamily">@font/manrope</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineHeight">26sp</item>
+        <item name="lineHeight">26sp</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="TextAppearance.Confess.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="fontFamily">@font/manrope</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineHeight">22sp</item>
+        <item name="lineHeight">22sp</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="TextAppearance.Confess.Label" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="fontFamily">@font/manrope</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineHeight">22sp</item>
+        <item name="lineHeight">22sp</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+
+    <style name="TextAppearance.Confess.Button" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="fontFamily">@font/manrope</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <!-- ── JetBrains Mono ─────────────────────────────────────────────── -->
+    <style name="TextAppearance.Confess.Meta" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/jetbrainsmono</item>
+        <item name="fontFamily">@font/jetbrainsmono</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:lineHeight">16sp</item>
+        <item name="lineHeight">16sp</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <!-- Tiny caps tags: "STEP 1 OF 3", "ANONYMOUS DOORWAY". -->
+    <style name="TextAppearance.Confess.MetaSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/jetbrainsmono</item>
+        <item name="fontFamily">@font/jetbrainsmono</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:lineHeight">14sp</item>
+        <item name="lineHeight">14sp</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="textAllCaps">true</item>
+    </style>
+
+    <!-- @alias next to avatars. -->
+    <style name="TextAppearance.Confess.Alias" parent="TextAppearance.Confess.Meta">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+
+</resources>

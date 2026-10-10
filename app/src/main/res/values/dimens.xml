@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Layout -->
+    <dimen name="margin_screen">20dp</dimen>
+    <dimen name="gutter">16dp</dimen>
+
+    <!-- Spacing scale -->
+    <dimen name="space_xxs">2dp</dimen>
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_sm">8dp</dimen>
+    <dimen name="space_12">12dp</dimen>
+    <dimen name="space_md">16dp</dimen>
+    <dimen name="space_lg">24dp</dimen>
+    <dimen name="space_32">32dp</dimen>
+    <dimen name="space_xl">40dp</dimen>
+
+    <!-- Radii -->
+    <dimen name="radius_card">20dp</dimen>
+    <dimen name="radius_plate">16dp</dimen>
+    <dimen name="radius_input">14dp</dimen>
+    <dimen name="radius_sheet">24dp</dimen>
+
+    <!-- Components -->
+    <dimen name="button_height">52dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="icon_size_sm">18dp</dimen>
+    <dimen name="touch_target">48dp</dimen>
+    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="bottom_nav_height">64dp</dimen>
+    <dimen name="hairline">1dp</dimen>
+    <dimen name="paper_padding">24dp</dimen>
+    <dimen name="paper_elevation">10dp</dimen>
+
+    <!-- Avatars -->
+    <dimen name="avatar_xs">28dp</dimen>
+    <dimen name="avatar_sm">36dp</dimen>
+    <dimen name="avatar_md">48dp</dimen>
+    <dimen name="avatar_lg">72dp</dimen>
+    <dimen name="avatar_xl">112dp</dimen>
+</resources>

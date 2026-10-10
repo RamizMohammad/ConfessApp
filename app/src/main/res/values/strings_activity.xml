@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Section 8 — Notifications (S10) + push. Old: NotificationPage (local Room list) + FirebaseMessaging. -->
+<resources>
+    <string name="notif_title">Whispers &amp; Echoes</string>
+    <string name="notif_mark_all">Mark all read</string>
+    <string name="notif_filter_all">All</string>
+    <string name="notif_filter_felt">Felt</string>
+    <string name="notif_filter_responses">Responses</string>
+    <string name="notif_today">TODAY</string>
+    <string name="notif_week">THIS WEEK</string>
+    <string name="notif_earlier">EARLIER</string>
+    <string name="notif_new_count">%1$d new</string>
+    <string name="notif_felt"> felt your confession</string>
+    <string name="notif_responded"> responded to your confession</string>
+    <string name="notif_on">On “%1$s”</string>
+    <string name="notif_cd_felt">%1$s felt your confession, %2$s</string>
+    <string name="notif_cd_responded">%1$s responded to your confession, %2$s</string>
+    <string name="notif_empty_title">Quiet nights are good too.</string>
+    <string name="notif_empty_body">When someone feels or answers your confessions, it shows up here.</string>
+    <string name="notif_empty_filtered">Nothing of this kind yet.</string>
+
+    <!-- Push -->
+    <string name="channel_activity">Felt &amp; responses</string>
+    <string name="channel_activity_desc">When someone feels or responds to your confessions</string>
+    <string name="channel_new_posts">New confessions</string>
+    <string name="channel_new_posts_desc">When someone posts a new confession</string>
+    <string name="channel_reminders">Gentle reminders</string>
+    <string name="channel_reminders_desc">An occasional nudge to check in</string>
+    <string name="push_default_title">Confess</string>
+    <string name="push_default_body">Something new is waiting for you.</string>
+</resources>

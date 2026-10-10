@@ -1,27 +1,111 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.ConfessMain" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="android:textCursorDrawable">@drawable/edit_blinkers</item>
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Confess is dark-only ("Midnight Letters"). There is intentionally no
+    values-night override: the same theme applies in light and dark system mode.
+-->
+<resources>
+
+    <style name="Base.Theme.Confess" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Color roles -->
+        <item name="colorPrimary">@color/amber</item>
+        <item name="colorOnPrimary">@color/paper_ink</item>
+        <item name="colorPrimaryContainer">@color/amber_tint</item>
+        <item name="colorOnPrimaryContainer">@color/amber</item>
+        <item name="colorSecondary">@color/text_secondary</item>
+        <item name="colorOnSecondary">@color/ink</item>
+        <item name="colorTertiary">@color/sage</item>
+        <item name="colorError">@color/brick</item>
+        <item name="colorOnError">@color/paper</item>
+        <item name="colorErrorContainer">@color/brick_tint</item>
+        <item name="colorOnErrorContainer">@color/brick</item>
+
+        <item name="android:colorBackground">@color/ink</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorSurface">@color/ink</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorSurfaceVariant">@color/surface_raised</item>
+        <item name="colorSurfaceContainerLowest">@color/ink</item>
+        <item name="colorSurfaceContainerLow">@color/surface_raised</item>
+        <item name="colorSurfaceContainer">@color/surface_raised</item>
+        <item name="colorSurfaceContainerHigh">@color/surface_raised</item>
+        <item name="colorSurfaceContainerHighest">@color/surface_high</item>
+        <item name="colorSurfaceInverse">@color/paper</item>
+        <item name="colorOnSurfaceInverse">@color/paper_ink</item>
+        <item name="colorOutline">@color/hairline</item>
+        <item name="colorOutlineVariant">@color/hairline</item>
+        <item name="colorControlHighlight">@color/sl_ripple_dark</item>
+        <item name="colorControlActivated">@color/amber</item>
+
+        <!-- Window -->
+        <item name="android:windowBackground">@color/ink</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+
+        <!-- Type -->
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="fontFamily">@font/manrope</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_muted</item>
+        <item name="android:textCursorDrawable">@drawable/cursor_amber</item>
+        <item name="android:textColorHighlight">@color/amber_disabled</item>
+        <item name="android:textSelectHandle">@drawable/select_handle_amber</item>
+        <item name="android:textSelectHandleLeft">@drawable/select_handle_amber</item>
+        <item name="android:textSelectHandleRight">@drawable/select_handle_amber</item>
+
+        <!-- Material type roles → Confess type scale -->
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.Confess.Display</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Confess.Headline</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Confess.HeadlineSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Confess.Body</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Confess.BodyMedium</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.Confess.Button</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.Confess.Meta</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.Confess.MetaSmall</item>
+
+        <!-- Shapes -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Confess.Input</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Confess.Card</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Confess.Sheet</item>
+
+        <!-- Default component styles -->
+        <item name="materialButtonStyle">@style/Widget.Confess.Button</item>
+        <item name="borderlessButtonStyle">@style/Widget.Confess.Button.Ghost</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.Confess.Button.Outlined</item>
+        <item name="textInputStyle">@style/Widget.Confess.TextInputLayout</item>
+        <item name="chipStyle">@style/Widget.Confess.Chip</item>
+        <item name="materialSwitchStyle">@style/Widget.Confess.Switch</item>
+        <item name="checkboxStyle">@style/Widget.Confess.CheckBox</item>
+        <item name="circularProgressIndicatorStyle">@style/Widget.Confess.Progress.Circular</item>
+        <item name="linearProgressIndicatorStyle">@style/Widget.Confess.Progress.Linear</item>
+        <item name="snackbarStyle">@style/Widget.Confess.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/Widget.Confess.Snackbar.Text</item>
+        <item name="snackbarButtonStyle">@style/Widget.Confess.Snackbar.Button</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Confess.BottomSheetDialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Confess.AlertDialog</item>
+        <item name="bottomNavigationStyle">@style/Widget.Confess.BottomNavigation</item>
+        <item name="toolbarStyle">@style/Widget.Confess.Toolbar</item>
     </style>
 
-    <style name="Theme.ConfessMain" parent="Base.Theme.ConfessMain" />
-    <style name="CircleImage" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
+    <style name="Theme.Confess" parent="Base.Theme.Confess" />
+
+    <!-- Splash (Android 12+ SplashScreen API) — used from Section 2. -->
+    <!-- Invisible trampoline for links (LinkActivity). -->
+    <style name="Theme.Confess.Link" parent="Theme.Confess">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
     </style>
-    <style name="Theme.Confess" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowSplashScreenBackground">@color/black</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
-        <item name="android:windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+
+    <style name="Theme.Confess.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ink</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_mark</item>
+        <item name="postSplashScreenTheme">@style/Theme.Confess</item>
     </style>
-    <style name="Theme.Confess.AdjustResize" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Crucial flags -->
-        <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:windowFullscreen">false</item>
-        <item name="android:fitsSystemWindows">true</item>
-        <item name="android:windowSoftInputMode">adjustResize</item>
-    </style>
+
 </resources>

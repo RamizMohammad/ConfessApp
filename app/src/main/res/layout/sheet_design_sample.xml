@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sample bottom-sheet content (S2 sign-in sheet uses the same chrome). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/margin_screen"
+    android:paddingTop="@dimen/space_md"
+    android:paddingBottom="@dimen/space_lg">
+
+    <TextView
+        style="@style/Confess.Tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/dot_amber"
+        android:text="Anonymous doorway" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:text="Enter the room"
+        android:textAppearance="@style/TextAppearance.Confess.Headline" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="A safe haven for your untold stories."
+        android:textAppearance="@style/TextAppearance.Confess.Body"
+        android:textColor="@color/text_secondary" />
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.Confess.Button.Light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:text="Continue with Google"
+        app:icon="@drawable/ic_google" />
+</LinearLayout>

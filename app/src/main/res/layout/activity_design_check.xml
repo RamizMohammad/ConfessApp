@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Section 0 — Design check. A single scroll of every token and component so
+    the design system can be verified on a real device before screens are built.
+    Temporary: removed when the real launcher arrives (Section 2).
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ink"
+    android:clipToPadding="false"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/space_xl">
+
+        <!-- ── Hero ─────────────────────────────────────────────────────── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_screen"
+            android:paddingTop="@dimen/space_lg">
+
+            <TextView
+                style="@style/Confess.Tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/dot_amber"
+                android:text="Section 0 · Design check" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:text="@string/tagline_line1"
+                android:textAppearance="@style/TextAppearance.Confess.Display"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tagline_line2"
+                android:textAppearance="@style/TextAppearance.Confess.Display"
+                android:textColor="@color/amber"
+                android:textStyle="italic" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="@string/tagline_sub"
+                android:textAppearance="@style/TextAppearance.Confess.Body"
+                android:textColor="@color/text_secondary" />
+        </LinearLayout>
+
+        <!-- ── Section 1: server check ──────────────────────────────────── -->
+        <TextView
+            style="@style/Confess.SectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:text="Section 1 · Server check" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:background="@drawable/bg_plate"
+            android:orientation="vertical"
+            android:padding="@dimen/space_md">
+
+            <TextView
+                android:id="@+id/serverResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tap to check the v3 server, API key and models."
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/text_secondary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnServerCheck"
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:text="Run server check"
+                app:icon="@drawable/ic_refresh" />
+        </LinearLayout>
+
+        <!-- ── Type ─────────────────────────────────────────────────────── -->
+        <TextView
+            style="@style/Confess.SectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:text="Type" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:background="@drawable/bg_plate"
+            android:orientation="vertical"
+            android:padding="@dimen/space_md">
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Headline · Newsreader 28" android:textAppearance="@style/TextAppearance.Confess.Headline" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Headline small · Newsreader 22" android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="“A confession, in italic serif, set loose.”" android:textAppearance="@style/TextAppearance.Confess.Confession" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="Body · Manrope 16 — a safe haven for your untold stories." android:textAppearance="@style/TextAppearance.Confess.Body" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Body medium · Manrope 14 — your email is never shown." android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                android:textColor="@color/text_secondary" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Label · Manrope 15 medium" android:textAppearance="@style/TextAppearance.Confess.Label" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="\@quiet_wanderer · 2h ago · 1.4k felt" android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/text_secondary" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Step 1 of 3 · meta small caps" android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:textColor="@color/text_muted" />
+        </LinearLayout>
+
+        <!-- ── Colors ───────────────────────────────────────────────────── -->
+        <TextView
+            style="@style/Confess.SectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:text="Colors" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/margin_screen"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/swatches"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <!-- ── Buttons ──────────────────────────────────────────────────── -->
+        <TextView
+            style="@style/Confess.SectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:text="Buttons" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_screen">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Join the world"
+                app:icon="@drawable/ic_arrow_right" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:enabled="false"
+                android:text="Continue to alias (disabled)"
+                app:icon="@drawable/ic_arrow_right" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Confess.Button.Light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:text="Continue with Google"
+            app:icon="@drawable/ic_google" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:text="Use biometrics"
+                app:icon="@drawable/ic_fingerprint" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Confess.Button.Danger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:text="Delete account"
+                app:icon="@drawable/ic_trash" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.Confess.Button.Ghost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Forgot password?" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.Confess.Button.Link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Review guidelines"
+                    app:icon="@drawable/ic_arrow_right" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ── Inputs ───────────────────────────────────────────────────── -->
+        <TextView
+            style="@style/Confess.SectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:text="Inputs" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_screen">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/aliasLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:counterEnabled="true"
+                app:counterMaxLength="15"
+                app:helperText="Alias can't be changed once confirmed."
+                app:helperTextEnabled="true"
+                app:prefixText="\@"
+                app:prefixTextColor="@color/amber">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="your_alias"
+                    android:inputType="textNoSuggestions"
+                    android:maxLength="15"
+                    android:text="quiet_wanderer" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                app:endIconDrawable="@drawable/sel_password_toggle"
+                app:endIconMode="password_toggle"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:text="candlelight" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- ── Chips + controls ─────────────────────────────────────────── -->
+        <TextView
+            style="@style/Confess.SectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:text="Chips and controls" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/margin_screen"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Latest" />
+
+            <com.google.android.material.chip.Chip
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Most felt" />
+
+            <com.google.android.material.chip.Chip
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="whispering_ash" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:layout_marginTop="@dimen/space_md"
+            android:background="@drawable/bg_plate"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/space_md"
+            android:paddingVertical="@dimen/space_xs">
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:minHeight="@dimen/touch_target"
+                android:text="Allow comments"
+                android:textAppearance="@style/TextAppearance.Confess.Label" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/divider_hairline" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/touch_target"
+                android:text="Biometric unlock"
+                android:textAppearance="@style/TextAppearance.Confess.Label" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/divider_hairline" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="I've read and accept the guidelines" />
+        </LinearLayout>
+
+        <!-- ── Paper card ───────────────────────────────────────────────── -->
+        <TextView
+            style="@style/Confess.SectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:text="Confession card (tap the heart)" />
+
+        <include
+            android:id="@+id/sampleCard"
+            layout="@layout/item_confession_card" />
+
+        <!-- ── Moderation / error card ──────────────────────────────────── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:layout_marginTop="@dimen/space_md"
+            android:background="@drawable/bg_plate_error"
+            android:orientation="horizontal"
+            android:padding="@dimen/space_md">
+
+            <ImageView
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_alert"
+                app:tint="@color/brick" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_12"
+                android:layout_weight="1"
+                android:text="This can't be posted. It breaks our guidelines on private identification."
+                android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                android:textColor="@color/text_primary" />
+        </LinearLayout>
+
+        <!-- ── Auras ────────────────────────────────────────────────────── -->
+        <TextView
+            style="@style/Confess.SectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:text="Auras (tap to select)" />
+
+        <TextView
+            android:id="@+id/auraName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:layout_marginBottom="@dimen/space_sm"
+            android:textAppearance="@style/TextAppearance.Confess.Meta"
+            android:textColor="@color/amber" />
+
+        <GridLayout
+            android:id="@+id/auraGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:columnCount="4"
+            android:useDefaultMargins="false" />
+
+        <!-- ── Icons ────────────────────────────────────────────────────── -->
+        <TextView
+            style="@style/Confess.SectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:text="Icons" />
+
+        <GridLayout
+            android:id="@+id/iconGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:columnCount="8" />
+
+        <!-- ── Progress + feedback ──────────────────────────────────────── -->
+        <TextView
+            style="@style/Confess.SectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_screen"
+            android:text="Progress and feedback" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/margin_screen">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_md"
+                android:layout_weight="1"
+                android:progress="60" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/margin_screen">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSnackbar"
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Snackbar" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSheet"
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_sm"
+                android:layout_weight="1"
+                android:text="Sheet" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDialog"
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Dialog" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

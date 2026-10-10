@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "AUTHOR" tag on the confession writer's own responses. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/amber_tint" />
+    <stroke android:width="@dimen/hairline" android:color="@color/amber_disabled" />
+    <corners android:radius="100dp" />
+</shape>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Centre "Confess" button: amber circle with a ring of ink so it floats above the bar. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/amber_pressed">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/amber" />
+            <stroke android:width="4dp" android:color="@color/ink" />
+        </shape>
+    </item>
+</ripple>
