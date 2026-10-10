@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     S7 · Feed. Old: HomeFragment (+ PostAdapter, sort spinner).
-    Top bar (wordmark · search · bell+dot) → Latest / Most felt → paper cards.
+    Top bar (C mark · search · bell+dot) → Latest / Most felt → paper cards.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -23,16 +23,20 @@
         android:paddingStart="@dimen/margin_screen"
         android:paddingEnd="@dimen/space_xs">
 
-        <TextView
-            android:id="@+id/wordmark"
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="@font/newsreader"
-            android:text="@string/app_name"
-            android:textColor="@color/text_primary"
-            android:textSize="26sp"
-            android:textStyle="italic" />
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/wordmark"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_gravity="start|center_vertical"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/logo_c" />
+        </FrameLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/search"

@@ -8,17 +8,15 @@
     android:background="@drawable/bg_welcome"
     android:paddingHorizontal="@dimen/margin_screen">
 
-    <!-- Wordmark + live clock -->
-    <TextView
+    <!-- Logo + live clock -->
+    <ImageView
         android:id="@+id/wordmark"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="24dp"
         android:layout_marginTop="@dimen/space_md"
-        android:drawableEnd="@drawable/dot_amber"
-        android:drawablePadding="6dp"
-        android:text="@string/app_name"
-        android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall"
-        android:textStyle="italic"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/logo_wordmark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
