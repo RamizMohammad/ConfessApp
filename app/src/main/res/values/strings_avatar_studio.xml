@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="avs_title">Your avatar</string>
+    <string name="avs_shuffle">Shuffle</string>
+    <string name="avs_use">Use this avatar</string>
+    <string name="avs_design">Design your avatar</string>
+    <string name="avs_edit">Edit your avatar</string>
+    <string name="avs_use_aura">Use aura</string>
+    <string name="avs_label">AVATAR</string>
+    <string name="avs_name">Your avatar</string>
+    <string name="avs_note">Make a little you — not the real you. Illustrated avatars keep Confess anonymous.</string>
+    <string name="avs_option_cd">%1$s %2$d</string>
+    <string name="avs_discard_title">Discard this avatar?</string>
+
+    <string name="avs_skin">Skin</string>
+    <string name="avs_hair">Hair</string>
+    <string name="avs_hair_color">Hair colour</string>
+    <string name="avs_eyes">Eyes</string>
+    <string name="avs_brows">Brows</string>
+    <string name="avs_mouth">Mouth</string>
+    <string name="avs_beard">Beard</string>
+    <string name="avs_glasses">Glasses</string>
+    <string name="avs_hat">Headwear</string>
+    <string name="avs_outfit">Outfit</string>
+    <string name="avs_backdrop">Backdrop</string>
+</resources>

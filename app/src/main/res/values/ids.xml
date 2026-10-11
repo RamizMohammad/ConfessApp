@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- PostCardBinder: the waiting single tap (cancelled by a second tap = double-tap like). -->
+    <item name="tag_single_tap" type="id" />
+</resources>

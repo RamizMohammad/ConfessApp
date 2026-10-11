@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Scope pill (feed + notifications) -->
+    <string name="scope_everyone">Everyone</string>
+    <string name="scope_following">Following</string>
+
+    <!-- Following feed -->
+    <string name="feed_following_none_title">You\'re not following anyone yet</string>
+    <string name="feed_following_none_body">Follow writers whose letters stay with you — their new ones will gather here.</string>
+    <string name="feed_following_empty_title">Nothing new from them yet</string>
+    <string name="feed_following_empty_body">When someone you follow writes, it shows up here first.</string>
+    <string name="feed_following_find">Find people</string>
+
+    <!-- Follow button -->
+    <string name="follow">Follow</string>
+    <string name="following_btn">Following</string>
+    <string name="unfollow_title">Unfollow @%1$s?</string>
+    <string name="unfollow_body">Their new letters won\'t appear in your Following feed.</string>
+    <string name="unfollow_confirm">Unfollow</string>
+    <string name="followers_label">followers</string>
+    <string name="following_label">following</string>
+
+    <!-- Me -->
+    <string name="me_following">Following</string>
+    <string name="me_followers">Followers</string>
+
+    <!-- Lists -->
+    <string name="people_followers_title">FOLLOWERS</string>
+    <string name="people_following_title">FOLLOWING</string>
+    <string name="people_followers_empty">No followers yet</string>
+    <string name="people_followers_empty_body">When someone follows you, they\'ll appear here.</string>
+    <string name="people_following_empty">You don\'t follow anyone yet</string>
+    <string name="people_following_empty_body">Open someone\'s profile and tap Follow.</string>
+
+    <!-- Notifications -->
+    <string name="notif_followed_you">" started following you"</string>
+    <string name="notif_new_letter">" wrote a new letter"</string>
+    <string name="notif_cd_followed">%1$s started following you, %2$s</string>
+    <string name="notif_cd_new_letter">%1$s wrote a new letter, %2$s</string>
+    <string name="notif_filter_follows">Follows</string>
+    <string name="notif_following_empty_title">Quiet from the people you follow</string>
+    <string name="notif_following_empty_body">Felt, responses and follows from people you follow will show here.</string>
+    <string name="cd_notification_settings">Notification settings</string>
+
+    <!-- Notification settings -->
+    <string name="nprefs_title">NOTIFICATIONS</string>
+    <string name="nprefs_master">Push notifications</string>
+    <string name="nprefs_master_sub">Turn every push on or off for this account</string>
+    <string name="nprefs_section_you">About you</string>
+    <string name="nprefs_section_letters">New letters</string>
+    <string name="nprefs_section_other">Other</string>
+    <string name="nprefs_likes">Felt</string>
+    <string name="nprefs_likes_sub">Someone felt your confession</string>
+    <string name="nprefs_comments">Responses</string>
+    <string name="nprefs_comments_sub">Someone responded to your confession</string>
+    <string name="nprefs_follows">New followers</string>
+    <string name="nprefs_follows_sub">Someone started following you</string>
+    <string name="nprefs_following_posts">From people you follow</string>
+    <string name="nprefs_following_posts_sub">A writer you follow posted a new letter</string>
+    <string name="nprefs_new_posts">From everyone</string>
+    <string name="nprefs_new_posts_sub">Any new confession on Confess</string>
+    <string name="nprefs_nudges">Gentle nudges</string>
+    <string name="nprefs_nudges_sub">A few quiet reminders a day to write</string>
+    <string name="nprefs_system">Sound &amp; style</string>
+    <string name="nprefs_system_sub">Android notification settings for Confess</string>
+    <string name="nprefs_note">These control pushes. Everything still appears in Activity.</string>
+    <string name="settings_notif_types">Choose notifications</string>
+    <string name="settings_notif_types_sub">Felt, responses, followers, new letters, nudges</string>
+    <string name="profile_follow_counts">%1$s %2$s · %3$s %4$s</string>
+</resources>

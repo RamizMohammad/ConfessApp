@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Avatar studio option: raised tile; amber edge + tint when it's the current choice. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/amber_tint" />
+            <stroke android:width="2dp" android:color="@color/amber" />
+            <corners android:radius="18dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/surface_raised" />
+            <stroke android:width="1dp" android:color="@color/hairline" />
+            <corners android:radius="18dp" />
+        </shape>
+    </item>
+</selector>

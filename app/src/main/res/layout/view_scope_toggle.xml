@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Everyone / Following — included by the feed and notifications screens. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scopeToggle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_scope_toggle"
+    android:orientation="horizontal"
+    android:padding="3dp">
+
+    <TextView
+        android:id="@+id/scopeAll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_scope_option"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="5dp"
+        android:text="@string/scope_everyone"
+        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+        android:textColor="@color/scope_option_text" />
+
+    <TextView
+        android:id="@+id/scopeFollowing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_scope_option"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="5dp"
+        android:text="@string/scope_following"
+        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+        android:textColor="@color/scope_option_text" />
+</LinearLayout>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One draft: the opening lines (paper serif) + when it was last edited. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/space_12"
+    android:background="@drawable/bg_me_card"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/space_md"
+    android:paddingTop="@dimen/space_md"
+    android:paddingEnd="@dimen/space_xs"
+    android:paddingBottom="@dimen/space_sm"
+    android:stateListAnimator="@animator/press_scale">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/newsreader"
+            android:lineSpacingExtra="4sp"
+            android:maxLines="3"
+            android:textColor="@color/text_primary"
+            android:textSize="17sp"
+            android:textStyle="italic"
+            tools:text="I never told anyone that I quit the job because I was scared, not because…" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/delete"
+            style="@style/Widget.Confess.IconButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@string/cd_delete_draft"
+            android:minWidth="40dp"
+            android:minHeight="40dp"
+            app:icon="@drawable/ic_trash"
+            app:iconSize="@dimen/icon_size_sm"
+            app:iconTint="@color/text_muted" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/meta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:layout_marginEnd="@dimen/space_md"
+        android:textAppearance="@style/TextAppearance.Confess.Meta"
+        android:textColor="@color/text_muted"
+        tools:text="Edited 5m ago · 214 chars" />
+</LinearLayout>

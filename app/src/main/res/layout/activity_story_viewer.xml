@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Story viewer: the coloured card full screen, segmented progress on top,
+  who + when, ⋯ / close. Tap right → next, left → back, hold → pause,
+  swipe down → close. On my own stories: "Seen by N" at the bottom.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ink">
+
+    <FrameLayout
+        android:id="@+id/page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- The card (also the touch surface) -->
+        <FrameLayout
+            android:id="@+id/card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/newsreader"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.15"
+                android:paddingHorizontal="@dimen/space_32"
+                android:textSize="28sp"
+                tools:text="Some nights the quiet is louder than anything I could say." />
+        </FrameLayout>
+
+        <!-- Top: progress · header -->
+        <LinearLayout
+            android:id="@+id/top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_story_scrim_top"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/space_sm"
+            android:paddingBottom="@dimen/space_lg">
+
+            <LinearLayout
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginTop="@dimen/space_sm"
+                android:orientation="horizontal" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/who"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_row_ripple"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/space_xs">
+
+                    <in.mohammad.ramiz.confess.ui.components.AuraAvatarView
+                        android:id="@+id/avatar"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp" />
+
+                    <TextView
+                        android:id="@+id/alias"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_sm"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:shadowColor="#66000000"
+                        android:shadowRadius="4"
+                        android:textAppearance="@style/TextAppearance.Confess.Alias"
+                        android:textColor="@color/paper"
+                        tools:text="\@moonlit_echo" />
+
+                    <TextView
+                        android:id="@+id/time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_sm"
+                        android:maxLines="1"
+                        android:shadowColor="#66000000"
+                        android:shadowRadius="4"
+                        android:textAppearance="@style/TextAppearance.Confess.Meta"
+                        android:textColor="@color/paper"
+                        android:alpha="0.75"
+                        tools:text="3h ago" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/more"
+                    style="@style/Widget.Confess.IconButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/cd_story_more"
+                    app:icon="@drawable/ic_flag"
+                    app:iconSize="22dp"
+                    app:iconTint="@color/paper" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/close"
+                    style="@style/Widget.Confess.IconButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/cd_story_close"
+                    app:icon="@drawable/ic_close"
+                    app:iconTint="@color/paper" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Reaction burst (centre of the card) -->
+        <TextView
+            android:id="@+id/burst"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:textSize="96sp"
+            android:visibility="gone" />
+
+        <!-- Bottom: mine → "Seen by N"; theirs → quick reactions -->
+        <FrameLayout
+            android:id="@+id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_story_scrim_bottom"
+            android:paddingTop="@dimen/space_lg"
+            android:paddingBottom="@dimen/space_md"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/seenBy"
+                style="@style/Widget.Confess.Button.Ghost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/paper"
+                app:icon="@drawable/ic_eye"
+                app:iconTint="@color/paper"
+                tools:text="Seen by 12" />
+
+            <LinearLayout
+                android:id="@+id/reactions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bg_reaction_bar"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="4dp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </FrameLayout>
+    </FrameLayout>
+</FrameLayout>

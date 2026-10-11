@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Coming back: the screen underneath brightens again. -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="220"
+    android:interpolator="@android:interpolator/fast_out_slow_in"
+    android:zAdjustment="bottom">
+    <alpha android:fromAlpha="0.6" android:toAlpha="1" />
+</set>

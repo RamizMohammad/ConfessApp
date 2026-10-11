@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Story bubble with something unseen: amber → brick ring around the aura. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <gradient android:type="sweep" android:startColor="@color/amber" android:centerColor="@color/brick"
+                android:endColor="@color/amber" />
+        </shape>
+    </item>
+    <item android:bottom="2.5dp" android:left="2.5dp" android:right="2.5dp" android:top="2.5dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/ink" />
+        </shape>
+    </item>
+</layer-list>

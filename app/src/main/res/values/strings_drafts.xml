@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Me → Drafts -->
+    <string name="me_card_drafts">Drafts</string>
+    <string name="me_card_drafts_sub">Unsent — only on this phone</string>
+    <string name="drafts_title">DRAFTS</string>
+    <string name="drafts_summary">Only on this phone · encrypted</string>
+    <string name="drafts_empty_title">No drafts</string>
+    <string name="drafts_empty_body">If you leave a confession half-written, it waits here.</string>
+    <string name="drafts_edited">Edited %1$s</string>
+    <string name="drafts_chars">%1$d chars</string>
+    <string name="drafts_responses_off">responses off</string>
+    <string name="drafts_deleted">Draft deleted</string>
+    <string name="drafts_undo">Undo</string>
+    <string name="cd_delete_draft">Delete draft</string>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One choice in the avatar studio: a mini avatar (shapes) or a colour swatch (colours). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tile"
+    android:layout_width="match_parent"
+    android:layout_height="84dp"
+    android:layout_margin="5dp"
+    android:background="@drawable/bg_avatar_option"
+    android:foreground="@drawable/bg_row_ripple"
+    android:stateListAnimator="@animator/press_scale">
+
+    <in.mohammad.ramiz.confess.ui.components.AuraAvatarView
+        android:id="@+id/face"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center" />
+
+    <View
+        android:id="@+id/swatch"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+</FrameLayout>

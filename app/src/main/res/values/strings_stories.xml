@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="story_yours">Your story</string>
+    <string name="story_add">Add a story</string>
+    <string name="story_cd_unseen">%1$s — new story</string>
+    <string name="story_cd_seen">%1$s — story, seen</string>
+
+    <!-- Composer -->
+    <string name="story_compose_hint">Say it in a line…</string>
+    <string name="story_share">Share for 24h</string>
+    <string name="story_sharing">Checking…</string>
+    <string name="story_counter">%1$d / 100</string>
+    <string name="story_style_cd">Background %1$d</string>
+    <string name="story_shared">Story shared — it fades in 24 hours</string>
+    <string name="story_discard_title">Discard this story?</string>
+    <string name="story_too_many">You can have up to 10 stories at a time.</string>
+
+    <!-- Viewer -->
+    <string name="story_seen_by">Seen by %1$d</string>
+    <string name="story_seen_by_reacted">Seen by %1$d · %2$d reacted</string>
+    <string name="story_react_cd">React %1$s</string>
+    <string name="story_reacted">Sent %1$s</string>
+    <string name="story_seen_by_none">No views yet</string>
+    <string name="story_viewers_title">Seen by</string>
+    <string name="story_delete">Delete story</string>
+    <string name="story_delete_title">Delete this story?</string>
+    <string name="story_delete_body">It disappears for everyone right away.</string>
+    <string name="story_report">Report story</string>
+    <string name="story_report_title">Report this story?</string>
+    <string name="story_report_body">You won\'t see it again. We review reported stories.</string>
+    <string name="story_reported">Reported. Thanks for keeping this place kind.</string>
+    <string name="story_ended">This story has ended</string>
+    <string name="story_deleted">Story deleted</string>
+    <string name="story_report_send">Report and hide</string>
+    <string name="story_viewers_more_error">Couldn\'t load more viewers</string>
+    <string name="cd_story_more">More</string>
+    <string name="cd_story_close">Close</string>
+</resources>
