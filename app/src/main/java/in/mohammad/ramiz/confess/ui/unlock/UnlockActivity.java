@@ -1,14 +1,19 @@
 package in.mohammad.ramiz.confess.ui.unlock;
 
+import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -39,7 +44,9 @@ import retrofit2.Call;
  *
  *  - password → POST users/me/password/verify; on match the session is unlocked
  *  - biometric (if turned on for the account AND available on this phone) opens
- *    automatically, like the old app; it unlocks locally
+ *    automatically, like the old app; it unlocks locally. Android draws the sheet;
+ *    around it the avatar pulses amber, a check pops in on success, and the sheet's
+ *    "Use password" button drops straight into the password field
  *  - 5 wrong passwords → 30 s pause (the server also rate-limits)
  *  - "Forgot password?" → emails a reset link to the signed-in Google account
  *  - "Not you? Sign out"
@@ -64,6 +71,8 @@ public class UnlockActivity extends BaseActivity {
     private boolean working = false;
     @Nullable private CountDownTimer cooldown;
     @Nullable private Call<MatchResult> pending;
+    @Nullable private ValueAnimator pulse;
+    private boolean unlocking = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +162,7 @@ public class UnlockActivity extends BaseActivity {
                 setWorking(false);
                 if (r.match) {
                     Haptics.click(UnlockActivity.this);
-                    done();
+                    showUnlocked();
                 } else {
                     wrong();
                 }
@@ -223,18 +232,63 @@ public class UnlockActivity extends BaseActivity {
     // ── Biometric ────────────────────────────────────────────────────────────
 
     private void promptBiometric() {
-        if (!bioAllowed || isFinishing()) return;
+        if (!bioAllowed || unlocking || isFinishing()) return;
+        startPulse();
         Biometrics.prompt(this, getString(R.string.unlock_bio_title), getString(R.string.unlock_bio_subtitle),
+                getString(R.string.unlock_bio_use_password),
                 new Biometrics.Callback() {
                     @Override public void onSuccess() {
                         Haptics.click(UnlockActivity.this);
                         SessionManager.get().markUnlocked();
-                        done();
+                        showUnlocked();
                     }
                     @Override public void onFailure(@NonNull CharSequence reason) {
+                        stopPulse();
                         b.passwordInput.requestFocus();    // fall back to the password
                     }
+                    @Override public void onNegative() {   // "Use password"
+                        stopPulse();
+                        b.passwordInput.requestFocus();
+                        WindowCompat.getInsetsController(getWindow(), b.passwordInput)
+                                .show(WindowInsetsCompat.Type.ime());
+                    }
                 });
+    }
+
+    /** Amber ring breathing out of the avatar while the system sheet is up. */
+    private void startPulse() {
+        if (pulse != null) return;
+        pulse = ValueAnimator.ofFloat(0f, 1f);
+        pulse.setDuration(1400);
+        pulse.setRepeatCount(ValueAnimator.INFINITE);
+        pulse.setInterpolator(new DecelerateInterpolator());
+        pulse.addUpdateListener(a -> {
+            float f = (float) a.getAnimatedValue();
+            b.bioPulse.setScaleX(1f + 0.38f * f);
+            b.bioPulse.setScaleY(1f + 0.38f * f);
+            b.bioPulse.setAlpha(0.9f * (1f - f));
+        });
+        pulse.start();
+    }
+
+    private void stopPulse() {
+        if (pulse != null) { pulse.cancel(); pulse = null; }
+        b.bioPulse.animate().alpha(0f).setDuration(150).start();
+    }
+
+    /** Check pops onto the avatar, then the app opens. */
+    private void showUnlocked() {
+        if (unlocking) return;
+        unlocking = true;
+        stopPulse();
+        b.unlockedBadge.setScaleX(0f);
+        b.unlockedBadge.setScaleY(0f);
+        b.unlockedBadge.setVisibility(View.VISIBLE);
+        b.unlockedBadge.animate().scaleX(1f).scaleY(1f).setDuration(260)
+                .setInterpolator(new OvershootInterpolator(2.2f)).start();
+        b.avatar.animate().scaleX(1.06f).scaleY(1.06f).setDuration(150).withEndAction(() ->
+                b.avatar.animate().scaleX(1f).scaleY(1f).setDuration(170).start()).start();
+        b.getRoot().postDelayed(() -> { if (!isFinishing()) done(); }, 520);
     }
 
     // ── Forgot / sign out ────────────────────────────────────────────────────
@@ -287,6 +341,7 @@ public class UnlockActivity extends BaseActivity {
     protected void onDestroy() {
         if (cooldown != null) cooldown.cancel();
         if (pending != null) pending.cancel();
+        if (pulse != null) pulse.cancel();
         super.onDestroy();
     }
 }

@@ -14,7 +14,9 @@
     <string name="unlock_or">or</string>
     <string name="unlock_biometric">Use fingerprint</string>
     <string name="unlock_bio_title">Unlock Confess</string>
-    <string name="unlock_bio_subtitle">Confirm it\'s you</string>
+    <string name="unlock_bio_subtitle">Your letters are waiting</string>
+    <string name="unlock_bio_use_password">Use password</string>
+    <string name="unlock_cd_unlocked">Unlocked</string>
     <string name="unlock_forgot">Forgot password?</string>
     <string name="unlock_sign_out">Not you? Sign out</string>
     <string name="unlock_relock_note">Locks again when you\'ve been away</string>

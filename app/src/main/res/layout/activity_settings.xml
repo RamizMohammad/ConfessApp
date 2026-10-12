@@ -246,20 +246,20 @@
 
             </LinearLayout>
 
-            <!-- Debug builds only -->
-            <LinearLayout
-                android:id="@+id/designGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_12"
-                android:background="@drawable/bg_plate"
-                android:orientation="vertical"
-                android:visibility="gone">
+<!--            &lt;!&ndash; Debug builds only &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/designGroup"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="@dimen/space_12"-->
+<!--                android:background="@drawable/bg_plate"-->
+<!--                android:orientation="vertical"-->
+<!--                android:visibility="gone">-->
 
-                <include
-                    android:id="@+id/design"
-                    layout="@layout/view_setting_row" />
-            </LinearLayout>
+<!--                <include-->
+<!--                    android:id="@+id/design"-->
+<!--                    layout="@layout/view_setting_row" />-->
+<!--            </LinearLayout>-->
 
             <!-- Danger zone -->
             <TextView

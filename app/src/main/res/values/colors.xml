@@ -9,6 +9,9 @@
     <!-- Brand: the original Confess logo, in the app's own palette -->
     <color name="brand_tile">#201F27</color>      <!-- = surface_high -->
     <color name="brand_mark">#E8A04C</color>      <!-- = amber -->
+    <!-- Launcher / Play icon and splash: deep-amber CONFESS on warm cream (matches the store listing). -->
+    <color name="icon_tile">#EDE6DA</color>
+    <color name="icon_mark">#B8691F</color>
 
     <color name="story_night">#2A2236</color>         <!-- story background 0 (deep plum) -->
     <color name="story_gold">#F6C76A</color>          <!-- story ring highlight (amber → gold sweep) -->

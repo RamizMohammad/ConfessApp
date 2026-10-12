@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     S7 · Feed. Old: HomeFragment (+ PostAdapter, sort spinner).
-    Top bar (C mark · search · bell+dot) → Latest / Most felt → paper cards.
+    Top bar (C mark · search · bell+dot, fixed) → stories (scroll away) → Everyone / Following (pins) → paper cards.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -71,189 +71,159 @@
         </FrameLayout>
     </LinearLayout>
 
-    <!-- Stories tray -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/stories"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:overScrollMode="never"
-        android:paddingHorizontal="12dp"
-        android:paddingBottom="@dimen/space_xs" />
-
-    <!-- Sort tabs -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/margin_screen">
-
-        <LinearLayout
-            android:id="@+id/sortLatest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_row_ripple"
-            android:orientation="vertical"
-            android:paddingTop="@dimen/space_sm">
-
-            <TextView
-                android:id="@+id/sortLatestLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="2dp"
-                android:text="@string/sort_latest"
-                android:textAppearance="@style/TextAppearance.Confess.Label" />
-
-            <View
-                android:id="@+id/sortLatestLine"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/sort_indicator" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/sortTop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/space_lg"
-            android:background="@drawable/bg_row_ripple"
-            android:orientation="vertical"
-            android:paddingTop="@dimen/space_sm">
-
-            <TextView
-                android:id="@+id/sortTopLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="2dp"
-                android:text="@string/sort_top"
-                android:textAppearance="@style/TextAppearance.Confess.Label" />
-
-            <View
-                android:id="@+id/sortTopLine"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/sort_indicator"
-                android:visibility="invisible" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
-
-        <!-- Everyone / Following -->
-        <include
-            android:id="@+id/scope"
-            layout="@layout/view_scope_toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/hairline"
-        android:background="@color/hairline" />
-
-    <!-- Content -->
-    <FrameLayout
+    <!--
+        Stories scroll away with the feed; the Everyone / Following bar then pins
+        right under the top bar. Stories come back when the list is at the top.
+    -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/refresh"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:background="@color/ink"
+            android:stateListAnimator="@null"
+            app:elevation="0dp"
+            app:liftOnScroll="false">
 
+            <!-- Stories tray -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list"
+                android:id="@+id/stories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:paddingHorizontal="12dp"
+                android:paddingBottom="@dimen/space_xs"
+                app:layout_scrollFlags="scroll" />
+
+            <!-- Everyone / Following (pinned) -->
+            <LinearLayout
+                android:id="@+id/scopeBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/ink"
+                android:orientation="vertical">
+
+                <!-- Everyone / Following pill -->
+                <include
+                    android:id="@+id/scope"
+                    layout="@layout/view_scope_toggle_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_screen"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:layout_marginBottom="@dimen/space_sm" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hairline"
+                    android:background="@color/hairline" />
+            </LinearLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Content: scrolls under the pinned scope bar -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/refresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:paddingTop="@dimen/space_sm"
+                    tools:listitem="@layout/item_confession_card" />
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <!-- First load -->
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/skeleton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:paddingTop="@dimen/space_sm"
-                tools:listitem="@layout/item_confession_card" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                android:visibility="gone"
+                app:shimmer_auto_start="false"
+                app:shimmer_base_alpha="0.6"
+                app:shimmer_duration="1400"
+                app:shimmer_highlight_alpha="1.0">
 
-        <!-- First load -->
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/skeleton"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            app:shimmer_auto_start="false"
-            app:shimmer_base_alpha="0.6"
-            app:shimmer_duration="1400"
-            app:shimmer_highlight_alpha="1.0">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/space_sm">
 
+                    <include layout="@layout/item_feed_skeleton" />
+
+                    <include layout="@layout/item_feed_skeleton" />
+
+                    <include layout="@layout/item_feed_skeleton" />
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <!-- Empty / error -->
             <LinearLayout
+                android:id="@+id/state"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/space_sm">
+                android:paddingHorizontal="@dimen/space_xl"
+                android:paddingBottom="@dimen/space_xl"
+                android:visibility="gone"
+                tools:visibility="visible">
 
-                <include layout="@layout/item_feed_skeleton" />
+                <ImageView
+                    android:id="@+id/stateIcon"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_icon_tile"
+                    android:importantForAccessibility="no"
+                    android:padding="16dp"
+                    android:src="@drawable/ic_mail_open"
+                    app:tint="@color/amber" />
 
-                <include layout="@layout/item_feed_skeleton" />
+                <TextView
+                    android:id="@+id/stateTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_lg"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall"
+                    android:textColor="@color/text_primary"
+                    tools:text="@string/feed_empty_title" />
 
-                <include layout="@layout/item_feed_skeleton" />
+                <TextView
+                    android:id="@+id/stateBody"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                    android:textColor="@color/text_secondary"
+                    tools:text="@string/feed_empty_body" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/stateAction"
+                    style="@style/Widget.Confess.Button.Outlined"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_lg"
+                    android:paddingHorizontal="@dimen/space_lg"
+                    tools:text="@string/feed_empty_action" />
             </LinearLayout>
-        </com.facebook.shimmer.ShimmerFrameLayout>
-
-        <!-- Empty / error -->
-        <LinearLayout
-            android:id="@+id/state"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/space_xl"
-            android:paddingBottom="@dimen/space_xl"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <ImageView
-                android:id="@+id/stateIcon"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:background="@drawable/bg_icon_tile"
-                android:importantForAccessibility="no"
-                android:padding="16dp"
-                android:src="@drawable/ic_mail_open"
-                app:tint="@color/amber" />
-
-            <TextView
-                android:id="@+id/stateTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg"
-                android:gravity="center"
-                android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall"
-                android:textColor="@color/text_primary"
-                tools:text="@string/feed_empty_title" />
-
-            <TextView
-                android:id="@+id/stateBody"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_sm"
-                android:gravity="center"
-                android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
-                android:textColor="@color/text_secondary"
-                tools:text="@string/feed_empty_body" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/stateAction"
-                style="@style/Widget.Confess.Button.Outlined"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg"
-                android:paddingHorizontal="@dimen/space_lg"
-                tools:text="@string/feed_empty_action" />
-        </LinearLayout>
-    </FrameLayout>
+        </FrameLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </LinearLayout>

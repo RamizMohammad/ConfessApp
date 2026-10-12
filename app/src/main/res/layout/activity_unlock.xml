@@ -52,12 +52,44 @@
             android:minHeight="@dimen/space_xl" />
 
         <!-- Who -->
-        <in.mohammad.ramiz.confess.ui.components.AuraAvatarView
-            android:id="@+id/avatar"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+        <!-- Avatar + amber pulse while the fingerprint sheet is open + check when unlocked -->
+        <FrameLayout
+            android:layout_width="136dp"
+            android:layout_height="136dp"
             android:layout_gravity="center_horizontal"
-            app:auraSelected="true" />
+            android:layout_marginVertical="-20dp"
+            android:clipChildren="false">
+
+            <View
+                android:id="@+id/bioPulse"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_gravity="center"
+                android:alpha="0"
+                android:background="@drawable/bg_unlock_pulse"
+                android:importantForAccessibility="no" />
+
+            <in.mohammad.ramiz.confess.ui.components.AuraAvatarView
+                android:id="@+id/avatar"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_gravity="center"
+                app:auraSelected="true" />
+
+            <ImageView
+                android:id="@+id/unlockedBadge"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="34dp"
+                android:layout_marginTop="34dp"
+                android:background="@drawable/bg_check_badge"
+                android:contentDescription="@string/unlock_cd_unlocked"
+                android:padding="7dp"
+                android:src="@drawable/ic_check"
+                android:visibility="invisible"
+                app:tint="@color/paper_ink" />
+        </FrameLayout>
 
         <TextView
             android:layout_width="match_parent"

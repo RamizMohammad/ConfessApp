@@ -80,7 +80,7 @@ public class SettingsActivity extends BaseActivity {
         setup(b.guidelines, R.drawable.ic_shield, R.string.settings_guidelines);
         setup(b.privacy, R.drawable.ic_lock, R.string.settings_privacy_policy);
         setup(b.signOut, R.drawable.ic_log_out, R.string.settings_sign_out);
-        setup(b.design, R.drawable.ic_help, R.string.settings_design);
+//        setup(b.design, R.drawable.ic_help, R.string.settings_design);
 
         toggle(b.lock);
         toggle(b.bio);
@@ -126,8 +126,8 @@ public class SettingsActivity extends BaseActivity {
         b.signOut.row.setOnClickListener(v -> confirmSignOut());
         b.deleteAccount.setOnClickListener(v -> confirmDelete());
 
-        b.designGroup.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
-        b.design.row.setOnClickListener(v -> startActivity(new Intent(this, DesignCheckActivity.class)));
+//        b.designGroup.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
+//        b.design.row.setOnClickListener(v -> startActivity(new Intent(this, DesignCheckActivity.class)));
         b.version.setText(getString(R.string.settings_version, BuildConfig.VERSION_NAME));
 
         render(SessionManager.get().cachedMe());

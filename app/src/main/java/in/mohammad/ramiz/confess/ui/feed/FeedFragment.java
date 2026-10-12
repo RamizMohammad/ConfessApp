@@ -50,7 +50,6 @@ import in.mohammad.ramiz.confess.ui.stories.StoryTrayCache;
  */
 public class FeedFragment extends Fragment implements PostCardBinder.Listener {
 
-    private static final String STATE_SORT = "sort";
     private static final int PREFETCH = 4;
 
     private FragmentFeedBinding b;
@@ -75,7 +74,7 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
-        if (state != null) sort = state.getString(STATE_SORT, PostRepository.SORT_LATEST);
+        // The feed is always newest-first; Everyone / Following is the only switch.
         scope = state != null ? state.getString(STATE_SCOPE, PostRepository.SCOPE_ALL)
                 : requireContext().getSharedPreferences("feed", android.content.Context.MODE_PRIVATE)
                         .getString(PREF_SCOPE, PostRepository.SCOPE_ALL);
@@ -109,9 +108,7 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
         vm.unread().observe(getViewLifecycleOwner(), n ->
                 b.unreadDot.setVisibility(n != null && n > 0 ? View.VISIBLE : View.GONE));
 
-        // Sort tabs
-        b.sortLatest.setOnClickListener(v -> selectSort(PostRepository.SORT_LATEST));
-        b.sortTop.setOnClickListener(v -> selectSort(PostRepository.SORT_TOP));
+        // Everyone / Following (pins under the top bar once the stories scroll away)
         setupStories();
         b.scope.scopeAll.setOnClickListener(v -> selectScope(PostRepository.SCOPE_ALL));
         b.scope.scopeFollowing.setOnClickListener(v -> selectScope(PostRepository.SCOPE_FOLLOWING));
@@ -153,14 +150,6 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     }
 
     // ── Sort ─────────────────────────────────────────────────────────────────
-
-    private void selectSort(String next) {
-        if (next.equals(sort)) {
-            scrollToTop();
-            return;
-        }
-        switchTo(next, scope);
-    }
 
     private void selectScope(String next) {
         if (next.equals(scope)) {
@@ -234,15 +223,6 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     }
 
     private void showSortTabs() {
-        boolean latest = PostRepository.SORT_LATEST.equals(sort);
-        int on = ContextCompat.getColor(requireContext(), R.color.text_primary);
-        int off = ContextCompat.getColor(requireContext(), R.color.text_muted);
-        b.sortLatestLabel.setTextColor(latest ? on : off);
-        b.sortTopLabel.setTextColor(latest ? off : on);
-        b.sortLatestLine.setVisibility(latest ? View.VISIBLE : View.INVISIBLE);
-        b.sortTopLine.setVisibility(latest ? View.INVISIBLE : View.VISIBLE);
-        b.sortLatest.setSelected(latest);
-        b.sortTop.setSelected(!latest);
         boolean everyone = PostRepository.SCOPE_ALL.equals(scope);
         b.scope.scopeAll.setSelected(everyone);
         b.scope.scopeFollowing.setSelected(!everyone);
@@ -336,6 +316,7 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
             scrollBySort.remove(PostRepository.SORT_LATEST);
             switchTo(PostRepository.SORT_LATEST, PostRepository.SCOPE_ALL);
         }
+        b.appBar.setExpanded(true, false);
         b.list.scrollToPosition(0);
         // The new card is inserted by an async diff; follow it up once it lands.
         b.list.postDelayed(() -> { if (b != null) b.list.smoothScrollToPosition(0); }, 350);
@@ -344,6 +325,7 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     /** Wordmark tap / re-selecting the Feed tab: back to the newest. */
     public void scrollToTop() {
         if (b == null) return;
+        b.appBar.setExpanded(true, true);          // bring the stories back too
         if (layout.findFirstVisibleItemPosition() > 8) b.list.scrollToPosition(8);
         b.list.smoothScrollToPosition(0);
     }
@@ -402,7 +384,6 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     @Override
     public void onSaveInstanceState(@NonNull Bundle out) {
         super.onSaveInstanceState(out);
-        out.putString(STATE_SORT, sort);
         out.putString(STATE_SCOPE, scope);
     }
 

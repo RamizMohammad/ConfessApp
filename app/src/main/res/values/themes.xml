@@ -120,7 +120,6 @@
     <style name="Theme.Confess.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/ink</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
-        <item name="windowSplashScreenIconBackgroundColor">@color/brand_tile</item>
         <item name="postSplashScreenTheme">@style/Theme.Confess</item>
     </style>
 
