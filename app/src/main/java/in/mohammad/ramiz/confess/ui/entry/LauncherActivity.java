@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,7 +44,13 @@ public class LauncherActivity extends AppCompatActivity {
     /** Never keep the splash longer than this, whatever the network does. */
     private static final long MAX_WAIT_MS = 8_000;
 
+    /** Long enough for Letty's splash animation (splash_letty_anim, 1000 ms) to finish on a fresh launch. */
+    private static final long MIN_SPLASH_MS = 1050;
+
     private boolean decided = false;
+    /** The splash stays up until we actually leave, so it never uncovers this empty screen. */
+    private boolean leaving = false;
+    private long holdSplashUntil = 0;
     private final Handler handler = new Handler(Looper.getMainLooper());
     @Nullable private CancellationSignal googleCancel;
 
@@ -51,11 +58,13 @@ public class LauncherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen splash = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
-        splash.setKeepOnScreenCondition(() -> !decided);
+        splash.setKeepOnScreenCondition(() -> !leaving);
+        if (savedInstanceState == null) holdSplashUntil = SystemClock.uptimeMillis() + MIN_SPLASH_MS;
         DeepLink.capture(getIntent());            // tapped a push → open that confession once in
 
         if (!BuildConfig.DEBUG && !AppSignature.isGenuine(this)) {
             decided = true;
+            leaving = true;
             showTampered();
             return;
         }
@@ -145,7 +154,11 @@ public class LauncherActivity extends AppCompatActivity {
         if (decided) return;
         decided = true;
         handler.removeCallbacksAndMessages(null);
-        destination.go(this);
+        long wait = Math.max(0, holdSplashUntil - SystemClock.uptimeMillis());
+        handler.postDelayed(() -> {
+            leaving = true;
+            destination.go(this);
+        }, wait);
     }
 
     @Override

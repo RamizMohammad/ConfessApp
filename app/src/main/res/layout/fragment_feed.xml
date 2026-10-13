@@ -31,11 +31,11 @@
             <ImageView
                 android:id="@+id/wordmark"
                 android:layout_width="wrap_content"
-                android:layout_height="28dp"
+                android:layout_height="30dp"
                 android:layout_gravity="start|center_vertical"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/app_name"
-                android:src="@drawable/logo_c" />
+                android:src="@drawable/logo_letty" />
         </FrameLayout>
 
         <com.google.android.material.button.MaterialButton

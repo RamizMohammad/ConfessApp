@@ -119,7 +119,8 @@
 
     <style name="Theme.Confess.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/ink</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_letty_anim</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
         <item name="postSplashScreenTheme">@style/Theme.Confess</item>
     </style>
 

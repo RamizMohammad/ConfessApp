@@ -325,11 +325,22 @@
                     app:iconGravity="textStart" />
             </LinearLayout>
 
+            <!-- Brand sign-off: Letty above the version -->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/space_xl"
+                android:adjustViewBounds="true"
+                android:alpha="0.9"
+                android:importantForAccessibility="no"
+                android:src="@drawable/logo_letty" />
+
             <TextView
                 android:id="@+id/version"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_sm"
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
                 android:textColor="@color/text_muted" />

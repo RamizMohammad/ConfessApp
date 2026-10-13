@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Status-bar icon: the original white Confess "C" (alpha only — the system colours it). -->
+<!-- Status-bar icon: Letty in one colour (alpha only — the system colours it). -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp" android:height="24dp"
     android:viewportWidth="24" android:viewportHeight="24">
-    <group android:scaleX="0.2128" android:scaleY="0.2128" android:translateX="4.0213" android:translateY="2">
-        <path android:fillColor="#FFFFFFFF" android:pathData="M37.06,89.63C32.57,89.31 30.34,88.79 26.06,87.1C19.93,84.68 14.54,80.08 11.06,74.31C7.95,69.16 5.72,62.42 5.01,56.06C4.16,48.43 4.44,39.38 5.7,33.31C6.05,31.64 7.76,26.34 8.54,24.5C14.25,11.06 26.93,3.45 41.91,4.47C45.95,4.75 47.6,5.12 51.62,6.65C55.98,8.31 59.13,10.23 62.51,13.28C67.02,17.35 70.53,23.94 70.56,28.38C70.57,30.68 69.89,31.18 66.38,31.49C65.59,31.56 63.95,31.71 62.75,31.81C58.63,32.18 57.95,31.76 56.95,28.19C55.56,23.21 52.23,19.24 47.66,17.1C43.53,15.16 35.66,15.27 31.38,17.32C24.45,20.65 20.39,27.49 19.13,38C18.07,46.72 18.79,58.38 20.69,63.5C23.31,70.55 25.87,73.7 31.04,76.25C36.25,78.82 45.26,78.78 50.11,76.17C54.18,73.99 57.32,70.36 59.39,65.47C60.66,62.45 61.42,62.14 65.58,62.99C70.07,63.9 70.82,64.29 71.26,65.93C71.97,68.52 68.26,75.73 64.06,79.94C60.08,83.94 54.78,87.03 49.12,88.67C46.26,89.49 41.04,89.91 37.06,89.63Z" />
+    <group android:translateX="-3.5" android:translateY="-5.9" android:scaleX="0.31" android:scaleY="0.31">
+        <path android:pathData="M25,32 H75 A9,9 0 0 1 84,41 V75 A9,9 0 0 1 75,84 H25 A9,9 0 0 1 16,75 V41 A9,9 0 0 1 25,32 Z"
+            android:strokeColor="#FFFFFFFF" android:strokeWidth="7" />
+        <path android:pathData="M20,36 L50,59 L80,36" android:strokeColor="#FFFFFFFF" android:strokeWidth="7"
+            android:strokeLineJoin="round" android:strokeLineCap="round" />
+        <path android:pathData="M39,60 A11,11 0 1 0 61,60 A11,11 0 1 0 39,60 Z" android:fillColor="#FFFFFFFF" />
+        <path android:pathData="M34.5,74.5 A4.5,5 0 1 0 43.5,74.5 A4.5,5 0 1 0 34.5,74.5 Z M56.5,74.5 A4.5,5 0 1 0 65.5,74.5 A4.5,5 0 1 0 56.5,74.5 Z"
+            android:fillColor="#FFFFFFFF" />
     </group>
 </vector>

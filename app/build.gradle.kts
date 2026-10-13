@@ -32,8 +32,8 @@ android {
         applicationId = "in.mohammad.ramiz.confess"
         minSdk = 31
         targetSdk = 36
-        versionCode = 19
-        versionName = "5.1.1"
+        versionCode = 20
+        versionName = "5.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
