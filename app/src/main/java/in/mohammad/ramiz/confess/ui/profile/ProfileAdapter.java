@@ -22,6 +22,7 @@ import in.mohammad.ramiz.confess.data.model.Post;
 import in.mohammad.ramiz.confess.databinding.ItemConfessionCardBinding;
 import in.mohammad.ramiz.confess.databinding.ItemProfileHeaderBinding;
 import in.mohammad.ramiz.confess.databinding.ItemResponsesFooterBinding;
+import in.mohammad.ramiz.confess.ui.components.Banner;
 import in.mohammad.ramiz.confess.ui.feed.PostCardBinder;
 
 /** Profile header, the letters (paper cards), and a footer (loading / empty / end). */
@@ -39,6 +40,9 @@ public class ProfileAdapter extends ListAdapter<ProfileAdapter.Row, RecyclerView
 
         /** The Unblock button on a profile I blocked. */
         default void onUnblock(@NonNull String alias) { }
+
+        /** My own profile: the banner (or its button) was tapped. */
+        default void onEditBanner() { }
     }
 
     private static final int T_HEADER = 1, T_POST = 2, T_FOOTER = 3;
@@ -124,6 +128,13 @@ public class ProfileAdapter extends ListAdapter<ProfileAdapter.Row, RecyclerView
 
     private void bindHeader(ItemProfileHeaderBinding b, ProfileViewModel.Header h) {
         Context ctx = b.getRoot().getContext();
+        b.banner.setAnimated(true);
+        b.banner.setFadeStart(0.72f);
+        b.banner.setBanner(Banner.resolve(h.banner, h.avatar, h.alias));
+        b.bannerEdit.setVisibility(h.isMe ? View.VISIBLE : View.GONE);
+        b.bannerEdit.setOnClickListener(h.isMe ? v -> listener.onEditBanner() : null);
+        b.bannerBox.setOnClickListener(h.isMe ? v -> listener.onEditBanner() : null);
+        b.bannerBox.setClickable(h.isMe);
         b.avatar.setAvatar(h.avatar);
         b.avatar.setStoryAlias(h.alias);
         b.alias.setText("@" + h.alias);

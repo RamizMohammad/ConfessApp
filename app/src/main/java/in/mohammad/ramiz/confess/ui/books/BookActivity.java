@@ -3,7 +3,6 @@ package in.mohammad.ramiz.confess.ui.books;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -224,18 +223,12 @@ public class BookActivity extends BaseActivity implements ReportSheet.Outcome {
 
     private void showMenu(@NonNull View anchor) {
         if (detail == null) return;
-        PopupMenu menu = new PopupMenu(this, anchor);
         if (detail.book.isMine) {
-            menu.getMenu().add(0, 1, 0, R.string.book_open_desk);
+            in.mohammad.ramiz.confess.ui.components.PopMenu.at(anchor).item(R.drawable.ic_feather, R.string.book_open_desk, () -> Nav.bookEditor(this, bookId)).show();
         } else {
-            menu.getMenu().add(0, 2, 0, R.string.book_report);
+            in.mohammad.ramiz.confess.ui.components.PopMenu.at(anchor).danger(R.drawable.ic_flag, R.string.book_report,
+                    () -> ReportSheet.showBook(getSupportFragmentManager(), bookId)).show();
         }
-        menu.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == 1) Nav.bookEditor(this, bookId);
-            else if (item.getItemId() == 2) ReportSheet.showBook(getSupportFragmentManager(), bookId);
-            return true;
-        });
-        menu.show();
     }
 
     // ── ReportSheet.Outcome ───────────────────────────────────────────────

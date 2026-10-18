@@ -1,242 +1,287 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Profile header (Me tab and other people): aura · @alias · about · since · actions · stats · "LETTERS (n)". -->
+<!-- Profile header (Me tab and other people): banner · aura · @alias · about · since · actions · stats · "LETTERS (n)". -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingHorizontal="@dimen/margin_screen"
-    android:paddingTop="@dimen/space_sm">
+    android:orientation="vertical">
 
+    <!-- Header on their banner, edge to edge: avatar · @alias · about · since · follow counts.
+         The banner fills whatever height that takes. Mine → tap it to change it. -->
     <FrameLayout
-        android:layout_width="132dp"
-        android:layout_height="132dp"
-        android:background="@drawable/bg_avatar_ring">
-
-        <in.mohammad.ramiz.confess.ui.components.AuraAvatarView
-            android:id="@+id/avatar"
-            android:layout_width="@dimen/avatar_xl"
-            android:layout_height="@dimen/avatar_xl"
-            android:layout_gravity="center" />
-    </FrameLayout>
-
-    <TextView
-        android:id="@+id/alias"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_md"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Confess.Headline"
-        android:textColor="@color/text_primary"
-        tools:text="\@quiet_wanderer" />
-
-    <TextView
-        android:id="@+id/about"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_xs"
-        android:fontFamily="@font/newsreader"
-        android:gravity="center"
-        android:textColor="@color/text_secondary"
-        android:textSize="18sp"
-        android:textStyle="italic"
-        tools:text="“Writing what I can only say when the city sleeps.”" />
-
-    <TextView
-        android:id="@+id/since"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_md"
-        android:background="@drawable/bg_status_pill"
-        android:drawableStart="@drawable/dot_amber"
-        android:drawablePadding="8dp"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/space_12"
-        android:paddingVertical="6dp"
-        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
-        android:textColor="@color/text_secondary"
-        tools:text="MEMBER SINCE OCT 2026" />
-
-    <!-- "12 followers · 4 following" -->
-    <TextView
-        android:id="@+id/followCounts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_sm"
-        android:textAppearance="@style/TextAppearance.Confess.Meta"
-        android:textColor="@color/text_secondary"
-        tools:text="12 followers · 4 following" />
-
-    <!-- Someone else: Follow (filled) / Following (outlined) -->
-    <FrameLayout
-        android:id="@+id/followBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_md"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/followBtn"
-            style="@style/Widget.Confess.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="140dp"
-            android:minHeight="44dp"
-            android:text="@string/follow"
-            app:icon="@drawable/ic_plus"
-            app:iconGravity="textStart"
-            app:iconSize="@dimen/icon_size_sm" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/followingBtn"
-            style="@style/Widget.Confess.Button.Outlined"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="140dp"
-            android:minHeight="44dp"
-            android:text="@string/following_btn"
-            android:visibility="gone"
-            app:icon="@drawable/ic_check"
-            app:iconGravity="textStart"
-            app:iconSize="@dimen/icon_size_sm" />
-    </FrameLayout>
-
-    <!-- Me only -->
-    <LinearLayout
-        android:id="@+id/actions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_md"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/editAura"
-            style="@style/Widget.Confess.Button.Outlined"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="40dp"
-            android:paddingHorizontal="@dimen/space_md"
-            android:text="@string/profile_edit_aura"
-            android:textAppearance="@style/TextAppearance.Confess.Meta"
-            app:icon="@drawable/ic_shuffle"
-            app:iconGravity="textStart"
-            app:iconSize="@dimen/icon_size_sm" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/editAbout"
-            style="@style/Widget.Confess.Button.Outlined"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/space_sm"
-            android:minHeight="40dp"
-            android:paddingHorizontal="@dimen/space_md"
-            android:text="@string/profile_edit_about"
-            android:textAppearance="@style/TextAppearance.Confess.Meta"
-            app:icon="@drawable/ic_pencil"
-            app:iconGravity="textStart"
-            app:iconSize="@dimen/icon_size_sm" />
-    </LinearLayout>
-
-    <!-- Stats -->
-    <LinearLayout
+        android:id="@+id/bannerBox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_lg"
-        android:background="@drawable/bg_plate"
-        android:baselineAligned="false"
-        android:orientation="horizontal"
-        android:padding="@dimen/space_sm">
+        android:layout_height="wrap_content">
+
+        <in.mohammad.ramiz.confess.ui.components.BannerView
+            android:id="@+id/banner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/bg_stat_cell"
-            android:gravity="center"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingVertical="@dimen/space_12">
+            android:paddingHorizontal="@dimen/margin_screen"
+            android:paddingTop="@dimen/space_lg"
+            android:paddingBottom="@dimen/space_lg">
+
+            <FrameLayout
+                android:layout_width="132dp"
+                android:layout_height="132dp"
+                android:background="@drawable/bg_avatar_ring">
+
+                <in.mohammad.ramiz.confess.ui.components.AuraAvatarView
+                    android:id="@+id/avatar"
+                    android:layout_width="@dimen/avatar_xl"
+                    android:layout_height="@dimen/avatar_xl"
+                    android:layout_gravity="center" />
+            </FrameLayout>
 
             <TextView
+                android:id="@+id/alias"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/profile_letters"
-                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
-                android:textColor="@color/text_muted" />
-
-            <TextView
-                android:id="@+id/postCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/space_md"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textAppearance="@style/TextAppearance.Confess.Headline"
                 android:textColor="@color/text_primary"
-                tools:text="14" />
+                tools:text="\@quiet_wanderer" />
 
             <TextView
+                android:id="@+id/about"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/profile_letters_sub"
-                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
-                android:textColor="@color/text_muted" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/feltCell"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/space_sm"
-            android:layout_weight="1"
-            android:background="@drawable/bg_stat_cell"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingVertical="@dimen/space_12">
+                android:layout_marginTop="@dimen/space_xs"
+                android:fontFamily="@font/newsreader"
+                android:gravity="center"
+                android:textColor="@color/text_secondary"
+                android:textSize="18sp"
+                android:textStyle="italic"
+                tools:text="“Writing what I can only say when the city sleeps.”" />
 
             <TextView
+                android:id="@+id/since"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_heart_filled"
-                android:drawablePadding="4dp"
-                android:drawableTint="@color/amber"
+                android:layout_marginTop="@dimen/space_md"
+                android:background="@drawable/bg_status_pill"
+                android:drawableStart="@drawable/dot_amber"
+                android:drawablePadding="8dp"
                 android:gravity="center_vertical"
-                android:text="@string/profile_felt"
+                android:paddingHorizontal="@dimen/space_12"
+                android:paddingVertical="6dp"
                 android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
-                android:textColor="@color/amber" />
+                android:textColor="@color/text_secondary"
+                tools:text="MEMBER SINCE OCT 2026" />
 
+            <!-- "12 followers · 4 following" -->
             <TextView
-                android:id="@+id/feltCount"
+                android:id="@+id/followCounts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textAppearance="@style/TextAppearance.Confess.Headline"
-                android:textColor="@color/amber"
-                tools:text="382" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/profile_felt_sub"
-                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
-                android:textColor="@color/text_muted" />
+                android:layout_marginTop="@dimen/space_sm"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/text_secondary"
+                tools:text="12 followers · 4 following" />
         </LinearLayout>
-    </LinearLayout>
 
-    <!-- "MY LETTERS (14)" -->
-    <TextView
-        android:id="@+id/lettersTitle"
+        <ImageButton
+            android:id="@+id/bannerEdit"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="@dimen/margin_screen"
+            android:layout_marginBottom="@dimen/space_md"
+            android:background="@drawable/bg_banner_edit"
+            android:contentDescription="@string/cd_banner_edit"
+            android:padding="9dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_image"
+            android:tooltipText="@string/cd_banner_edit"
+            android:visibility="gone"
+            app:tint="@color/text_primary" />
+    </FrameLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_lg"
-        android:drawableStart="@drawable/dot_amber"
-        android:drawablePadding="10dp"
-        android:gravity="center_vertical"
-        android:paddingBottom="@dimen/space_xs"
-        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
-        android:textColor="@color/amber"
-        tools:text="MY LETTERS (14)" />
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/margin_screen">
+
+
+        <!-- Someone else: Follow (filled) / Following (outlined) -->
+        <FrameLayout
+            android:id="@+id/followBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/followBtn"
+                style="@style/Widget.Confess.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="140dp"
+                android:minHeight="44dp"
+                android:text="@string/follow"
+                app:icon="@drawable/ic_plus"
+                app:iconGravity="textStart"
+                app:iconSize="@dimen/icon_size_sm" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/followingBtn"
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="140dp"
+                android:minHeight="44dp"
+                android:text="@string/following_btn"
+                android:visibility="gone"
+                app:icon="@drawable/ic_check"
+                app:iconGravity="textStart"
+                app:iconSize="@dimen/icon_size_sm" />
+        </FrameLayout>
+
+        <!-- Me only -->
+        <LinearLayout
+            android:id="@+id/actions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editAura"
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="40dp"
+                android:paddingHorizontal="@dimen/space_md"
+                android:text="@string/profile_edit_aura"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                app:icon="@drawable/ic_shuffle"
+                app:iconGravity="textStart"
+                app:iconSize="@dimen/icon_size_sm" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editAbout"
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_sm"
+                android:minHeight="40dp"
+                android:paddingHorizontal="@dimen/space_md"
+                android:text="@string/profile_edit_about"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                app:icon="@drawable/ic_pencil"
+                app:iconGravity="textStart"
+                app:iconSize="@dimen/icon_size_sm" />
+        </LinearLayout>
+
+        <!-- Stats -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:background="@drawable/bg_plate"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:padding="@dimen/space_sm">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_stat_cell"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/space_12">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_letters"
+                    android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                    android:textColor="@color/text_muted" />
+
+                <TextView
+                    android:id="@+id/postCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textAppearance="@style/TextAppearance.Confess.Headline"
+                    android:textColor="@color/text_primary"
+                    tools:text="14" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_letters_sub"
+                    android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                    android:textColor="@color/text_muted" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/feltCell"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_sm"
+                android:layout_weight="1"
+                android:background="@drawable/bg_stat_cell"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/space_12">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_heart_filled"
+                    android:drawablePadding="4dp"
+                    android:drawableTint="@color/amber"
+                    android:gravity="center_vertical"
+                    android:text="@string/profile_felt"
+                    android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                    android:textColor="@color/amber" />
+
+                <TextView
+                    android:id="@+id/feltCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textAppearance="@style/TextAppearance.Confess.Headline"
+                    android:textColor="@color/amber"
+                    tools:text="382" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_felt_sub"
+                    android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                    android:textColor="@color/text_muted" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- "MY LETTERS (14)" -->
+        <TextView
+            android:id="@+id/lettersTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:drawableStart="@drawable/dot_amber"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/space_xs"
+            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+            android:textColor="@color/amber"
+            tools:text="MY LETTERS (14)" />
+    </LinearLayout>
 </LinearLayout>

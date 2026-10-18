@@ -164,4 +164,27 @@
     <string name="text_tone_auto">Auto</string>
     <string name="cd_text_dark">Dark text</string>
     <string name="cd_text_light">Light text</string>
+    <!-- Notification sound -->
+    <string name="nprefs_section_sound">SOUND ON THIS PHONE</string>
+    <string name="nsound_title">Notification sound</string>
+    <string name="nsound_title_sub">How Confess sounds when something comes in</string>
+    <string name="nsound_default">Phone\'s default</string>
+    <string name="nsound_pick_phone">Choose a phone sound…</string>
+    <string name="nsound_pick_file">Use my own sound file…</string>
+    <string name="nsound_silent">Silent</string>
+    <string name="nsound_default_sub">Whatever your phone uses for notifications</string>
+    <string name="nsound_pick_phone_sub">Pick from the sounds on your phone</string>
+    <string name="nsound_pick_file_sub">Any audio file of yours, under 8 MB</string>
+    <string name="nsound_silent_sub">Notifications come in without a sound</string>
+    <string name="settings_autolock_sub">After this long away, Confess asks for your password again.</string>
+    <string name="nsound_custom">My sound</string>
+    <string name="nsound_importing">Adding…</string>
+    <string name="nsound_import_failed">Couldn\'t use that file. Try another sound (under 8 MB).</string>
+    <string name="nsound_saved">Sound: %1$s</string>
+    <string name="nsound_test">Send a test notification</string>
+    <string name="nsound_test_sub">Hear exactly how Confess sounds on this phone</string>
+    <string name="nsound_test_title">This is how Confess sounds</string>
+    <string name="nsound_test_body">Felt, responses and new letters will come in like this.</string>
+    <string name="nsound_off_warning">Sound is switched off for Confess on this phone, so notifications arrive silently.</string>
+    <string name="nsound_fix">Turn on</string>
 </resources>

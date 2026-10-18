@@ -167,23 +167,19 @@ public class SecurityActivity extends BaseActivity {
 
     private void chooseAutolock() {
         if (me == null || !me.hasPassword) return;
-        String[] labels = new String[LockPrefs.OPTIONS_MS.length];
-        int current = 0;
         long now = LockPrefs.timeoutMs(this);
-        for (int i = 0; i < labels.length; i++) {
-            labels[i] = getString(LockPrefs.LABELS[i]);
-            if (LockPrefs.OPTIONS_MS[i] == now) current = i;
+        in.mohammad.ramiz.confess.ui.components.ChoiceSheet sheet = in.mohammad.ramiz.confess.ui.components.ChoiceSheet.with(this)
+                .title(R.string.settings_autolock)
+                .subtitle(R.string.settings_autolock_sub);
+        for (int i = 0; i < LockPrefs.OPTIONS_MS.length; i++) {
+            long ms = LockPrefs.OPTIONS_MS[i];
+            sheet.option(R.drawable.ic_clock, getString(LockPrefs.LABELS[i]), null, ms == now, () -> {
+                LockPrefs.setTimeoutMs(this, ms);
+                Haptics.tick(this);
+                render(me);
+            });
         }
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.settings_autolock)
-                .setSingleChoiceItems(labels, current, (dialog, which) -> {
-                    LockPrefs.setTimeoutMs(this, LockPrefs.OPTIONS_MS[which]);
-                    Haptics.tick(this);
-                    render(me);
-                    dialog.dismiss();
-                })
-                .setNegativeButton(R.string.action_cancel, null)
-                .show();
+        sheet.show();
     }
 
     private void onBioTapped() {

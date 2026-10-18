@@ -65,9 +65,9 @@ public class PushService extends FirebaseMessagingService {
         // About my own words → hidden on a secure lock screen (same as the server's PRIVATE visibility).
         boolean personal = activity && !"follow".equals(type);
 
-        String channel = activity ? Push.CHANNEL_ACTIVITY
+        String channel = Push.channelId(this, activity ? Push.CHANNEL_ACTIVITY
                 : "new_post".equals(type) || "following_post".equals(type) || bookChapter ? Push.CHANNEL_NEW_POSTS
-                : Push.CHANNEL_REMINDERS;
+                : Push.CHANNEL_REMINDERS);
         Push.ensureChannels(this);
 
         Intent open = new Intent(this, LauncherActivity.class)

@@ -27,6 +27,7 @@
     <string name="story_delete_body">It disappears for everyone right away.</string>
     <string name="story_report">Report story</string>
     <string name="story_report_title">Report this story?</string>
+    <string name="story_report_sub">It\'s hidden for you right away. What\'s wrong with it?</string>
     <string name="story_report_body">You won\'t see it again. We review reported stories.</string>
     <string name="story_reported">Reported. Thanks for keeping this place kind.</string>
     <string name="story_ended">This story has ended</string>

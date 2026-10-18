@@ -61,6 +61,8 @@ public final class PostCardBinder {
 
         b.card.setContentDescription(ctx.getString(R.string.cd_card, alias, when));
         in.mohammad.ramiz.confess.ui.components.PaperTone.apply(b.card);                     // text + icons follow the paper / text tone
+        bindSensitive(b, post);
+        bindScore(b, post);
         bindTaps(b, post, l, true);
         b.responses.setOnClickListener(v -> l.onOpen(post, true));
         b.felt.setOnClickListener(v -> {
@@ -122,6 +124,10 @@ public final class PostCardBinder {
             }
             Runnable single = () -> {
                 v.setTag(R.id.tag_single_tap, null);
+                if (Sensitive.hidden(post)) {                         // first tap on a blurred one reads it
+                    reveal(b, post);
+                    return;
+                }
                 if (opens) l.onOpen(post, false);
             };
             v.setTag(R.id.tag_single_tap, single);
@@ -391,7 +397,80 @@ public final class PostCardBinder {
 
     /** For DiffUtil: anything about mood / letter / poll that the card shows. */
     public static String extrasSignature(@NonNull Post p) {
-        return p.mood + "|" + p.letterTo + "|" + (p.poll == null ? "" : p.poll.signature());
+        return p.mood + "|" + p.letterTo + "|" + (p.poll == null ? "" : p.poll.signature()) + "|" + p.sensitive;
+    }
+
+    // ── Score ────────────────────────────────────────────────────────────────
+
+    /** Blur threshold the server uses (SENSITIVE_THRESHOLD) — for the colour and the explanation. */
+    private static final int SCORE_BLUR = 85;
+
+    /** The sensitivity score beside the ⋯: green under 60, amber to 84, red from 85 (blurred). */
+    private static void bindScore(@NonNull ItemConfessionCardBinding b, @NonNull Post post) {
+        Integer s = post.riskScore;
+        if (s == null) {
+            b.score.setVisibility(View.GONE);
+            return;
+        }
+        Context ctx = b.getRoot().getContext();
+        int color = androidx.core.content.ContextCompat.getColor(ctx,
+                s >= SCORE_BLUR ? R.color.brick : s >= 60 ? R.color.amber : R.color.sage);
+        float d = ctx.getResources().getDisplayMetrics().density;
+        android.graphics.drawable.GradientDrawable pill = new android.graphics.drawable.GradientDrawable();
+        pill.setCornerRadius(999f);
+        pill.setColor(androidx.core.graphics.ColorUtils.setAlphaComponent(color, 28));
+        pill.setStroke(Math.max(1, Math.round(d)), androidx.core.graphics.ColorUtils.setAlphaComponent(color, 140));
+        b.score.setBackground(pill);
+        b.score.setText(String.valueOf(s));
+        b.score.setTextColor(color);
+        b.score.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(color));
+        android.graphics.drawable.Drawable[] ds = b.score.getCompoundDrawablesRelative();
+        if (ds[0] != null) {
+            int px = Math.round(12 * d);
+            ds[0].setBounds(0, 0, px, px);
+            b.score.setCompoundDrawablesRelative(ds[0], null, null, null);
+        }
+        String what = ctx.getString(s >= SCORE_BLUR ? R.string.score_explain_blurred : R.string.score_explain, s, SCORE_BLUR);
+        b.score.setContentDescription(ctx.getString(R.string.cd_score, s));
+        b.score.setTooltipText(what);
+        b.score.setOnClickListener(v -> android.widget.Toast.makeText(ctx, what, android.widget.Toast.LENGTH_LONG).show());
+        b.score.setVisibility(View.VISIBLE);
+    }
+
+    // ── Sensitive ────────────────────────────────────────────────────────────
+
+    /**
+     * Sensitive (scored high by moderation): the words, the letter line and the poll are blurred
+     * under a "Sensitive · tap to read" pill until tapped. My own: clear, with a note.
+     */
+    private static void bindSensitive(@NonNull ItemConfessionCardBinding b, @NonNull Post post) {
+        Context ctx = b.getRoot().getContext();
+        boolean hide = Sensitive.hidden(post);
+        float r = hide ? Sensitive.BLUR_DP * ctx.getResources().getDisplayMetrics().density : 0f;
+        Sensitive.blur(b.text, r);
+        Sensitive.blur(b.letterTo, r);
+        Sensitive.blur(b.poll, r);
+        b.poll.setEnabled(!hide);
+        for (int i = 0; i < b.pollOptions.getChildCount(); i++) b.pollOptions.getChildAt(i).setEnabled(!hide);
+        b.text.setMinHeight(hide ? Math.round(56 * ctx.getResources().getDisplayMetrics().density) : 0);  // room for the pill
+        b.sensitive.setVisibility(hide ? View.VISIBLE : View.GONE);
+        b.sensitive.setOnClickListener(hide ? v -> reveal(b, post) : null);
+        b.sensitiveNote.setVisibility(post.sensitive && post.isMine ? View.VISIBLE : View.GONE);
+        b.text.setContentDescription(hide ? ctx.getString(R.string.cd_sensitive) : null);
+    }
+
+    private static void reveal(@NonNull ItemConfessionCardBinding b, @NonNull Post post) {
+        Context ctx = b.getRoot().getContext();
+        Sensitive.reveal(post);
+        Haptics.tick(ctx);
+        b.sensitive.animate().alpha(0f).setDuration(160).withEndAction(() -> {
+            b.sensitive.setVisibility(View.GONE);
+            b.sensitive.setAlpha(1f);
+        }).start();
+        Sensitive.unblur(new View[]{b.text, b.letterTo, b.poll}, Sensitive.BLUR_DP * ctx.getResources().getDisplayMetrics().density);
+        b.poll.setEnabled(true);
+        for (int i = 0; i < b.pollOptions.getChildCount(); i++) b.pollOptions.getChildAt(i).setEnabled(true);
+        b.text.setContentDescription(null);
     }
 
     /** Responses closed → the bubble is struck through (no "comments closed" label). */

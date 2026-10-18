@@ -20,6 +20,9 @@ public class ConfessApp extends Application {
         in.mohammad.ramiz.confess.data.local.LocalStore.init(this);   // before the session: sign-out wipes it
         SessionManager.init(this);
         AppLock.install(this);
+        // Channels exist before the first push: one shown by Android while the app is closed
+        // must find its channel (with sound), not fall back to a silent default.
+        in.mohammad.ramiz.confess.core.push.Push.ensureChannels(this);
     }
 
     public static Context getAppContext() {

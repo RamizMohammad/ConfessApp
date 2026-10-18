@@ -110,18 +110,58 @@
             tools:text="To: my dad"
             tools:visibility="visible" />
 
-        <!-- The confession (plain, no quote marks) -->
-        <TextView
-            android:id="@+id/text"
+        <!-- The confession (plain, no quote marks); blurred under "tap to read" when it's sensitive -->
+        <FrameLayout
+            android:id="@+id/textFrame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_12"
-            android:layout_marginEnd="@dimen/space_md"
-            android:ellipsize="end"
-            android:maxLines="6"
-            android:textAppearance="@style/TextAppearance.Confess.Confession.Card"
-            android:textColor="@color/paper_ink"
-            tools:text="I still look for your car at every red light, even though I moved three states away two years ago." />
+            android:layout_marginEnd="@dimen/space_md">
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="6"
+                android:textAppearance="@style/TextAppearance.Confess.Confession.Card"
+                android:textColor="@color/paper_ink"
+                tools:text="I still look for your car at every red light, even though I moved three states away two years ago." />
+
+            <TextView
+                android:id="@+id/sensitive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_sensitive_pill"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_eye_off"
+                android:drawablePadding="@dimen/space_xs"
+                android:drawableTint="@color/text_primary"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/space_md"
+                android:paddingVertical="@dimen/space_xs"
+                android:text="@string/sensitive_cover"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/text_primary"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <!-- My own sensitive confession: a note that others see it blurred -->
+        <TextView
+            android:id="@+id/sensitiveNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:drawableStart="@drawable/ic_eye_off"
+            android:drawablePadding="@dimen/space_xs"
+            android:drawableTint="@color/paper_meta"
+            android:gravity="center_vertical"
+            android:text="@string/sensitive_mine"
+            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+            android:textColor="@color/paper_meta"
+            android:visibility="gone" />
 
         <!-- Poll: options (filled in code) + "37 votes · 2 days left" -->
         <LinearLayout
@@ -204,6 +244,22 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
+
+            <!-- Sensitivity score from moderation (0-100), coloured by level; tap = what it means -->
+            <TextView
+                android:id="@+id/score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_xxs"
+                android:drawableStart="@drawable/ic_shield"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:visibility="gone"
+                tools:text="12"
+                tools:visibility="visible" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/more"

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import java.util.Locale;
@@ -23,7 +24,9 @@ import in.mohammad.ramiz.confess.data.model.Me;
 import in.mohammad.ramiz.confess.data.repo.UserRepository;
 import in.mohammad.ramiz.confess.data.session.SessionManager;
 import in.mohammad.ramiz.confess.databinding.FragmentMeBinding;
+import in.mohammad.ramiz.confess.ui.components.Banner;
 import in.mohammad.ramiz.confess.ui.nav.Nav;
+import in.mohammad.ramiz.confess.ui.profile.BannerSheet;
 import in.mohammad.ramiz.confess.ui.util.EdgeInsets;
 import in.mohammad.ramiz.confess.ui.util.Motion;
 
@@ -51,6 +54,7 @@ public class MeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
         EdgeInsets.padTop(b.topBar);
+        setUpBanner();
 
         b.feltGiven.label.setText(R.string.me_given);
         b.feltReceived.label.setText(R.string.me_received);
@@ -91,7 +95,7 @@ public class MeFragment extends Fragment {
     private void enterCards() {
         if (cardsEntered || b == null) return;
         cardsEntered = true;
-        Motion.enterStack((ViewGroup) b.scroll.getChildAt(0));
+        Motion.enterStack(b.content);
     }
 
     @Override
@@ -126,6 +130,7 @@ public class MeFragment extends Fragment {
 
     private void render(@Nullable Me me) {
         if (me == null || b == null) return;
+        b.banner.setBanner(Banner.resolve(me.banner, me.avatar, me.alias));
         b.avatar.setAvatar(me.avatar);
         b.avatar.setStoryAlias(me.alias);
         b.alias.setText("@" + me.alias);
@@ -146,6 +151,45 @@ public class MeFragment extends Fragment {
         b.feltReceived.value.setText(Formats.count(me.likesReceived));
         b.responsesMade.value.setText(Formats.count(me.commentsMade));
         b.responsesReceived.value.setText(Formats.count(me.commentsReceived));
+    }
+
+    // ── Banner ───────────────────────────────────────────────────────────────
+
+    /**
+     * The banner runs edge to edge under the status bar and the (clear) top bar, behind the whole
+     * header (avatar · @alias · about · since). Scrolling moves it at half speed and fills the top bar in with ink.
+     */
+    private void setUpBanner() {
+        float dp = getResources().getDisplayMetrics().density;
+        b.banner.setAnimated(true);
+        b.banner.setFadeStart(0.72f);
+        b.topBar.setBackgroundColor(0);
+        b.topBar.addOnLayoutChangeListener((v, l, t, r, bt, ol, ot, or, ob) -> {
+            if (b == null || bt - t == ob - ot) return;
+            int top = bt - t;                                // the header starts below the top bar
+            b.headerContent.setPadding(b.headerContent.getPaddingLeft(), top + Math.round(12 * dp),
+                    b.headerContent.getPaddingRight(), b.headerContent.getPaddingBottom());
+            b.refresh.setProgressViewOffset(false, top - Math.round(24 * dp), top + Math.round(40 * dp));
+        });
+        b.scroll.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener)
+                (v, x, y, ox, oy) -> onScrolled(y));
+        View.OnClickListener edit = v -> BannerSheet.show(requireContext(), SessionManager.get().cachedMe(),
+                spec -> {
+                    Me cached = SessionManager.get().cachedMe();
+                    if (cached != null) render(cached);
+                    refresh();
+                });
+        b.bannerBox.setOnClickListener(edit);
+        b.bannerEdit.setOnClickListener(edit);
+    }
+
+    private void onScrolled(int y) {
+        if (b == null) return;
+        float range = Math.max(1, b.bannerBox.getHeight() - b.topBar.getHeight());
+        float f = Math.max(0f, Math.min(1f, y / range));
+        int ink = ContextCompat.getColor(requireContext(), R.color.ink);
+        b.topBar.setBackgroundColor(((int) (f * 255) << 24) | (ink & 0x00FFFFFF));
+        b.banner.setTranslationY(Math.min(y, b.bannerBox.getHeight()) * 0.45f);   // parallax
     }
 
     /** Drafts live on the phone, so their count is read locally (also when coming back from the composer). */

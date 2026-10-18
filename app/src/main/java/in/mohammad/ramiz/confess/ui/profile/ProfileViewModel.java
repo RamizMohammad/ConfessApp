@@ -60,6 +60,8 @@ public class ProfileViewModel extends ViewModel {
         public final boolean isFollowing;
         /** I blocked this person. */
         public final boolean blocked;
+        /** "" / null = automatic; see ui.components.Banner. Carried along by the with…() copies. */
+        @Nullable public String banner;
 
         Header(boolean isMe, @NonNull String alias, @Nullable String about, @Nullable String avatar,
                @Nullable String createdAt, int postCount, @Nullable Integer feltCount,
@@ -85,19 +87,25 @@ public class ProfileViewModel extends ViewModel {
 
         Header withPostCount(int n) {
             return new Header(isMe, alias, about, avatar, createdAt, Math.max(0, n), feltCount,
-                    followers, following, isFollowing, blocked);
+                    followers, following, isFollowing, blocked).banner(banner);
         }
 
         Header withFollow(boolean nowFollowing, int nowFollowers) {
             return new Header(isMe, alias, about, avatar, createdAt, postCount, feltCount,
-                    Math.max(0, nowFollowers), following, nowFollowing, blocked);
+                    Math.max(0, nowFollowers), following, nowFollowing, blocked).banner(banner);
         }
 
         /** Blocking also ends any follow between us (the server removes it both ways). */
         Header withBlocked(boolean nowBlocked) {
             boolean f = !nowBlocked && isFollowing;
             int n = nowBlocked && isFollowing ? Math.max(0, followers - 1) : followers;
-            return new Header(isMe, alias, about, avatar, createdAt, postCount, feltCount, n, following, f, nowBlocked);
+            return new Header(isMe, alias, about, avatar, createdAt, postCount, feltCount, n, following, f, nowBlocked)
+                    .banner(banner);
+        }
+
+        Header banner(@Nullable String b) {
+            banner = b;
+            return this;
         }
     }
 
@@ -223,7 +231,7 @@ public class ProfileViewModel extends ViewModel {
     @NonNull
     private static Header headerOf(@NonNull PublicProfile p) {
         return new Header(false, p.alias, p.about, p.avatar, p.createdAt, p.postCount, null,
-                p.followers, p.following, p.isFollowing, p.blockedByMe);
+                p.followers, p.following, p.isFollowing, p.blockedByMe).banner(p.banner);
     }
 
     public void refresh() {
@@ -277,7 +285,7 @@ public class ProfileViewModel extends ViewModel {
 
     private static Header fromMe(Me me) {
         return new Header(true, me.alias, me.about, me.avatar, me.createdAt, me.postCount, me.likesReceived,
-                me.followers, me.following, false);
+                me.followers, me.following, false).banner(me.banner);
     }
 
     // ── Follow ───────────────────────────────────────────────────────────────

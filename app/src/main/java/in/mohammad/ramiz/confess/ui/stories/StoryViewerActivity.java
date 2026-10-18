@@ -428,19 +428,13 @@ public class StoryViewerActivity extends BaseActivity {
         CharSequence[] labels = {
                 getString(R.string.report_hate), getString(R.string.report_personal),
                 getString(R.string.report_threat), getString(R.string.report_spam), getString(R.string.report_other)};
-        int[] picked = {-1};
-        androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.story_report_title)
-                .setSingleChoiceItems(labels, -1, (d, which) -> {
-                    picked[0] = which;
-                    Haptics.tick(this);
-                    ((androidx.appcompat.app.AlertDialog) d).getButton(android.content.DialogInterface.BUTTON_POSITIVE).setEnabled(true);
-                })
-                .setNegativeButton(R.string.action_cancel, null)
-                .setPositiveButton(R.string.story_report_send, (d, w) -> {
-                    if (picked[0] < 0) return;
-                    Haptics.click(this);
-                    repo.report(s.id, codes[picked[0]], new ApiCallback<JsonObject>() {
+        int[] icons = {R.drawable.ic_ban, R.drawable.ic_eye_off, R.drawable.ic_alert, R.drawable.ic_mail_open, R.drawable.ic_flag};
+        in.mohammad.ramiz.confess.ui.components.ChoiceSheet sheet = in.mohammad.ramiz.confess.ui.components.ChoiceSheet.with(this)
+                .title(R.string.story_report_title)
+                .subtitle(R.string.story_report_sub);
+        for (int i = 0; i < labels.length; i++) sheet.option(icons[i], labels[i], null, false, null);
+        sheet.confirm(R.string.story_report_send, true, which -> {
+                    repo.report(s.id, codes[which], new ApiCallback<JsonObject>() {
                         @Override public void onSuccess(JsonObject data) {
                             Toast.makeText(StoryViewerActivity.this, R.string.story_reported, Toast.LENGTH_SHORT).show();
                             removeStory(s);
@@ -450,10 +444,8 @@ public class StoryViewerActivity extends BaseActivity {
                         }
                     });
                 })
-                .setOnDismissListener(d -> setOverlay(false))
-                .create();
-        dialog.show();
-        dialog.getButton(android.content.DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                .onDismiss(() -> setOverlay(false))
+                .show();
     }
 
     /** Deleted / reported: take it out here and in the tray, then carry on. */

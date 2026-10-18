@@ -66,6 +66,11 @@ public final class UserRepository {
         return Calls.enqueue(ApiClient.api().updateAvatar(new AvatarRequest(avatar)), cb);
     }
 
+    /** Profile banner: "bn1:p3.c5", or "" to follow the avatar. */
+    public Call<JsonObject> updateBanner(@NonNull String banner, @NonNull ApiCallback<JsonObject> cb) {
+        return Calls.enqueue(ApiClient.api().updateBanner(new in.mohammad.ramiz.confess.data.model.BannerRequest(banner)), cb);
+    }
+
     // ── Password lock ────────────────────────────────────────────────────────
 
     /** Unlock screen. On match the session is marked unlocked for this process. */

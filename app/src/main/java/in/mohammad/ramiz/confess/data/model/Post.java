@@ -29,6 +29,10 @@ public class Post {
     @Nullable public ChapterMeta chapter;
     /** In the feed with bursts: this card stands for a burst of several (null = on its own). */
     @Nullable public BurstInfo burst;
+    /** Sensitivity 0-100 from moderation (null = not scored). */
+    @Nullable public Integer riskScore;
+    /** Scored at or above the server's threshold: blurred for others until tapped. */
+    public boolean sensitive;
 
     /** Shallow copy — lists hand out copies so DiffUtil can see what changed. */
     public Post copy() {
@@ -49,6 +53,8 @@ public class Post {
         p.poll = poll;
         p.chapter = chapter;
         p.burst = burst;
+        p.riskScore = riskScore;
+        p.sensitive = sensitive;
         return p;
     }
 }

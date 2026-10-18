@@ -8,6 +8,7 @@ import in.mohammad.ramiz.confess.data.model.AboutRequest;
 import in.mohammad.ramiz.confess.data.model.AliasAvailability;
 import in.mohammad.ramiz.confess.data.model.AuthResponse;
 import in.mohammad.ramiz.confess.data.model.AvatarRequest;
+import in.mohammad.ramiz.confess.data.model.BannerRequest;
 import in.mohammad.ramiz.confess.data.model.BookDetail;
 import in.mohammad.ramiz.confess.data.model.BurstPage;
 import in.mohammad.ramiz.confess.data.model.BookDownload;
@@ -118,6 +119,9 @@ public interface ConfessApi {
 
     @POST("api/v2/users/me/avatar")
     Call<JsonObject> updateAvatar(@Body AvatarRequest body);
+
+    @POST("api/v2/users/me/banner")
+    Call<JsonObject> updateBanner(@Body BannerRequest body);
 
     @POST("api/v2/users/me/password/verify")
     Call<MatchResult> verifyPassword(@Body PasswordRequest body);

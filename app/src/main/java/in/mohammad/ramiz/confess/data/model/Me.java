@@ -6,6 +6,8 @@ public class Me {
     public String alias;
     public String about;
     public String avatar;
+    /** "" = automatic (from the avatar), else "bn1:p3.c5" — see ui.components.Banner. */
+    public String banner;
     public boolean hasPassword;
     public boolean biometricEnabled;
     /** A password reset switched biometrics off; offer to turn it back on. */

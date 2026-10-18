@@ -40,6 +40,12 @@ public final class ActivityRepository {
         return Calls.enqueue(ApiClient.api().registerPushToken(new PushTokenRequest(token)), cb);
     }
 
+    /** With this phone's channel tag (".v3"), so pushes ring with the reader's chosen sound. */
+    public Call<JsonObject> registerPushToken(@NonNull String token, @NonNull String channelTag,
+                                              @NonNull ApiCallback<JsonObject> cb) {
+        return Calls.enqueue(ApiClient.api().registerPushToken(new PushTokenRequest(token, channelTag)), cb);
+    }
+
     public Call<JsonObject> setPushEnabled(boolean enabled, @NonNull ApiCallback<JsonObject> cb) {
         return Calls.enqueue(ApiClient.api().setPushEnabled(new EnabledRequest(enabled)), cb);
     }

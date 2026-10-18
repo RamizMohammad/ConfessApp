@@ -211,6 +211,11 @@ public final class ProfileScreen implements ProfileAdapter.Listener {
     }
 
     @Override
+    public void onEditBanner() {
+        BannerSheet.show(ctx, in.mohammad.ramiz.confess.data.session.SessionManager.get().cachedMe(), spec -> vm.refresh());
+    }
+
+    @Override
     public void onRetryMore() {
         vm.retryMore();
     }

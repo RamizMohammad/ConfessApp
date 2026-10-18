@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="banner_title">Your banner</string>
+    <string name="banner_sub">Drawn just for your profile. Pick a pattern and a colour.</string>
+    <string name="banner_pattern">PATTERN</string>
+    <string name="banner_colour">COLOUR</string>
+    <string name="banner_auto">Match my avatar</string>
+    <string name="banner_auto_on">Matching your avatar</string>
+    <string name="banner_label">%1$s · %2$s</string>
+    <string name="banner_save">Save banner</string>
+    <string name="banner_saved">Banner saved</string>
+    <string name="cd_banner_edit">Change banner</string>
+    <string-array name="banner_patterns">
+        <item>Glow</item>
+        <item>Starfield</item>
+        <item>Waves</item>
+        <item>Letter paper</item>
+        <item>Envelopes</item>
+        <item>Moonrise</item>
+        <item>Rain</item>
+        <item>Constellation</item>
+        <item>Dunes</item>
+        <item>Bokeh</item>
+    </string-array>
+</resources>

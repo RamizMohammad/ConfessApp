@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -130,20 +129,13 @@ public class BookEditorActivity extends BaseActivity {
 
     private void showMenu(@NonNull View anchor) {
         if (detail == null) return;
-        PopupMenu menu = new PopupMenu(this, anchor);
-        menu.getMenu().add(0, 1, 0, R.string.desk_preview);
-        menu.getMenu().add(0, 2, 0, detail.book.isCompleted() ? R.string.desk_reopen : R.string.desk_complete);
-        menu.getMenu().add(0, 3, 0, R.string.desk_delete);
-        menu.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case 1: Nav.book(this, bookId); break;
-                case 2: setCompleted(!detail.book.isCompleted()); break;
-                case 3: confirmDelete(); break;
-                default: break;
-            }
-            return true;
-        });
-        menu.show();
+        boolean done = detail.book.isCompleted();
+        in.mohammad.ramiz.confess.ui.components.PopMenu.at(anchor)
+                .item(R.drawable.ic_eye, R.string.desk_preview, () -> Nav.book(this, bookId))
+                .item(done ? R.drawable.ic_book_open : R.drawable.ic_check, done ? R.string.desk_reopen : R.string.desk_complete,
+                        () -> setCompleted(!detail.book.isCompleted()))
+                .danger(R.drawable.ic_trash, R.string.desk_delete, this::confirmDelete)
+                .show();
     }
 
     private void setCompleted(boolean done) {

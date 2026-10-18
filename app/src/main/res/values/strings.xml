@@ -30,4 +30,11 @@
     <!-- Common states -->
     <string name="error_generic">Something went quiet on our side. Try again.</string>
     <string name="error_offline">You\'re offline. Your words will wait.</string>
+    <!-- Sensitive confessions (blurred until tapped) -->
+    <string name="sensitive_cover">Sensitive · tap to read</string>
+    <string name="sensitive_mine">Others see this blurred — it may be sensitive</string>
+    <string name="score_explain">Sensitivity %1$d / 100. At %2$d or more a confession is blurred until someone taps it.</string>
+    <string name="score_explain_blurred">Sensitivity %1$d / 100 — blurred for readers until they tap it (from %2$d).</string>
+    <string name="cd_score">Sensitivity score %1$d out of 100</string>
+    <string name="cd_sensitive">Sensitive confession, blurred. Tap to read it.</string>
 </resources>

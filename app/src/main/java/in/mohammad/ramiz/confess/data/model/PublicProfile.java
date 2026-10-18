@@ -5,6 +5,7 @@ public class PublicProfile {
     public String alias;
     public String about;
     public String avatar;
+    public String banner;
     public String createdAt;
     public int postCount;
     public int followers;
