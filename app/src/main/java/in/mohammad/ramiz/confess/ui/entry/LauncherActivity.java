@@ -38,6 +38,9 @@ import in.mohammad.ramiz.confess.ui.base.Router;
  *   old-style session (older app)    → quiet Google re-sign-in to get a refreshable one
  *                                      (falls back to the current token while it's valid)
  *   no session                       → Welcome
+ *
+ * The splash plays Letty's opening (splash_letty_anim) and, on the way out, zooms her into
+ * the app ({@link #playOut}).
  */
 public class LauncherActivity extends AppCompatActivity {
 
@@ -53,12 +56,16 @@ public class LauncherActivity extends AppCompatActivity {
     private long holdSplashUntil = 0;
     private final Handler handler = new Handler(Looper.getMainLooper());
     @Nullable private CancellationSignal googleCancel;
+    /** Where to go once the splash has played its way out. */
+    @Nullable private Destination pending;
+    private boolean gone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen splash = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         splash.setKeepOnScreenCondition(() -> !leaving);
+        splash.setOnExitAnimationListener(this::playOut);
         if (savedInstanceState == null) holdSplashUntil = SystemClock.uptimeMillis() + MIN_SPLASH_MS;
         DeepLink.capture(getIntent());            // tapped a push → open that confession once in
 
@@ -155,10 +162,44 @@ public class LauncherActivity extends AppCompatActivity {
         decided = true;
         handler.removeCallbacksAndMessages(null);
         long wait = Math.max(0, holdSplashUntil - SystemClock.uptimeMillis());
+        pending = destination;
         handler.postDelayed(() -> {
-            leaving = true;
-            destination.go(this);
+            leaving = true;                              // → playOut, which then goes
+            handler.postDelayed(this::go, 1500);         // in case the exit animation never comes
         }, wait);
+    }
+
+    /**
+     * The splash leaves: Letty dips, then zooms toward you and fades as the dark curtain lifts —
+     * straight into the app (whose background is the same ink, so nothing flashes).
+     */
+    private void playOut(@NonNull androidx.core.splashscreen.SplashScreenViewProvider provider) {
+        android.view.View screen = provider.getView();
+        android.view.View icon = provider.getIconView();
+        if (!android.animation.ValueAnimator.areAnimatorsEnabled() || pending == null) {
+            provider.remove();
+            go();
+            return;
+        }
+        if (icon != null) {
+            icon.animate().scaleX(0.9f).scaleY(0.9f).setDuration(110)
+                    .setInterpolator(new android.view.animation.DecelerateInterpolator())
+                    .withEndAction(() -> icon.animate().scaleX(2.6f).scaleY(2.6f).alpha(0f).setDuration(340)
+                            .setInterpolator(new android.view.animation.AccelerateInterpolator(1.4f)).start())
+                    .start();
+        }
+        screen.animate().alpha(0f).setStartDelay(220).setDuration(260)
+                .withEndAction(() -> {
+                    provider.remove();
+                    go();
+                }).start();
+    }
+
+    private void go() {
+        if (gone || pending == null) return;
+        gone = true;
+        handler.removeCallbacksAndMessages(null);
+        pending.go(this);                                // Router fades into the next screen
     }
 
     @Override

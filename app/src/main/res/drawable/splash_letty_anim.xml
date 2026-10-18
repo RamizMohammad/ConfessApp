@@ -2,6 +2,9 @@
 <!--
     Splash animation (1000 ms, = windowSplashScreenAnimationDuration):
       0–260   Letty settles in
+      120–240 she blinks
+      260–520 the seal pops — the envelope wobbles
+      380–1000 sparkles twinkle around her, one after another
       180–420 the Confess seal swells, then spins off
       380–520 the flap folds up to its hinge
       520–720 the inside of the flap swings up behind the letter
@@ -16,6 +19,12 @@
     <target android:name="letty">
         <aapt:attr name="android:animation">
             <set>
+                <objectAnimator android:propertyName="rotation" android:valueFrom="0" android:valueTo="-6"
+                    android:startOffset="260" android:duration="90" android:interpolator="@android:interpolator/decelerate_quad" />
+                <objectAnimator android:propertyName="rotation" android:valueFrom="-6" android:valueTo="4"
+                    android:startOffset="350" android:duration="100" android:interpolator="@android:interpolator/accelerate_decelerate" />
+                <objectAnimator android:propertyName="rotation" android:valueFrom="4" android:valueTo="0"
+                    android:startOffset="450" android:duration="90" android:interpolator="@android:interpolator/decelerate_quad" />
                 <objectAnimator android:propertyName="scaleX" android:valueFrom="0.86" android:valueTo="1"
                     android:duration="260" android:interpolator="@android:anim/overshoot_interpolator" />
                 <objectAnimator android:propertyName="scaleY" android:valueFrom="0.86" android:valueTo="1"
@@ -75,8 +84,25 @@
 
     <target android:name="letter">
         <aapt:attr name="android:animation">
-            <objectAnimator android:propertyName="translateY" android:valueFrom="0" android:valueTo="-21"
-                android:startOffset="600" android:duration="260" android:interpolator="@android:anim/overshoot_interpolator" />
+            <set>
+                <objectAnimator android:propertyName="translateY" android:valueFrom="0" android:valueTo="-21"
+                    android:startOffset="600" android:duration="260" android:interpolator="@android:anim/overshoot_interpolator" />
+                <objectAnimator android:propertyName="rotation" android:valueFrom="0" android:valueTo="-5"
+                    android:startOffset="600" android:duration="150" android:interpolator="@android:interpolator/decelerate_quad" />
+                <objectAnimator android:propertyName="rotation" android:valueFrom="-5" android:valueTo="0"
+                    android:startOffset="750" android:duration="170" android:interpolator="@android:anim/overshoot_interpolator" />
+            </set>
+        </aapt:attr>
+    </target>
+
+    <target android:name="blink">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="1" android:valueTo="0.1"
+                    android:startOffset="120" android:duration="60" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="0.1" android:valueTo="1"
+                    android:startOffset="180" android:duration="60" />
+            </set>
         </aapt:attr>
     </target>
 
@@ -101,6 +127,70 @@
                     android:startOffset="820" android:duration="180" android:interpolator="@android:anim/overshoot_interpolator" />
                 <objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1"
                     android:startOffset="820" android:duration="180" android:interpolator="@android:anim/overshoot_interpolator" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="spark0">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1.1"
+                    android:startOffset="380" android:duration="130" android:interpolator="@android:anim/overshoot_interpolator" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1.1"
+                    android:startOffset="380" android:duration="130" android:interpolator="@android:anim/overshoot_interpolator" />
+                <objectAnimator android:propertyName="rotation" android:valueFrom="0" android:valueTo="90"
+                    android:startOffset="380" android:duration="330" />
+                <objectAnimator android:propertyName="scaleX" android:valueFrom="1.1" android:valueTo="0"
+                    android:startOffset="530" android:duration="180" android:interpolator="@android:interpolator/accelerate_quad" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="1.1" android:valueTo="0"
+                    android:startOffset="530" android:duration="180" android:interpolator="@android:interpolator/accelerate_quad" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="spark1">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1.1"
+                    android:startOffset="520" android:duration="130" android:interpolator="@android:anim/overshoot_interpolator" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1.1"
+                    android:startOffset="520" android:duration="130" android:interpolator="@android:anim/overshoot_interpolator" />
+                <objectAnimator android:propertyName="rotation" android:valueFrom="0" android:valueTo="90"
+                    android:startOffset="520" android:duration="330" />
+                <objectAnimator android:propertyName="scaleX" android:valueFrom="1.1" android:valueTo="0"
+                    android:startOffset="670" android:duration="180" android:interpolator="@android:interpolator/accelerate_quad" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="1.1" android:valueTo="0"
+                    android:startOffset="670" android:duration="180" android:interpolator="@android:interpolator/accelerate_quad" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="spark2">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1.1"
+                    android:startOffset="640" android:duration="130" android:interpolator="@android:anim/overshoot_interpolator" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1.1"
+                    android:startOffset="640" android:duration="130" android:interpolator="@android:anim/overshoot_interpolator" />
+                <objectAnimator android:propertyName="rotation" android:valueFrom="0" android:valueTo="90"
+                    android:startOffset="640" android:duration="330" />
+                <objectAnimator android:propertyName="scaleX" android:valueFrom="1.1" android:valueTo="0"
+                    android:startOffset="790" android:duration="180" android:interpolator="@android:interpolator/accelerate_quad" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="1.1" android:valueTo="0"
+                    android:startOffset="790" android:duration="180" android:interpolator="@android:interpolator/accelerate_quad" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="spark3">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1.1"
+                    android:startOffset="670" android:duration="130" android:interpolator="@android:anim/overshoot_interpolator" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1.1"
+                    android:startOffset="670" android:duration="130" android:interpolator="@android:anim/overshoot_interpolator" />
+                <objectAnimator android:propertyName="rotation" android:valueFrom="0" android:valueTo="90"
+                    android:startOffset="670" android:duration="330" />
+                <objectAnimator android:propertyName="scaleX" android:valueFrom="1.1" android:valueTo="0"
+                    android:startOffset="820" android:duration="180" android:interpolator="@android:interpolator/accelerate_quad" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="1.1" android:valueTo="0"
+                    android:startOffset="820" android:duration="180" android:interpolator="@android:interpolator/accelerate_quad" />
             </set>
         </aapt:attr>
     </target>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Splash icon: Letty, the Confess envelope, sealed with the Confess "C".
-    Animated by splash_letty_anim.xml (seal pops → flap opens → letter rises → smile → heart).
+    Animated by splash_letty_anim.xml (blink → seal pops with a wobble → flap opens → letter rises
+    → sparkles → smile → heart); LauncherActivity zooms her into the app as the splash leaves.
     No icon background: Android shows a 240dp drawable in a 160dp-wide visible circle,
     so Letty (fully open) is scaled to fit inside it. Drawn in a 100-unit box, placed by "letty".
 -->
@@ -35,7 +36,7 @@
             </group>
 
             <!-- the letter: hidden until it rises -->
-            <group android:name="letter">
+            <group android:name="letter" android:pivotX="50" android:pivotY="72">
                 <path android:name="letterCard"
                     android:pathData="M30,38 H70 A3,3 0 0 1 73,41 V69 A3,3 0 0 1 70,72 H30 A3,3 0 0 1 27,69 V41 A3,3 0 0 1 30,38 Z"
                     android:fillColor="#FFFCF6" android:fillAlpha="0"
@@ -69,13 +70,37 @@
             </group>
 
             <!-- face -->
-            <path android:name="eyes"
-                android:pathData="M35.7,74 A3.3,3.9 0 1 0 42.3,74 A3.3,3.9 0 1 0 35.7,74 Z M57.7,74 A3.3,3.9 0 1 0 64.3,74 A3.3,3.9 0 1 0 57.7,74 Z"
-                android:fillColor="#1B1A20" />
+            <group android:name="blink" android:pivotX="50" android:pivotY="74">
+                <path android:name="eyes"
+                    android:pathData="M35.7,74 A3.3,3.9 0 1 0 42.3,74 A3.3,3.9 0 1 0 35.7,74 Z M57.7,74 A3.3,3.9 0 1 0 64.3,74 A3.3,3.9 0 1 0 57.7,74 Z"
+                    android:fillColor="#1B1A20" />
+            </group>
             <path android:name="happy" android:pathData="M35.6,75.2 Q39,70.6 42.4,75.2 M57.6,75.2 Q61,70.6 64.4,75.2"
                 android:strokeColor="#1B1A20" android:strokeWidth="2.8" android:strokeLineCap="round" android:strokeAlpha="0" />
             <path android:pathData="M27.2,78.5 A3.8,3.8 0 1 0 34.8,78.5 A3.8,3.8 0 1 0 27.2,78.5 Z M65.2,78.5 A3.8,3.8 0 1 0 72.8,78.5 A3.8,3.8 0 1 0 65.2,78.5 Z"
                 android:fillColor="@color/icon_mark" android:fillAlpha="0.45" />
+        </group>
+
+        <!-- sparkles: twinkle around her as the envelope opens -->
+        <group android:translateX="8" android:translateY="40">
+            <group android:name="spark0" android:scaleX="0" android:scaleY="0">
+                <path android:pathData="M0,-5 Q0.9,-0.9 5,0 Q0.9,0.9 0,5 Q-0.9,0.9 -5,0 Q-0.9,-0.9 0,-5 Z" android:fillColor="#FFE8A04C" />
+            </group>
+        </group>
+        <group android:translateX="92" android:translateY="34">
+            <group android:name="spark1" android:scaleX="0" android:scaleY="0">
+                <path android:pathData="M0,-5 Q0.9,-0.9 5,0 Q0.9,0.9 0,5 Q-0.9,0.9 -5,0 Q-0.9,-0.9 0,-5 Z" android:fillColor="#FFF3ECDF" />
+            </group>
+        </group>
+        <group android:translateX="87" android:translateY="77">
+            <group android:name="spark2" android:scaleX="0" android:scaleY="0">
+                <path android:pathData="M0,-5 Q0.9,-0.9 5,0 Q0.9,0.9 0,5 Q-0.9,0.9 -5,0 Q-0.9,-0.9 0,-5 Z" android:fillColor="#FFE8A04C" />
+            </group>
+        </group>
+        <group android:translateX="13" android:translateY="79">
+            <group android:name="spark3" android:scaleX="0" android:scaleY="0">
+                <path android:pathData="M0,-5 Q0.9,-0.9 5,0 Q0.9,0.9 0,5 Q-0.9,0.9 -5,0 Q-0.9,-0.9 0,-5 Z" android:fillColor="#FFF3ECDF" />
+            </group>
         </group>
     </group>
 </vector>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- S1 · Welcome — headline, stacked paper notes, "Join the world". -->
+<!-- S1 · Welcome — headline, stacked paper notes (as many as fit; tap one for a sample feed), "Join the world". -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
@@ -76,10 +76,26 @@
         android:layout_height="0dp"
         android:clipChildren="false"
         android:clipToPadding="false"
-        app:layout_constraintBottom_toTopOf="@id/join"
+        app:layout_constraintBottom_toTopOf="@id/peekHint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sub" />
+
+    <TextView
+        android:id="@+id/peekHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_md"
+        android:drawableStart="@drawable/ic_eye"
+        android:drawablePadding="@dimen/space_xs"
+        android:drawableTint="@color/text_muted"
+        android:gravity="center_vertical"
+        android:text="@string/welcome_peek_hint"
+        android:textAppearance="@style/TextAppearance.Confess.Meta"
+        android:textColor="@color/text_muted"
+        app:layout_constraintBottom_toTopOf="@id/join"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Actions -->
     <com.google.android.material.button.MaterialButton

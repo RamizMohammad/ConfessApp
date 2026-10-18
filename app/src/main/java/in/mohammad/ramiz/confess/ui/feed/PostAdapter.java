@@ -42,8 +42,9 @@ import in.mohammad.ramiz.confess.ui.components.PaperTone;
  * Bursts ({@link Bursts}): the feed sends one card per burst; it shows as a slider (swipe
  * through them, oldest first — fetched from the server a set at a time as you near the end,
  * see {@link BurstStore}) or, for more than three when the reader chose it, a stack card that
- * opens them full screen. The same adapter, in "pages" mode, fills a slider: plain cards, full
- * height, no footer.
+ * opens them full screen. The same adapter, in "pages" mode, fills a slider: plain cards at their
+ * own height, no footer. The slider takes the height of the card on screen and grows / shrinks
+ * smoothly while you swipe between a short one and a long one (like a photo carousel).
  */
 public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewHolder> {
 
@@ -153,7 +154,7 @@ public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewH
             if (pages) {
                 ViewGroup.LayoutParams lp = b.getRoot().getLayoutParams();
                 lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;    // its own height, never stretched
             }
             return new PostHolder(b);
         }
@@ -227,6 +228,8 @@ public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewH
         @Nullable BurstStore.Entry entry;
         int page = 0;
         private int shownCount = 0;
+        /** Each loaded card's height, in slider order. */
+        private final List<Integer> pageHeights = new ArrayList<>();
         private final ViewGroup outer;
         @Nullable private ItemConfessionCardBinding probe;
         /** Measured card heights (by confession + what it shows), so each card is measured once. */
@@ -238,7 +241,19 @@ public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewH
             this.b = b;
             this.outer = outer;
             pagesAdapter = new PostAdapter(listener, () -> { }, true);
-            layout = new LinearLayoutManager(b.getRoot().getContext(), LinearLayoutManager.HORIZONTAL, false);
+            layout = new LinearLayoutManager(b.getRoot().getContext(), LinearLayoutManager.HORIZONTAL, false) {
+                /** Cards are measured at their full height, not squeezed into the slider's current one
+                 *  (mid-swipe the slider is between two heights; the taller card is clipped, not cut). */
+                @Override
+                public void measureChildWithMargins(@NonNull View child, int widthUsed, int heightUsed) {
+                    RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) child.getLayoutParams();
+                    int ws = getChildMeasureSpec(getWidth(), getWidthMode(),
+                            getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin + widthUsed,
+                            lp.width, canScrollHorizontally());
+                    int hs = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                    child.measure(ws, hs);
+                }
+            };
             b.pages.setLayoutManager(layout);
             b.pages.setAdapter(pagesAdapter);
             b.pages.setItemAnimator(null);
@@ -250,6 +265,7 @@ public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewH
                     if (dx > 0 && entry != null && layout.findLastVisibleItemPosition() >= shownCount - 2) {
                         BurstStore.want(entry, shownCount + 1);          // the next set, before you get there
                     }
+                    followHeight();
                 }
 
                 @Override
@@ -260,9 +276,36 @@ public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewH
                     if (p == RecyclerView.NO_POSITION) return;
                     page = p;
                     if (group != null) sliderPage.put(group.id, p);
+                    setHeight(heightAt(p));
                     showPage();
                 }
             });
+        }
+
+        /** Mid-swipe: between the two cards' heights, in step with the finger. */
+        void followHeight() {
+            int w = b.pages.getWidth();
+            int p = layout.findFirstVisibleItemPosition();
+            if (w <= 0 || p == RecyclerView.NO_POSITION) return;
+            View v = layout.findViewByPosition(p);
+            if (v == null) return;
+            float f = Math.max(0f, Math.min(1f, -v.getLeft() / (float) w));
+            int a = heightAt(p), z = heightAt(Math.min(p + 1, pageHeights.size() - 1));
+            setHeight(Math.round(a + (z - a) * f));
+        }
+
+        int heightAt(int p) {
+            if (pageHeights.isEmpty()) return 0;
+            return pageHeights.get(Math.max(0, Math.min(p, pageHeights.size() - 1)));
+        }
+
+        void setHeight(int height) {
+            if (height <= 0) return;
+            ViewGroup.LayoutParams lp = b.pages.getLayoutParams();
+            if (lp.height != height) {
+                lp.height = height;
+                b.pages.setLayoutParams(lp);
+            }
         }
 
         void bind(@NonNull Bursts.Group g) {
@@ -290,12 +333,8 @@ public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewH
             List<Post> list = entry.posts.isEmpty() ? Collections.singletonList(group.head) : new ArrayList<>(entry.posts);
             shownCount = list.size();
             pagesAdapter.submit(list, FeedState.Footer.NONE, null);
-            int height = tallest(list);
-            ViewGroup.LayoutParams lp = b.pages.getLayoutParams();
-            if (height > 0 && lp.height != height) {
-                lp.height = height;
-                b.pages.setLayoutParams(lp);
-            }
+            measure(list);
+            setHeight(heightAt(page));
             showPage();
         }
 
@@ -331,8 +370,8 @@ public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewH
             }
         }
 
-        /** The slider is as tall as its tallest loaded card (so swiping never makes the feed jump). */
-        int tallest(@NonNull List<Post> posts) {
+        /** Each loaded card's natural height (measured once per card, kept in {@link #pageHeights}). */
+        void measure(@NonNull List<Post> posts) {
             int width = b.pages.getWidth() > 0 ? b.pages.getWidth()
                     : outer.getWidth() > 0 ? outer.getWidth()
                     : itemView.getResources().getDisplayMetrics().widthPixels;
@@ -348,7 +387,7 @@ public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewH
             int mv = m == null ? 0 : m.topMargin + m.bottomMargin;
             int ws = View.MeasureSpec.makeMeasureSpec(Math.max(1, width - mh), View.MeasureSpec.EXACTLY);
             int hs = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-            int max = 0;
+            pageHeights.clear();
             for (Post p : posts) {
                 String key = p.postId + "|" + (p.text == null ? 0 : p.text.length()) + "|" + PostCardBinder.extrasSignature(p);
                 Integer known = heights.get(key);
@@ -358,9 +397,8 @@ public class PostAdapter extends ListAdapter<PostAdapter.Row, RecyclerView.ViewH
                     known = card.getMeasuredHeight() + mv;
                     heights.put(key, known);
                 }
-                max = Math.max(max, known);
+                pageHeights.add(known);
             }
-            return max;
         }
     }
 

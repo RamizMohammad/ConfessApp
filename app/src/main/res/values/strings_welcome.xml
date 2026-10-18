@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Welcome: the note stack and the "glimpse inside" sample feed (made-up confessions, shown before sign-in). -->
+<resources>
+    <string name="welcome_peek_hint">Tap a note to look inside</string>
+    <string name="welcome_peek_title">A glimpse inside</string>
+    <string name="welcome_peek_sub">This is how the feed reads. Every name is an alias — join to feel, respond and write your own.</string>
+    <string name="welcome_peek_nudge">Join to feel and respond</string>
+    <string name="welcome_peek_sample">Sample confessions</string>
+    <string name="welcome_sample_letter_to">my grandfather</string>
+
+    <!-- Ten sample confessions; the first three are the notes on the welcome screen. -->
+    <string-array name="demo_texts">
+        <item>Sometimes I pretend I didn\'t see the message just to feel in control.</item>
+        <item>I told everyone I was proud of them, but I cried on the way home.</item>
+        <item>I still look for your car at every red light.</item>
+        <item>I moved to a new city for a fresh start and I\'ve eaten dinner alone every night for a month. Nobody here knows my name yet.</item>
+        <item>Got the job. Called my mum first. She cried more than I did.</item>
+        <item>Is it normal to miss someone you were the one to leave?</item>
+        <item>I laugh the loudest in every group chat so nobody asks how I\'m actually doing.</item>
+        <item>You never got to see me graduate. I wore your watch the whole day.</item>
+        <item>Today I said no to something I didn\'t want to do, and the world didn\'t end.</item>
+        <item>I keep a list of every kind thing a stranger has done for me. It\'s 41 lines long now.</item>
+    </string-array>
+    <string-array name="demo_aliases">
+        <item>silent_frequency</item>
+        <item>folded_paper</item>
+        <item>quiet_wanderer</item>
+        <item>new_city_ghost</item>
+        <item>sunday_tea</item>
+        <item>half_moon</item>
+        <item>loud_laugh</item>
+        <item>wrist_watch</item>
+        <item>soft_no</item>
+        <item>kind_list</item>
+    </string-array>
+    <!-- vent · advice · listen · happy · heartbreak, or empty -->
+    <string-array name="demo_moods">
+        <item>vent</item>
+        <item>listen</item>
+        <item>heartbreak</item>
+        <item>advice</item>
+        <item>happy</item>
+        <item>advice</item>
+        <item></item>
+        <item></item>
+        <item>happy</item>
+        <item></item>
+    </string-array>
+</resources>
