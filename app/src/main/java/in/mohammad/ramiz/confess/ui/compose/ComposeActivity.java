@@ -11,6 +11,7 @@ import android.text.format.DateFormat;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -21,6 +22,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -62,7 +64,10 @@ import retrofit2.Call;
  *
  *  - the note shows exactly how it will appear: your aura, @alias, the time
  *  - 2000-character limit (server's POST_MAX) with a live counter; over the limit → blocked
- *  - "Allow responses" = commentsEnabled
+ *  - two pages: write (text, letter / poll, mood) → before it goes out ("Allow responses" =
+ *    commentsEnabled). "Instant publish" skips page 2 and goes out as it is.
+ *  - while the keyboard is up the publish buttons step aside and the mood chips move up under
+ *    the top bar, so they stay in reach while typing
  *  - every confession is moderated on the server before it is saved:
  *      451 CONTENT_FLAGGED      → red notice with the specific reason + guidelines link
  *      503 MODERATION_UNAVAILABLE → amber notice + try again (nothing was posted)
@@ -98,6 +103,10 @@ public class ComposeActivity extends BaseActivity {
     @Nullable private String mood;
     /** "Allow responses" as the writer left it, before "just listen" turned it off. */
     private boolean allowBeforeListen = true;
+    /** Page 2 ("before it goes out") is showing. */
+    private boolean onOptions = false;
+    private boolean imeUp = false;
+    private int bottomPad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,10 +116,17 @@ public class ComposeActivity extends BaseActivity {
         drafts = Drafts.get(this);
         if (savedInstanceState != null) draftId = savedInstanceState.getString(STATE_DRAFT_ID);
         EdgeInsets.padTop(b.topBar);
-        EdgeInsets.padBottom(b.bottom, true);
+        bottomPad = b.bottom.getPaddingBottom();
+        watchKeyboard();
 
         Me me = SessionManager.get().cachedMe();
         renderAuthor(me);
+        int paper = in.mohammad.ramiz.confess.ui.components.PaperTone.paper(this);
+        b.paper.setCardBackgroundColor(paper);
+        b.optionsPreview.setBackgroundTintList(android.content.res.ColorStateList.valueOf(paper));
+        in.mohammad.ramiz.confess.ui.components.PaperTone.apply(b.paper);
+        in.mohammad.ramiz.confess.ui.components.PaperTone.apply(b.optionsPreview);
+        b.input.setRuleColor(in.mohammad.ramiz.confess.ui.components.PaperTone.rule(this));
         if (me == null) {
             new UserRepository().me(new ApiCallback<Me>() {
                 @Override public void onSuccess(Me m) { renderAuthor(m); }
@@ -141,10 +157,15 @@ public class ComposeActivity extends BaseActivity {
         b.allowText.setOnClickListener(v -> b.allow.toggle());
 
         b.release.setOnClickListener(v -> release());
+        b.instant.setOnClickListener(v -> release());
+        b.next.setOnClickListener(v -> showOptions(true));
+        b.edit.setOnClickListener(v -> showOptions(false));
         b.discard.setOnClickListener(v -> discard());
         b.help.setOnClickListener(v -> openGuidelines());
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override public void handleOnBackPressed() { leave(); }
+            @Override public void handleOnBackPressed() {
+                if (onOptions) showOptions(false); else leave();
+            }
         });
 
         if (savedInstanceState == null) {
@@ -155,6 +176,93 @@ public class ComposeActivity extends BaseActivity {
                 WindowCompat.getInsetsController(getWindow(), b.input).show(WindowInsetsCompat.Type.ime());
             }, 350);
         }
+    }
+
+    // ── Pages + keyboard ─────────────────────────────────────────────────────
+
+    /**
+     * Keyboard up: hide the publish bar (it only takes room while typing), move the mood chips
+     * up under the top bar, and lift the page above the keyboard. Keyboard down: all back.
+     */
+    private void watchKeyboard() {
+        ViewCompat.setOnApplyWindowInsetsListener(b.root, (v, insets) -> {
+            boolean up = insets.isVisible(WindowInsetsCompat.Type.ime());
+            int ime = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom;
+            int nav = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+            b.bottom.setPadding(b.bottom.getPaddingLeft(), b.bottom.getPaddingTop(), b.bottom.getPaddingRight(), bottomPad + nav);
+            b.pages.setPadding(0, 0, 0, up ? ime : 0);
+            if (up != imeUp) {
+                imeUp = up;
+                b.bottom.setVisibility(up ? View.GONE : View.VISIBLE);
+                // The prompt is only a welcome: while typing, give its room to the note.
+                b.prompt.setVisibility(up ? View.GONE : View.VISIBLE);
+                b.promptSub.setVisibility(up ? View.GONE : View.VISIBLE);
+                placeMoods(up && !onOptions);
+                if (up) b.scroll.post(this::keepCaretInView);
+            }
+            return insets;
+        });
+    }
+
+    /** After the layout shifts for the keyboard, bring the line being typed back into view. */
+    private void keepCaretInView() {
+        View focus = getCurrentFocus();
+        if (focus == null) return;
+        int[] at = new int[2], top = new int[2];
+        focus.getLocationInWindow(at);
+        b.scroll.getLocationInWindow(top);
+        int y = at[1] - top[1] + b.scroll.getScrollY();
+        if (focus == b.input && b.input.getLayout() != null) {
+            int line = b.input.getLayout().getLineForOffset(Math.max(0, b.input.getSelectionStart()));
+            y += b.input.getLayout().getLineBottom(line) + b.input.getPaddingTop();
+        }
+        int visible = b.scroll.getHeight() - b.pages.getPaddingBottom();
+        if (y > b.scroll.getScrollY() + visible || y < b.scroll.getScrollY()) {
+            b.scroll.smoothScrollTo(0, Math.max(0, y - visible + visible / 4));
+        }
+    }
+
+    /** The mood chips: under the top bar while typing, else in their place on the page. */
+    private void placeMoods(boolean top) {
+        ViewGroup parent = (ViewGroup) b.moodScroll.getParent();
+        if (top && parent != b.moodTop) {
+            parent.removeView(b.moodScroll);
+            b.moodTop.addView(b.moodScroll);
+            b.moodTop.setVisibility(View.VISIBLE);
+            b.moodLabel.setVisibility(View.GONE);
+        } else if (!top && parent == b.moodTop) {
+            b.moodTop.removeView(b.moodScroll);
+            ViewGroup home = (ViewGroup) b.moodLabel.getParent();
+            home.addView(b.moodScroll, home.indexOfChild(b.moodLabel) + 1);
+            b.moodTop.setVisibility(View.GONE);
+            b.moodLabel.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /** Page 2 slides in over the writing page (and back). */
+    private void showOptions(boolean show) {
+        if (show == onOptions || (show && working)) return;
+        if (show) {
+            String body = text().trim();
+            if (body.isEmpty() || body.length() > MAX_CHARS) return;
+            Haptics.click(this);
+            WindowCompat.getInsetsController(getWindow(), b.input).hide(WindowInsetsCompat.Type.ime());
+            String to = letterTo();
+            b.optionsPreview.setText(to != null && !to.isEmpty() ? getString(R.string.compose_to) + " " + to + "\n" + body : body);
+        }
+        onOptions = show;
+        float w = b.pages.getWidth();
+        if (show) {
+            b.options.setVisibility(View.VISIBLE);
+            b.options.setTranslationX(w);
+            b.options.animate().translationX(0).setDuration(220).start();
+        } else {
+            b.options.animate().translationX(w).setDuration(200)
+                    .withEndAction(() -> b.options.setVisibility(View.GONE)).start();
+        }
+        b.writeActions.setVisibility(show ? View.GONE : View.VISIBLE);
+        b.optionsActions.setVisibility(show ? View.VISIBLE : View.GONE);
+        updateButton();
     }
 
     // ── Header ───────────────────────────────────────────────────────────────
@@ -194,7 +302,10 @@ public class ComposeActivity extends BaseActivity {
 
     private void updateButton() {
         int n = text().trim().length();
-        b.release.setEnabled(!working && n > 0 && n <= MAX_CHARS);
+        boolean ok = !working && n > 0 && n <= MAX_CHARS;
+        b.release.setEnabled(ok);
+        b.instant.setEnabled(ok);
+        b.next.setEnabled(ok);
     }
 
     private void updateAllowText() {
@@ -473,6 +584,9 @@ public class ComposeActivity extends BaseActivity {
             @Override
             public void onError(ApiException e) {
                 setWorking(false);
+                if (onOptions && (e.is(ErrorCode.CONTENT_FLAGGED) || e.is(ErrorCode.MODERATION_UNAVAILABLE))) {
+                    showOptions(false);
+                }
                 handleError(e);
             }
         });
@@ -530,8 +644,10 @@ public class ComposeActivity extends BaseActivity {
 
     private void setWorking(boolean on) {
         working = on;
-        b.release.setText(on ? R.string.compose_checking : R.string.compose_release);
+        b.release.setText(on ? R.string.compose_checking : R.string.compose_release_short);
         b.release.setIconResource(on ? 0 : R.drawable.ic_send);
+        b.instant.setText(on ? R.string.compose_checking : R.string.compose_instant);
+        b.edit.setEnabled(!on);
         b.input.setEnabled(!on);
         b.allow.setEnabled(!on && !Moods.LISTEN.equals(mood));
         b.discard.setEnabled(!on);

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The e-book reader. Full-screen pages (PageTurner: curl / slide / instant); tap the middle
+    for the chrome: book + chapter, contents, reading settings, a page scrubber.
+    Colours are set from the reader theme in code.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/reader_paper_bg">
+
+    <in.mohammad.ramiz.confess.ui.books.reader.PageTurner
+        android:id="@+id/pages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Opening a chapter / errors -->
+    <LinearLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/space_xl"
+        tools:visibility="gone">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/spinner"
+            style="@style/Widget.Confess.Progress.Circular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/retry"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="@string/action_retry"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- Top chrome -->
+    <LinearLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/toolbar_height"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/space_xs"
+        android:paddingEnd="@dimen/space_xs">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/back"
+            style="@style/Widget.Confess.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/action_back"
+            app:icon="@drawable/ic_arrow_left" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xs"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/bookTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                tools:text="NIGHT SHIFTS" />
+
+            <TextView
+                android:id="@+id/chapterTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/newsreader"
+                android:maxLines="1"
+                android:textSize="17sp"
+                tools:text="The first night" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/contents"
+            style="@style/Widget.Confess.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_reader_contents"
+            app:icon="@drawable/ic_contents" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/settings"
+            style="@style/Widget.Confess.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_reader_settings"
+            app:icon="@drawable/ic_text_size" />
+    </LinearLayout>
+
+    <!-- Bottom chrome -->
+    <LinearLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:paddingTop="@dimen/space_sm"
+        android:paddingBottom="@dimen/space_md">
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/scrubber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stepSize="1"
+            android:valueFrom="1"
+            android:valueTo="2"
+            app:labelBehavior="gone"
+            app:thumbRadius="7dp"
+            app:trackHeight="3dp" />
+
+        <TextView
+            android:id="@+id/position"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Confess.Meta"
+            tools:text="Page 4 of 12 · Chapter 3 of 8" />
+    </LinearLayout>
+</FrameLayout>

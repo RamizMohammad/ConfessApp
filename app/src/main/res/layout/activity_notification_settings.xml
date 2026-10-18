@@ -123,6 +123,16 @@
                 <include
                     android:id="@+id/newPosts"
                     layout="@layout/view_setting_row" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hairline"
+                    android:layout_marginStart="56dp"
+                    android:background="@color/hairline" />
+
+                <include
+                    android:id="@+id/bookChapters"
+                    layout="@layout/view_setting_row" />
             </LinearLayout>
             <TextView
                 style="@style/Confess.SectionLabel"

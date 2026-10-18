@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One line of a book's contents: number, title, date / reactions; a tick when read. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_row_ripple"
+    android:gravity="center_vertical"
+    android:minHeight="64dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_md"
+    android:paddingTop="@dimen/space_12"
+    android:paddingEnd="@dimen/space_md"
+    android:paddingBottom="@dimen/space_12">
+
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Confess.Meta"
+        android:textColor="@color/amber"
+        tools:text="03" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/newsreader"
+            android:maxLines="2"
+            android:textColor="@color/text_primary"
+            android:textSize="17sp"
+            tools:text="The first night" />
+
+        <TextView
+            android:id="@+id/meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Confess.Meta"
+            android:textColor="@color/text_muted"
+            tools:text="Oct 9 · 12 felt · 3 responses" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/mark"
+        android:layout_width="@dimen/icon_size_sm"
+        android:layout_height="@dimen/icon_size_sm"
+        android:layout_marginStart="@dimen/space_sm"
+        android:contentDescription="@string/cd_chapter_read"
+        android:src="@drawable/ic_check_check"
+        android:visibility="gone"
+        app:tint="@color/text_muted"
+        tools:visibility="visible" />
+</LinearLayout>

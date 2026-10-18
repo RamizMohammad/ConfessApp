@@ -4,10 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 
 import in.mohammad.ramiz.confess.R;
 import in.mohammad.ramiz.confess.ui.activity.NotificationsActivity;
+import in.mohammad.ramiz.confess.ui.books.BookActivity;
+import in.mohammad.ramiz.confess.ui.books.reader.ReaderActivity;
+import in.mohammad.ramiz.confess.ui.books.write.BookEditorActivity;
+import in.mohammad.ramiz.confess.ui.books.write.BookSetupActivity;
+import in.mohammad.ramiz.confess.ui.books.write.ChapterEditorActivity;
+import in.mohammad.ramiz.confess.ui.books.write.MyBooksActivity;
 import in.mohammad.ramiz.confess.ui.compose.ComposeActivity;
 import in.mohammad.ramiz.confess.ui.me.DraftsActivity;
 import in.mohammad.ramiz.confess.ui.people.PeopleActivity;
@@ -125,5 +132,45 @@ public final class Nav {
     /** Edit aura / about. */
     public static void editProfile(@NonNull Context ctx) {
         ctx.startActivity(new Intent(ctx, EditProfileActivity.class));
+    }
+
+    // ── Books ─────────────────────────────────────────────────────────────
+
+    /** A book's page (cover, contents, Add to library). */
+    public static void book(@NonNull Context ctx, @NonNull String bookId) {
+        ctx.startActivity(new Intent(ctx, BookActivity.class).putExtra(BookActivity.EXTRA_BOOK_ID, bookId));
+    }
+
+    /** The e-book reader at a chapter; chapterNo 0 = carry on where I left off. */
+    public static void reader(@NonNull Context ctx, @NonNull String bookId, int chapterNo) {
+        ctx.startActivity(new Intent(ctx, ReaderActivity.class)
+                        .putExtra(ReaderActivity.EXTRA_BOOK_ID, bookId)
+                        .putExtra(ReaderActivity.EXTRA_CHAPTER, chapterNo),
+                ActivityOptionsCompat.makeCustomAnimation(ctx, R.anim.story_open, R.anim.stay).toBundle());
+    }
+
+    /** Books → Your books. */
+    public static void myBooks(@NonNull Context ctx) {
+        ctx.startActivity(new Intent(ctx, MyBooksActivity.class));
+    }
+
+    /** Start a book (bookId null) or edit its title / blurb / cover. */
+    public static void bookSetup(@NonNull Context ctx, @Nullable String bookId) {
+        Intent i = new Intent(ctx, BookSetupActivity.class);
+        if (bookId != null) i.putExtra(BookSetupActivity.EXTRA_BOOK_ID, bookId);
+        ctx.startActivity(i, composeAnimation(ctx).toBundle());
+    }
+
+    /** The writer's desk for one of my books. */
+    public static void bookEditor(@NonNull Context ctx, @NonNull String bookId) {
+        ctx.startActivity(new Intent(ctx, BookEditorActivity.class).putExtra(BookEditorActivity.EXTRA_BOOK_ID, bookId));
+    }
+
+    /** Write a new chapter (chapterNo 0) or edit one. */
+    public static void chapterEditor(@NonNull Context ctx, @NonNull String bookId, int chapterNo) {
+        ctx.startActivity(new Intent(ctx, ChapterEditorActivity.class)
+                        .putExtra(ChapterEditorActivity.EXTRA_BOOK_ID, bookId)
+                        .putExtra(ChapterEditorActivity.EXTRA_CHAPTER, chapterNo),
+                composeAnimation(ctx).toBundle());
     }
 }

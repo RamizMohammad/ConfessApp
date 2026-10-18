@@ -122,6 +122,9 @@ public final class SessionManager {
         store.put(K_SID, sid);
         store.put(K_SIGKEY, v2 ? auth.signingKey : null);
         if (auth.user != null) store.put(K_ME, ApiClient.gson().toJson(auth.user));
+        // What's saved on the phone belongs to one account: another one signing in starts from nothing.
+        in.mohammad.ramiz.confess.data.local.LocalStore local = in.mohammad.ramiz.confess.data.local.LocalStore.get();
+        if (local != null && auth.user != null) local.ensureOwner(auth.user.id);
         // A password-locked account still asks for its password after Google sign-in
         // (the Google account may be shared on this phone).
         unlocked = auth.user == null || !auth.user.hasPassword;
@@ -138,6 +141,8 @@ public final class SessionManager {
 
     public synchronized void clear() {
         store.clear();
+        in.mohammad.ramiz.confess.data.local.LocalStore local = in.mohammad.ramiz.confess.data.local.LocalStore.get();
+        if (local != null) local.wipe();                // feeds, profiles, books saved on the phone
         access = null;
         refresh = null;
         sid = null;

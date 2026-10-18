@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     S8 · Write a confession. Old: CreatePost (activity_create_post).
-    Prompt → paper note with ruled lines → responses switch + counter →
-    moderation notice (when rejected) → "Release into the dark".
+    Page 1 (write): prompt → paper note with ruled lines → letter · poll → mood → counter →
+    moderation notice; Instant publish | Publish → (hidden while the keyboard is up; the mood
+    chips then move up under the top bar so they stay in reach while typing).
+    Page 2 (before it goes out): allow responses → Edit | Release into the dark.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -60,11 +62,25 @@
             app:iconTint="@color/text_secondary" />
     </FrameLayout>
 
+    <!-- While the keyboard is up the mood chips move here, under the top bar. -->
+    <FrameLayout
+        android:id="@+id/moodTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:paddingBottom="@dimen/space_sm"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/pages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fillViewport="true">
 
@@ -83,19 +99,19 @@
                 android:layout_marginTop="@dimen/space_sm"
                 android:gravity="center"
                 android:text="@string/compose_prompt"
-                android:textAppearance="@style/TextAppearance.Confess.Display"
+                android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall"
                 android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/promptSub"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_sm"
+                android:layout_marginTop="@dimen/space_xs"
                 android:fontFamily="@font/newsreader"
                 android:gravity="center"
                 android:text="@string/compose_prompt_sub"
                 android:textColor="@color/amber"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 android:textStyle="italic" />
 
             <!-- The paper note -->
@@ -103,7 +119,7 @@
                 android:id="@+id/paper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_md"
                 android:outlineAmbientShadowColor="#000000"
                 android:outlineSpotShadowColor="#000000"
                 app:cardBackgroundColor="@color/paper"
@@ -379,12 +395,14 @@
 
             <!-- How should people respond? (mood) -->
             <TextView
+                android:id="@+id/moodLabel"
                 style="@style/Confess.SectionLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/compose_mood_label" />
 
             <HorizontalScrollView
+                android:id="@+id/moodScroll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="none">
@@ -397,60 +415,19 @@
                     app:singleSelection="true" />
             </HorizontalScrollView>
 
-            <!-- Responses switch · counter -->
+            <!-- Counter -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg"
-                android:background="@drawable/bg_plate"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingVertical="@dimen/space_12"
-                android:paddingStart="@dimen/space_md"
-                android:paddingEnd="@dimen/space_md">
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/allow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:contentDescription="@string/compose_allow" />
-
-                <LinearLayout
-                    android:id="@+id/allowText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/space_12"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/compose_allow"
-                        android:textAppearance="@style/TextAppearance.Confess.Body"
-                        android:textColor="@color/text_primary" />
-
-                    <TextView
-                        android:id="@+id/allowSub"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/compose_allow_on"
-                        android:textAppearance="@style/TextAppearance.Confess.Meta"
-                        android:textColor="@color/text_secondary" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="@dimen/hairline"
-                    android:layout_height="36dp"
-                    android:layout_marginHorizontal="@dimen/space_12"
-                    android:background="@color/hairline" />
+                android:layout_marginTop="@dimen/space_md"
+                android:gravity="end|center_vertical"
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/count"
@@ -458,11 +435,12 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/jetbrainsmono"
                         android:textColor="@color/amber"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         tools:text="138" />
 
                     <TextView
                         android:id="@+id/countMax"
+                        android:layout_marginStart="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
@@ -541,6 +519,112 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Page 2: before it goes out -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/options"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/ink"
+        android:clipToPadding="false"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_screen"
+            android:paddingTop="@dimen/space_md"
+            android:paddingBottom="@dimen/space_lg">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/compose_options_label"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:textColor="@color/amber" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="@string/compose_options_title"
+                android:textAppearance="@style/TextAppearance.Confess.Headline"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:id="@+id/optionsPreview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:background="@drawable/bg_paper"
+                android:ellipsize="end"
+                android:fontFamily="@font/newsreader"
+                android:maxLines="4"
+                android:padding="@dimen/space_md"
+                android:textColor="@color/paper_ink"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                tools:text="I bought two train tickets to the coast this morning." />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:background="@drawable/bg_plate"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/space_md"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_md">
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/allow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:contentDescription="@string/compose_allow" />
+
+                <LinearLayout
+                    android:id="@+id/allowText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_12"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/compose_allow"
+                        android:textAppearance="@style/TextAppearance.Confess.Body"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:id="@+id/allowSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/compose_allow_on"
+                        android:textAppearance="@style/TextAppearance.Confess.Meta"
+                        android:textColor="@color/text_secondary" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:drawableStart="@drawable/ic_lock_small"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/text_muted"
+                android:text="@string/compose_options_note"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/text_muted" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
+
     <!-- Sticky release -->
     <LinearLayout
         android:id="@+id/bottom"
@@ -552,14 +636,81 @@
         android:paddingTop="@dimen/space_12"
         android:paddingBottom="@dimen/space_md">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/release"
-            style="@style/Widget.Confess.Button"
+        <!-- Page 1 -->
+        <LinearLayout
+            android:id="@+id/writeActions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="@string/compose_release"
-            app:icon="@drawable/ic_send" />
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/instant"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_height"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:text="@string/compose_instant" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/next"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                style="@style/Widget.Confess.Button"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginStart="@dimen/space_sm"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:text="@string/compose_publish_next"
+                app:icon="@drawable/ic_arrow_right"
+                app:iconGravity="textEnd" />
+        </LinearLayout>
+
+        <!-- Page 2 -->
+        <LinearLayout
+            android:id="@+id/optionsActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                style="@style/Widget.Confess.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_height"
+                android:layout_weight="1"
+                android:text="@string/compose_options_back"
+                app:icon="@drawable/ic_arrow_left"
+                app:iconGravity="textStart" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/release"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                style="@style/Widget.Confess.Button"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginStart="@dimen/space_sm"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:text="@string/compose_release_short"
+                app:icon="@drawable/ic_send"
+                app:iconGravity="textStart" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/footnote"

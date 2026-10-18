@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A chapter on the writer's desk: number, title / opening words, state pill, drag handle. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/space_sm"
+    android:background="@drawable/bg_me_card"
+    android:foreground="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_md"
+    android:paddingTop="@dimen/space_12"
+    android:paddingEnd="@dimen/space_xs"
+    android:paddingBottom="@dimen/space_12">
+
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Confess.Meta"
+        android:textColor="@color/amber"
+        tools:text="03" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/newsreader"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textSize="17sp"
+            tools:text="The first night" />
+
+        <TextView
+            android:id="@+id/excerpt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+            android:textColor="@color/text_muted"
+            tools:text="The lift was broken again, so I took the stairs…" />
+
+        <TextView
+            android:id="@+id/state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:background="@drawable/bg_state_chip"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="3dp"
+            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+            tools:text="SAT 18 OCT · 9:00 PM" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/handle"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="@string/cd_drag"
+        android:padding="10dp"
+        android:src="@drawable/ic_grip"
+        app:tint="@color/text_muted" />
+</LinearLayout>

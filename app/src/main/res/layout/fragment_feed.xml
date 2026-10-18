@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     S7 · Feed. Old: HomeFragment (+ PostAdapter, sort spinner).
-    Top bar (C mark · search · bell+dot, fixed) → stories (scroll away) → Everyone / Following (pins) → paper cards.
+    Top bar (C mark · bell+dot, fixed; search lives in the bottom bar) → stories (scroll away) → Everyone / Following (pins) → paper cards.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -38,13 +38,6 @@
                 android:src="@drawable/logo_letty" />
         </FrameLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/search"
-            style="@style/Widget.Confess.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/cd_search"
-            app:icon="@drawable/ic_search" />
 
         <FrameLayout
             android:layout_width="wrap_content"

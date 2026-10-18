@@ -43,6 +43,7 @@ public final class PostCardBinder {
 
     public static void bind(@NonNull ItemConfessionCardBinding b, @NonNull Post post, @NonNull Listener l) {
         Context ctx = b.getRoot().getContext();
+        b.card.setCardBackgroundColor(in.mohammad.ramiz.confess.ui.components.PaperTone.paper(ctx));
         String alias = post.author != null && post.author.alias != null ? post.author.alias : "";
 
         b.avatar.setAvatar(post.author != null ? post.author.avatar : null);
@@ -59,6 +60,7 @@ public final class PostCardBinder {
         bindFelt(b, post, false);
 
         b.card.setContentDescription(ctx.getString(R.string.cd_card, alias, when));
+        in.mohammad.ramiz.confess.ui.components.PaperTone.apply(b.card);                     // text + icons follow the paper / text tone
         bindTaps(b, post, l, true);
         b.responses.setOnClickListener(v -> l.onOpen(post, true));
         b.felt.setOnClickListener(v -> {
@@ -248,22 +250,25 @@ public final class PostCardBinder {
             env = env.mutate();
             int px = Math.round(16 * ctx.getResources().getDisplayMetrics().density);
             env.setBounds(0, 0, px, px);
-            env.setTint(ContextCompat.getColor(ctx, R.color.paper_meta));
+            env.setTint(in.mohammad.ramiz.confess.ui.components.PaperTone.meta(ctx));
         }
         b.letterTo.setCompoundDrawablesRelative(env, null, null, null);
         if (b.airmail.getBackground() == null) b.airmail.setBackground(airmail(ctx));
     }
 
     @androidx.annotation.Nullable private static android.graphics.Bitmap airmailTile;
+    private static int airmailTone = -1;
 
     /** Classic airmail edge: brick / paper / navy diagonal stripes, tiled across the card. */
     private static android.graphics.drawable.Drawable airmail(@NonNull Context ctx) {
         float d = ctx.getResources().getDisplayMetrics().density;
-        if (airmailTile == null) {
+        int tone = in.mohammad.ramiz.confess.ui.components.PaperTone.get(ctx);
+        if (airmailTile == null || airmailTone != tone) {
+            airmailTone = tone;
             int w = Math.round(36 * d), h = Math.round(6 * d);
             android.graphics.Bitmap bmp = android.graphics.Bitmap.createBitmap(w, h, android.graphics.Bitmap.Config.ARGB_8888);
             android.graphics.Canvas c = new android.graphics.Canvas(bmp);
-            c.drawColor(ContextCompat.getColor(ctx, R.color.paper));
+            c.drawColor(in.mohammad.ramiz.confess.ui.components.PaperTone.paper(ctx));
             android.graphics.Paint p = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
             int[] cols = {ContextCompat.getColor(ctx, R.color.brick), 0xFF2F4A6D};
             float stripe = w / 4f;
@@ -417,7 +422,7 @@ public final class PostCardBinder {
     public static void bindFelt(@NonNull ItemConfessionCardBinding b, @NonNull Post post, boolean animate) {
         Context ctx = b.getRoot().getContext();
         String mine = Reactions.mine(post);
-        int color = ContextCompat.getColor(ctx, mine != null ? R.color.amber : R.color.paper_meta);
+        int color = mine != null ? ContextCompat.getColor(ctx, R.color.amber) : in.mohammad.ramiz.confess.ui.components.PaperTone.meta(ctx);
         if (mine == null || Reactions.FELT.equals(mine)) {
             b.felt.setIconResource(mine != null ? R.drawable.ic_heart_filled : R.drawable.ic_heart);
             b.felt.setIconTint(ColorStateList.valueOf(color));

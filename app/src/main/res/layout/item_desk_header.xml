@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Writer's desk header: the book (tap to edit), its numbers, the chapters label. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/bookCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:background="@drawable/bg_me_card"
+        android:foreground="?attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:padding="@dimen/space_md">
+
+        <in.mohammad.ramiz.confess.ui.books.BookCoverView
+            android:id="@+id/cover"
+            android:layout_width="76dp"
+            android:layout_height="wrap_content"
+            android:elevation="6dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_md"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:textColor="@color/amber"
+                tools:text="ONGOING" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/newsreader_headline"
+                android:textColor="@color/text_primary"
+                android:textSize="21sp"
+                tools:text="Night shifts" />
+
+            <TextView
+                android:id="@+id/blurb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                android:textColor="@color/text_secondary"
+                tools:text="Twelve months, one city." />
+
+            <TextView
+                android:id="@+id/stats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/text_muted"
+                tools:text="5 out · 2 scheduled · 23 in libraries" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="@dimen/icon_size_sm"
+            android:layout_height="@dimen/icon_size_sm"
+            android:layout_marginStart="@dimen/space_xs"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_pencil"
+            app:tint="@color/text_muted" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/hiddenNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:background="@drawable/bg_plate_error"
+        android:padding="@dimen/space_12"
+        android:text="@string/desk_hidden"
+        android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+        android:textColor="@color/text_primary"
+        android:visibility="gone" />
+
+    <TextView
+        style="@style/Confess.SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/desk_chapters" />
+
+    <TextView
+        android:id="@+id/hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_sm"
+        android:text="@string/desk_reorder_hint"
+        android:textAppearance="@style/TextAppearance.Confess.Meta"
+        android:textColor="@color/text_muted" />
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_plate"
+        android:padding="@dimen/space_md"
+        android:text="@string/desk_empty"
+        android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+        android:textColor="@color/text_secondary"
+        android:visibility="gone" />
+</LinearLayout>

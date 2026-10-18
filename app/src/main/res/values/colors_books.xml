@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Reader themes (Books). Paper = the confession card; Sepia = warm print; Night = the app canvas. -->
+<resources>
+    <color name="reader_paper_bg">#EDE6DA</color>
+    <color name="reader_paper_ink">#1B1A20</color>
+    <color name="reader_paper_meta">#8C8578</color>
+
+    <color name="reader_sepia_bg">#F2E6D0</color>
+    <color name="reader_sepia_ink">#4A3A28</color>
+    <color name="reader_sepia_meta">#9A8467</color>
+
+    <color name="reader_night_bg">#0F0E13</color>
+    <color name="reader_night_ink">#D8D3CA</color>
+    <color name="reader_night_meta">#6E6A76</color>
+
+    <color name="reader_accent">#B8691F</color>          <!-- deep amber: readable on paper and sepia -->
+</resources>

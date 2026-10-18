@@ -38,12 +38,13 @@ public final class Biometrics {
         return BiometricManager.from(context).canAuthenticate(AUTHENTICATORS) == BiometricManager.BIOMETRIC_SUCCESS;
     }
 
-    public static void prompt(@NonNull FragmentActivity activity, @NonNull CharSequence title,
+    public static BiometricPrompt prompt(@NonNull FragmentActivity activity, @NonNull CharSequence title,
                               @NonNull CharSequence subtitle, @NonNull Callback cb) {
-        prompt(activity, title, subtitle, activity.getString(R.string.action_cancel), cb);
+        return prompt(activity, title, subtitle, activity.getString(R.string.action_cancel), cb);
     }
 
-    public static void prompt(@NonNull FragmentActivity activity, @NonNull CharSequence title,
+    /** Shows the sheet; the returned prompt can close it again ({@code cancelAuthentication()}). */
+    public static BiometricPrompt prompt(@NonNull FragmentActivity activity, @NonNull CharSequence title,
                               @NonNull CharSequence subtitle, @NonNull CharSequence negative,
                               @NonNull Callback cb) {
         BiometricPrompt prompt = new BiometricPrompt(activity, ContextCompat.getMainExecutor(activity),
@@ -68,5 +69,6 @@ public final class Biometrics {
                 .setAllowedAuthenticators(AUTHENTICATORS)
                 .build();
         prompt.authenticate(info);
+        return prompt;
     }
 }

@@ -54,15 +54,19 @@ public class PushService extends FirebaseMessagingService {
         String type = data.get("type");
         String postId = data.get("postId");
         String alias = data.get("alias");
+        String bookId = data.get("bookId");
+        boolean bookChapter = "book_chapter".equals(type);
+        boolean releaseFailed = "book_release_failed".equals(type);
         boolean activity = "like".equals(type) || "comment".equals(type) || "follow".equals(type)
-                || "story_reaction".equals(type) || "poll_result".equals(type) || "milestone".equals(type);
+                || "story_reaction".equals(type) || "poll_result".equals(type) || "milestone".equals(type)
+                || releaseFailed;
         boolean digest = "digest".equals(type);
         if (activity || digest) ActivityEvents.ping();             // bell dot refreshes if the app is open
         // About my own words → hidden on a secure lock screen (same as the server's PRIVATE visibility).
         boolean personal = activity && !"follow".equals(type);
 
         String channel = activity ? Push.CHANNEL_ACTIVITY
-                : "new_post".equals(type) || "following_post".equals(type) ? Push.CHANNEL_NEW_POSTS
+                : "new_post".equals(type) || "following_post".equals(type) || bookChapter ? Push.CHANNEL_NEW_POSTS
                 : Push.CHANNEL_REMINDERS;
         Push.ensureChannels(this);
 
@@ -74,9 +78,18 @@ public class PushService extends FirebaseMessagingService {
         }
         if ("follow".equals(type) && alias != null) open.putExtra(DeepLink.EXTRA_ALIAS, alias);
         if (digest) open.putExtra(DeepLink.EXTRA_ACTIVITY, true);
+        if ((bookChapter || releaseFailed) && bookId != null) {
+            int no = 0;
+            try {
+                no = Integer.parseInt(String.valueOf(data.get("chapterNo")));
+            } catch (NumberFormatException ignored) { }
+            open.putExtra(DeepLink.EXTRA_BOOK_ID, bookId)
+                    .putExtra(DeepLink.EXTRA_CHAPTER_NO, no)
+                    .putExtra(DeepLink.EXTRA_BOOK_EDIT, releaseFailed);
+        }
         // Same id as the server's tag: a milestone replaces that letter's reaction notification.
         String tagType = "milestone".equals(type) ? "like" : type;
-        int id = (tagType + ":" + (postId != null ? postId : alias != null ? alias : title)).hashCode();
+        int id = (tagType + ":" + (postId != null ? postId : bookId != null ? bookId : alias != null ? alias : title)).hashCode();
         PendingIntent tap = PendingIntent.getActivity(this, id, open,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 

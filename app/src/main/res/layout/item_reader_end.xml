@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The page after a chapter's last page: react, respond, and the way on. Coloured from the reader theme. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+    <LinearLayout
+        android:id="@+id/column"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="36dp"
+        android:paddingVertical="72dp">
+
+        <TextView
+            android:id="@+id/ornament"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/newsreader"
+            android:text="❦"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/endLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:letterSpacing="0.2"
+            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+            tools:text="END OF CHAPTER 3" />
+
+        <TextView
+            android:id="@+id/endTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:fontFamily="@font/newsreader_headline"
+            android:gravity="center"
+            android:textSize="24sp"
+            tools:text="The first night" />
+
+        <TextView
+            android:id="@+id/felt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_32"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+            tools:text="12 felt this chapter" />
+
+        <LinearLayout
+            android:id="@+id/reactions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:gravity="center"
+            android:orientation="horizontal" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/responses"
+            style="@style/Widget.Confess.Button.Ghost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            app:icon="@drawable/ic_message"
+            app:iconGravity="textStart"
+            tools:text="Responses · 3" />
+
+        <View
+            android:id="@+id/rule"
+            android:layout_width="48dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/space_lg" />
+
+        <TextView
+            android:id="@+id/nextLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:letterSpacing="0.2"
+            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+            tools:text="NEXT" />
+
+        <TextView
+            android:id="@+id/nextTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:fontFamily="@font/newsreader"
+            android:gravity="center"
+            android:textSize="19sp"
+            tools:text="Chapter 4 · What the morning knew" />
+
+        <TextView
+            android:id="@+id/nextBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/next"
+            style="@style/Widget.Confess.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/space_md"
+            android:paddingHorizontal="@dimen/space_lg"
+            app:icon="@drawable/ic_arrow_right"
+            app:iconGravity="end"
+            tools:text="Turn the page" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/library"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/space_sm"
+            android:text="@string/book_add_library"
+            android:visibility="gone"
+            app:icon="@drawable/ic_library_add"
+            app:iconGravity="textStart" />
+    </LinearLayout>
+</ScrollView>

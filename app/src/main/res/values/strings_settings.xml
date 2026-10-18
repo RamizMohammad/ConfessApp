@@ -8,7 +8,7 @@
     <string name="settings_headline">Lock, notices &amp; account</string>
     <string name="settings_sub">Control who can open your letters and what reaches you.</string>
 
-    <string name="settings_section_security">SECURITY</string>
+    <string name="settings_section_security">LOCK &amp; PRIVACY</string>
     <string name="settings_lock">Password lock</string>
     <string name="settings_lock_on">Asks for your password when Confess opens</string>
     <string name="settings_lock_off">Anyone holding this phone can open Confess</string>
@@ -134,4 +134,34 @@
     <string name="feature_send">Send idea</string>
     <string name="feature_sending">Sending…</string>
     <string name="feature_sent">Thank you — we read every one.</string>
+    <!-- Appearance: paper tone -->
+    <string name="settings_section_appearance">APPEARANCE</string>
+    <string name="settings_section_people">PEOPLE</string>
+    <string name="settings_section_paper">PAPER &amp; TEXT</string>
+    <string name="settings_profile_card_sub">Your aura &amp; about</string>
+    <string name="settings_appearance_row">Paper, text &amp; bursts</string>
+    <string name="settings_appearance_sub">How cards and book pages look</string>
+    <string name="settings_appearance_bright">Bright</string>
+    <string name="settings_appearance_dimmed">Dimmed</string>
+    <string name="settings_appearance_title">Appearance</string>
+    <string name="settings_appearance_intro">Make cards and book pages easy on the eyes, and choose how a run of someone\'s confessions shows up.</string>
+    <string name="settings_security_row">Lock &amp; privacy</string>
+    <string name="settings_security_sub">Password, fingerprint, auto-lock, private screen</string>
+    <string name="settings_security_off">Off</string>
+    <string name="settings_security_on">On</string>
+    <string name="settings_security_on_bio">On · fingerprint</string>
+    <string name="settings_security_title">Lock &amp; privacy</string>
+    <string name="settings_security_intro">Control who can open your letters on this phone.</string>
+    <string name="settings_delete_row_sub">Removes your profile and everything you posted</string>
+    <string name="paper_tone">Paper tone</string>
+    <string name="paper_tone_label">PAPER TONE</string>
+    <string name="paper_tone_sub">Dim confession cards and book pages from bright paper down to charcoal, for reading at night.</string>
+    <string name="paper_tone_reader_sub">For Paper and Sepia pages — confession cards follow too. Text on Auto turns light when the paper gets dark.</string>
+    <string name="paper_tone_preview">This is how your paper will look tonight.</string>
+    <string name="cd_paper_light">Bright paper</string>
+    <string name="cd_paper_grey">Dark paper</string>
+    <string name="text_tone">Text</string>
+    <string name="text_tone_auto">Auto</string>
+    <string name="cd_text_dark">Dark text</string>
+    <string name="cd_text_light">Light text</string>
 </resources>

@@ -13,6 +13,8 @@ public class NotificationPrefs {
     @Nullable public Boolean followingPosts;
     @Nullable public Boolean newPosts;
     @Nullable public Boolean nudges;
+    /** New chapters of books in my library. */
+    @Nullable public Boolean bookChapters;
 
     public static boolean on(@Nullable Boolean b) {
         return b == null || b;

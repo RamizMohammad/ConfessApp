@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Splash icon: Letty, the Confess envelope, sealed with the Confess "C".
+    Animated by splash_letty_anim.xml (seal pops → flap opens → letter rises → smile → heart).
+    No icon background: Android shows a 240dp drawable in a 160dp-wide visible circle,
+    so Letty (fully open) is scaled to fit inside it. Drawn in a 100-unit box, placed by "letty".
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="240dp" android:height="240dp"
+    android:viewportWidth="240" android:viewportHeight="240">
+
+    <!-- soft amber glow behind her -->
+    <path android:pathData="M120,42 A78,78 0 1 1 119.99,42 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="radial" android:centerX="120" android:centerY="124" android:gradientRadius="78">
+                <item android:offset="0" android:color="#47E8A04C" />
+                <item android:offset="1" android:color="#00E8A04C" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <group android:name="place" android:translateX="50" android:translateY="61.2" android:scaleX="1.4" android:scaleY="1.4">
+        <group android:name="letty" android:pivotX="50" android:pivotY="60">
+
+            <!-- back of the envelope -->
+            <path android:pathData="M25,32 H75 A9,9 0 0 1 84,41 V75 A9,9 0 0 1 75,84 H25 A9,9 0 0 1 16,75 V41 A9,9 0 0 1 25,32 Z"
+                android:fillColor="#F3ECDF" android:strokeColor="#1B1A20" android:strokeWidth="4" />
+
+            <!-- inside of the flap: swings up behind the letter -->
+            <group android:name="flapBack" android:pivotX="50" android:pivotY="34" android:scaleY="0">
+                <path android:pathData="M18,34 L50,60 L82,34 Z" android:fillColor="#E9DFCC" />
+                <path android:pathData="M19.5,35.5 L50,60 L80.5,35.5" android:strokeColor="#1B1A20" android:strokeWidth="4"
+                    android:strokeLineJoin="round" android:strokeLineCap="round" />
+            </group>
+
+            <!-- the letter: hidden until it rises -->
+            <group android:name="letter">
+                <path android:name="letterCard"
+                    android:pathData="M30,38 H70 A3,3 0 0 1 73,41 V69 A3,3 0 0 1 70,72 H30 A3,3 0 0 1 27,69 V41 A3,3 0 0 1 30,38 Z"
+                    android:fillColor="#FFFCF6" android:fillAlpha="0"
+                    android:strokeColor="#1B1A20" android:strokeWidth="2.6" android:strokeAlpha="0" />
+                <path android:name="letterLines" android:pathData="M33,46 H61 M33,52 H55"
+                    android:strokeColor="#1B1A20" android:strokeWidth="2.4" android:strokeLineCap="round" android:strokeAlpha="0" />
+                <group android:name="heart" android:pivotX="50" android:pivotY="36" android:scaleX="0" android:scaleY="0">
+                    <path android:pathData="M50,36 s-9.5,-5.7 -9.5,-12.2 a4.9,4.9 0 0 1 9.5,-2.4 a4.9,4.9 0 0 1 9.5,2.4 C59.5,30.3 50,36 50,36 Z"
+                        android:fillColor="@color/icon_mark" />
+                </group>
+            </group>
+
+            <!-- front pocket (no line of its own) + the envelope's sides and bottom -->
+            <path android:pathData="M16,46 L50,67 L84,46 V75 A9,9 0 0 1 75,84 H25 A9,9 0 0 1 16,75 Z" android:fillColor="#FFFCF6" />
+            <path android:pathData="M16,40 V75 A9,9 0 0 0 25,84 H75 A9,9 0 0 0 84,75 V40"
+                android:strokeColor="#1B1A20" android:strokeWidth="4" />
+
+            <!-- the flap, hinged at the top edge -->
+            <group android:name="flap" android:pivotX="50" android:pivotY="34">
+                <path android:pathData="M18,34 L50,60 L82,34 Z" android:fillColor="#FFFCF6" />
+                <path android:pathData="M19.5,35.5 L50,60 L80.5,35.5" android:strokeColor="#1B1A20" android:strokeWidth="4"
+                    android:strokeLineJoin="round" android:strokeLineCap="round" />
+            </group>
+
+            <!-- the Confess seal -->
+            <group android:name="seal" android:pivotX="50" android:pivotY="60">
+                <path android:pathData="M41,60 A9,9 0 1 0 59,60 A9,9 0 1 0 41,60 Z" android:fillColor="@color/icon_mark" />
+                <group android:translateX="45.1" android:translateY="54.6" android:scaleX="0.052" android:scaleY="0.052">
+                    <path android:fillColor="#FFFCF6" android:pathData="@string/path_logo_c" />
+                </group>
+            </group>
+
+            <!-- face -->
+            <path android:name="eyes"
+                android:pathData="M35.7,74 A3.3,3.9 0 1 0 42.3,74 A3.3,3.9 0 1 0 35.7,74 Z M57.7,74 A3.3,3.9 0 1 0 64.3,74 A3.3,3.9 0 1 0 57.7,74 Z"
+                android:fillColor="#1B1A20" />
+            <path android:name="happy" android:pathData="M35.6,75.2 Q39,70.6 42.4,75.2 M57.6,75.2 Q61,70.6 64.4,75.2"
+                android:strokeColor="#1B1A20" android:strokeWidth="2.8" android:strokeLineCap="round" android:strokeAlpha="0" />
+            <path android:pathData="M27.2,78.5 A3.8,3.8 0 1 0 34.8,78.5 A3.8,3.8 0 1 0 27.2,78.5 Z M65.2,78.5 A3.8,3.8 0 1 0 72.8,78.5 A3.8,3.8 0 1 0 65.2,78.5 Z"
+                android:fillColor="@color/icon_mark" android:fillAlpha="0.45" />
+        </group>
+    </group>
+</vector>

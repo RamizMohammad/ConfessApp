@@ -103,6 +103,38 @@
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <!-- Confession + responses (Section 7) -->
+        <!-- Books -->
+        <activity
+            android:name=".ui.books.BookActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.feed.BurstReaderActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.books.reader.ReaderActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.books.write.MyBooksActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.books.write.BookSetupActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ui.books.write.BookEditorActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.books.write.ChapterEditorActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+
         <activity
             android:name=".ui.post.PostDetailActivity"
             android:exported="false"
@@ -171,6 +203,14 @@
         <!-- Settings (Section 10) -->
         <activity
             android:name=".ui.settings.SettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.settings.AppearanceActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.settings.SecurityActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

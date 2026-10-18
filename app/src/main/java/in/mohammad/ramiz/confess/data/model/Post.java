@@ -25,6 +25,10 @@ public class Post {
     /** Unsent letter addressee, or null. */
     @Nullable public String letterTo;
     @Nullable public Poll poll;
+    /** Set when this confession is a book chapter (opened from a reaction push, say). */
+    @Nullable public ChapterMeta chapter;
+    /** In the feed with bursts: this card stands for a burst of several (null = on its own). */
+    @Nullable public BurstInfo burst;
 
     /** Shallow copy — lists hand out copies so DiffUtil can see what changed. */
     public Post copy() {
@@ -43,6 +47,8 @@ public class Post {
         p.mood = mood;
         p.letterTo = letterTo;
         p.poll = poll;
+        p.chapter = chapter;
+        p.burst = burst;
         return p;
     }
 }

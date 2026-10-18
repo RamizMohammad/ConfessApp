@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import in.mohammad.ramiz.confess.data.api.ApiCallback;
 import in.mohammad.ramiz.confess.data.api.ApiClient;
 import in.mohammad.ramiz.confess.data.api.Calls;
+import in.mohammad.ramiz.confess.data.model.BurstPage;
 import in.mohammad.ramiz.confess.data.model.Comment;
 import in.mohammad.ramiz.confess.data.model.CommentPage;
 import in.mohammad.ramiz.confess.data.model.CreatePostRequest;
@@ -31,7 +32,19 @@ public final class PostRepository {
 
     public Call<PostPage> feed(@NonNull String sort, @NonNull String scope, @Nullable String cursor,
                                @NonNull ApiCallback<PostPage> cb) {
-        return Calls.enqueue(ApiClient.api().feed(sort, scope, cursor, null), cb);
+        return feed(sort, scope, cursor, false, cb);
+    }
+
+    /** bursts: one card per burst (see {@link #burst}). */
+    public Call<PostPage> feed(@NonNull String sort, @NonNull String scope, @Nullable String cursor, boolean bursts,
+                               @NonNull ApiCallback<PostPage> cb) {
+        return Calls.enqueue(ApiClient.api().feed(sort, scope, cursor, null, bursts ? Boolean.TRUE : null), cb);
+    }
+
+    /** A set of one burst, oldest first (cursor null = from the very first). */
+    public Call<BurstPage> burst(@NonNull String burstId, @NonNull String scope, @Nullable String cursor, int limit,
+                                 @NonNull ApiCallback<BurstPage> cb) {
+        return Calls.enqueue(ApiClient.api().burst(burstId, scope, cursor, limit), cb);
     }
 
     public Call<PostPage> myPosts(@Nullable String cursor, @NonNull ApiCallback<PostPage> cb) {

@@ -23,6 +23,7 @@ import in.mohammad.ramiz.confess.data.api.ApiException;
 import in.mohammad.ramiz.confess.data.api.ErrorCode;
 import in.mohammad.ramiz.confess.data.model.FollowState;
 import in.mohammad.ramiz.confess.data.model.Me;
+import in.mohammad.ramiz.confess.data.local.LocalStore;
 import in.mohammad.ramiz.confess.data.model.Post;
 import in.mohammad.ramiz.confess.data.model.PostPage;
 import in.mohammad.ramiz.confess.data.model.PublicProfile;
@@ -129,8 +130,12 @@ public class ProfileViewModel extends ViewModel {
         }
     }
 
+    /** A saved profile younger than this isn't fetched again (back-and-forth between screens). */
+    private static final long FRESH_MS = 30_000;
+
     private final UserRepository users = new UserRepository();
     private final PostRepository postsRepo = new PostRepository();
+    @Nullable private final LocalStore local = LocalStore.get();
     private final MutableLiveData<State> state = new MutableLiveData<>();
     private final MutableLiveData<Event<Message>> messages = new MutableLiveData<>();
 
@@ -169,9 +174,56 @@ public class ProfileViewModel extends ViewModel {
             header = fromMe(me);
             screen = Screen.CONTENT;            // show the cached header at once
         }
+        restoreSaved();                         // their header + letters as saved on this phone
         publish();
+        if (header != null && postsLoaded && local != null && local.ageMs(postsKey()) < FRESH_MS) return;
         loadHeader();
         loadPosts(null);
+    }
+
+    // ── Saved on the phone ───────────────────────────────────────────────────
+
+    @NonNull
+    private String postsKey() {
+        return isMe ? "profile/me/posts" : "profile/" + (alias == null ? "" : alias.toLowerCase(java.util.Locale.ROOT)) + "/posts";
+    }
+
+    @NonNull
+    private String headerKey() {
+        return "profile/" + (alias == null ? "" : alias.toLowerCase(java.util.Locale.ROOT)) + "/header";
+    }
+
+    private void restoreSaved() {
+        if (local == null || (!isMe && alias == null)) return;
+        if (!isMe) {
+            PublicProfile p = local.read(headerKey(), PublicProfile.class);
+            if (p != null) {
+                header = headerOf(p);
+                screen = Screen.CONTENT;
+            }
+        }
+        PostPage page = local.read(postsKey(), PostPage.class);
+        if (page != null && page.posts != null) {
+            for (Post p : page.posts) if (p != null && p.postId != null && indexOf(p.postId) < 0) posts.add(p);
+            cursor = page.nextCursor;
+            postsLoaded = true;
+            footer = cursor == null ? Footer.END : Footer.NONE;
+        }
+    }
+
+    private void persistPosts() {
+        if (local == null || !postsLoaded || (!isMe && alias == null)) return;
+        PostPage page = new PostPage();
+        int n = Math.min(posts.size(), 60);
+        page.posts = new ArrayList<>(posts.subList(0, n));
+        page.nextCursor = n == posts.size() ? cursor : null;
+        local.write(postsKey(), page);
+    }
+
+    @NonNull
+    private static Header headerOf(@NonNull PublicProfile p) {
+        return new Header(false, p.alias, p.about, p.avatar, p.createdAt, p.postCount, null,
+                p.followers, p.following, p.isFollowing, p.blockedByMe);
     }
 
     public void refresh() {
@@ -199,8 +251,8 @@ public class ProfileViewModel extends ViewModel {
         } else if (alias != null) {
             users.profile(alias, new ApiCallback<PublicProfile>() {
                 @Override public void onSuccess(PublicProfile p) {
-                    header = new Header(false, p.alias, p.about, p.avatar, p.createdAt, p.postCount, null,
-                            p.followers, p.following, p.isFollowing, p.blockedByMe);
+                    header = headerOf(p);
+                    if (local != null) local.write(headerKey(), p);
                     screen = Screen.CONTENT;
                     error = null;
                     publish();
@@ -301,6 +353,7 @@ public class ProfileViewModel extends ViewModel {
                 cursor = page.nextCursor;
                 footer = cursor == null ? Footer.END : Footer.NONE;
                 publish();
+                persistPosts();
             }
 
             @Override
@@ -373,27 +426,27 @@ public class ProfileViewModel extends ViewModel {
                 header = header.withBlocked(true);
                 posts.clear();
                 footer = Footer.END;
-                publish();
+                publish(); persistPosts();
             }
             return;
         }
         int i = indexOf(c.postId);
         switch (c.kind) {
             case UPDATED:
-                if (i >= 0 && c.post != null) { posts.set(i, c.post.copy()); publish(); }
+                if (i >= 0 && c.post != null) { posts.set(i, c.post.copy()); publish(); persistPosts(); }
                 break;
             case REMOVED:
                 if (i >= 0) {
                     posts.remove(i);
                     if (header != null) header = header.withPostCount(header.postCount - 1);
-                    publish();
+                    publish(); persistPosts();
                 }
                 break;
             case CREATED:
                 if (isMe && i < 0 && postsLoaded && c.post != null) {
                     posts.add(0, c.post.copy());
                     if (header != null) header = header.withPostCount(header.postCount + 1);
-                    publish();
+                    publish(); persistPosts();
                 }
                 break;
         }

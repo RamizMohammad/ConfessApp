@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A book on the shelf: cover (+ NEW / COMPLETE badge), title, writer · chapters. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:paddingHorizontal="6dp"
+    android:paddingTop="@dimen/space_sm"
+    android:paddingBottom="@dimen/space_md"
+    android:stateListAnimator="@animator/press_scale">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false">
+
+        <in.mohammad.ramiz.confess.ui.books.BookCoverView
+            android:id="@+id/cover"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="6dp" />
+
+        <TextView
+            android:id="@+id/badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_margin="6dp"
+            android:background="@drawable/bg_badge_new"
+            android:elevation="8dp"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:text="@string/books_badge_new"
+            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+            android:textColor="@color/paper_ink"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:ellipsize="end"
+        android:fontFamily="@font/newsreader"
+        android:maxLines="2"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp"
+        tools:text="Night shifts" />
+
+    <TextView
+        android:id="@+id/meta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+        android:textColor="@color/text_muted"
+        tools:text="\@mira · 8 chapters" />
+</LinearLayout>

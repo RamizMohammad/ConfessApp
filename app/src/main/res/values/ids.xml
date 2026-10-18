@@ -2,4 +2,9 @@
 <resources>
     <!-- PostCardBinder: the waiting single tap (cancelled by a second tap = double-tap like). -->
     <item name="tag_single_tap" type="id" />
+    <!-- PaperTone.apply: which role (ink / meta) a view's colour had before toning. -->
+    <item name="tone_text" type="id" />
+    <item name="tone_hint" type="id" />
+    <item name="tone_drawable" type="id" />
+    <item name="tone_icon" type="id" />
 </resources>

@@ -17,6 +17,7 @@ public class ConfessApp extends Application {
     public void onCreate() {
         super.onCreate();
         appContext = getApplicationContext();
+        in.mohammad.ramiz.confess.data.local.LocalStore.init(this);   // before the session: sign-out wipes it
         SessionManager.init(this);
         AppLock.install(this);
     }

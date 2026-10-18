@@ -2,6 +2,7 @@ package in.mohammad.ramiz.confess.core;
 
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
@@ -18,6 +19,26 @@ public final class DeepLink {
     /** "While you were away" → the activity screen. */
     public static final String EXTRA_ACTIVITY = "deeplink_activity";
 
+    /** "📖 New chapter of …" → the reader; "Chapter n wasn't released" → that chapter's editor. */
+    public static final String EXTRA_BOOK_ID = "deeplink_book_id";
+    public static final String EXTRA_CHAPTER_NO = "deeplink_chapter_no";
+    public static final String EXTRA_BOOK_EDIT = "deeplink_book_edit";
+
+    /** A book chapter to open. */
+    public static final class Chapter {
+        public final String bookId;
+        public final int chapterNo;
+        public final boolean edit;
+
+        Chapter(String bookId, int chapterNo, boolean edit) {
+            this.bookId = bookId;
+            this.chapterNo = chapterNo;
+            this.edit = edit;
+        }
+    }
+
+    @Nullable private static Chapter chapter;
+
     @Nullable private static String postId;
     private static boolean activity;
     @Nullable private static String alias;
@@ -28,6 +49,7 @@ public final class DeepLink {
     /** Remember the target from the launcher's intent, if any. */
     public static void capture(@Nullable Intent intent) {
         if (intent == null) return;
+        captureChapter(intent);
         // Our own notifications use EXTRA_*; ones Android shows while the app is closed carry the raw
         // FCM data keys ("type", "postId", "alias") as extras instead.
         String type = intent.getStringExtra("type");
@@ -61,6 +83,32 @@ public final class DeepLink {
         boolean a = activity;
         activity = false;
         return a;
+    }
+
+    private static void captureChapter(@NonNull Intent intent) {
+        String type = intent.getStringExtra("type");
+        String book = intent.getStringExtra(EXTRA_BOOK_ID);
+        int no = intent.getIntExtra(EXTRA_CHAPTER_NO, 0);
+        boolean edit = intent.getBooleanExtra(EXTRA_BOOK_EDIT, false);
+        if (book == null && ("book_chapter".equals(type) || "book_release_failed".equals(type))) {
+            // Shown by Android while the app was closed: the raw FCM data keys are the extras.
+            book = intent.getStringExtra("bookId");
+            try {
+                no = Integer.parseInt(String.valueOf(intent.getStringExtra("chapterNo")));
+            } catch (NumberFormatException e) {
+                no = 0;
+            }
+            edit = "book_release_failed".equals(type);
+        }
+        if (book != null) chapter = new Chapter(book, no, edit && no > 0);
+    }
+
+    /** A book chapter to open (from a book push), cleared on read. */
+    @Nullable
+    public static Chapter consumeChapter() {
+        Chapter c = chapter;
+        chapter = null;
+        return c;
     }
 
     /** A profile to open (from a follow push), cleared on read. */

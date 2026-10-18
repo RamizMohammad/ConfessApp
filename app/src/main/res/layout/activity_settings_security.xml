@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings → Lock & privacy: password lock, lock-again timer, fingerprint, change password, private screen. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ink"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingHorizontal="@dimen/space_sm">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/back"
+            style="@style/Widget.Confess.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:contentDescription="@string/action_back"
+            app:icon="@drawable/ic_arrow_left" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/newsreader"
+            android:text="@string/settings_security_title"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
+            android:textStyle="italic" />
+    </FrameLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_screen"
+            android:paddingBottom="@dimen/space_xl">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:text="@string/settings_security_intro"
+                android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                android:textColor="@color/text_secondary" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/space_md" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_plate"
+                android:orientation="vertical">
+
+                <include
+                    android:id="@+id/lock"
+                    layout="@layout/view_setting_row" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hairline"
+                    android:layout_marginStart="56dp"
+                    android:background="@color/hairline" />
+
+                <include
+                    android:id="@+id/autolock"
+                    layout="@layout/view_setting_row" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hairline"
+                    android:layout_marginStart="56dp"
+                    android:background="@color/hairline" />
+
+                <include
+                    android:id="@+id/bio"
+                    layout="@layout/view_setting_row" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hairline"
+                    android:layout_marginStart="56dp"
+                    android:background="@color/hairline" />
+
+                <include
+                    android:id="@+id/changePassword"
+                    layout="@layout/view_setting_row" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hairline"
+                    android:layout_marginStart="56dp"
+                    android:background="@color/hairline" />
+
+                <include
+                    android:id="@+id/privacyScreen"
+                    layout="@layout/view_setting_row" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

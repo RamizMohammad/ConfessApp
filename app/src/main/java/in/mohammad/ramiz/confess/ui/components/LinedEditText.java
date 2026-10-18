@@ -36,6 +36,12 @@ public class LinedEditText extends AppCompatEditText {
         gap = 7 * d;                                     // line sits a little under the baseline
     }
 
+    /** Paper tone: rules in the current ink (15%). */
+    public void setRuleColor(int color) {
+        rule.setColor(color);
+        invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         int lineHeight = getLineHeight();

@@ -41,3 +41,6 @@
 
 # Drafts are stored as JSON (Gson reflection).
 -keep class in.mohammad.ramiz.confess.data.drafts.Drafts$Draft { *; }
+
+# Books: reading positions saved with Gson (ReadingShelf, data.books)
+-keep class in.mohammad.ramiz.confess.data.books.ReadingShelf$Entry { *; }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Unlock: amber ring that pulses out from the avatar while the fingerprint sheet is open. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <stroke android:width="3dp" android:color="@color/amber" />
+</shape>

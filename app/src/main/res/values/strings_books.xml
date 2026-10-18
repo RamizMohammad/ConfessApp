@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Books: serialised confessions, read like an e-book. -->
+<resources>
+    <!-- Bottom bar -->
+    <string name="tab_books">Books</string>
+    <string name="tab_search">Search</string>
+
+    <!-- Books tab (the shelf) -->
+    <string name="books_title">Books</string>
+    <string name="books_subtitle">Stories told chapter by chapter</string>
+    <string name="books_write">Your books</string>
+    <string name="books_continue">Continue reading</string>
+    <string name="books_tab_library">Library</string>
+    <string name="books_tab_updated">Updated</string>
+    <string name="books_tab_new">New</string>
+    <string name="books_empty_library_title">Your library is empty</string>
+    <string name="books_empty_library_body">Add a book to your library and you\'ll hear the moment a new chapter comes out.</string>
+    <string name="books_empty_title">No books yet</string>
+    <string name="books_empty_body">Be the first to tell a story in chapters.</string>
+    <string name="books_empty_write">Write a book</string>
+    <string name="books_badge_new">NEW</string>
+    <string name="books_badge_complete">COMPLETE</string>
+    <string name="books_card_meta">@%1$s · %2$s</string>
+    <string name="books_continue_progress">Chapter %1$d of %2$d</string>
+    <string name="books_continue_pct">%1$d%%</string>
+
+    <plurals name="books_chapters">
+        <item quantity="one">%d chapter</item>
+        <item quantity="other">%d chapters</item>
+    </plurals>
+    <plurals name="books_readers">
+        <item quantity="one">%d in libraries</item>
+        <item quantity="other">%d in libraries</item>
+    </plurals>
+
+    <!-- Book page -->
+    <string name="book_status_ongoing">ONGOING</string>
+    <string name="book_status_complete">COMPLETE</string>
+    <string name="book_status_draft">NOT PUBLISHED</string>
+    <string name="book_start">Start reading</string>
+    <string name="book_continue">Continue · Chapter %1$d</string>
+    <string name="book_read_again">Read again</string>
+    <string name="book_add_library">Add to library</string>
+    <string name="book_in_library">In your library</string>
+    <string name="book_added">Added to your library — you\'ll hear about new chapters</string>
+    <string name="book_removed">Taken out of your library</string>
+    <string name="book_contents">Contents</string>
+    <string name="book_open_desk">Open writer\'s desk</string>
+    <string name="book_report">Report this book</string>
+    <string name="book_edit">Edit book</string>
+    <string name="book_gone">This book isn\'t available any more.</string>
+    <string name="book_no_chapters">The first chapter hasn\'t come out yet.</string>
+    <string name="chapter_default">Chapter %1$d</string>
+    <string name="chapter_number">%1$02d</string>
+    <string name="chapter_meta_released">%1$s</string>
+    <string name="chapter_meta_counts">%1$s · %2$s felt · %3$s responses</string>
+    <string name="cd_chapter_read">Read</string>
+
+    <!-- Reader -->
+    <string name="reader_chapter_label">CHAPTER %1$d</string>
+    <string name="reader_page_of">%1$d / %2$d</string>
+    <string name="reader_position">Page %1$d of %2$d · Chapter %3$d of %4$d</string>
+    <string name="reader_end_label">END OF CHAPTER %1$d</string>
+    <string name="reader_felt_count">%1$s felt this chapter</string>
+    <string name="reader_felt_none">How did this chapter feel?</string>
+    <string name="reader_responses">Responses · %1$s</string>
+    <string name="reader_respond">Respond</string>
+    <string name="reader_next_label">NEXT</string>
+    <string name="reader_turn_page">Turn the page</string>
+    <string name="reader_the_end">THE END</string>
+    <string name="reader_the_end_body">That\'s the whole story.</string>
+    <string name="reader_caught_up">You\'re all caught up</string>
+    <string name="reader_caught_up_body">The next chapter hasn\'t come out yet.</string>
+    <string name="reader_caught_up_library">Add this book to your library and we\'ll tell you when it does.</string>
+    <string name="reader_back_to_book">Back to the book</string>
+    <string name="reader_loading_chapter">Turning to chapter %1$d…</string>
+    <string name="reader_error">Couldn\'t open this chapter.</string>
+    <string name="cd_reader_settings">Reading settings</string>
+    <string name="cd_reader_contents">Contents</string>
+
+    <!-- Reader settings sheet -->
+    <string name="reader_settings_title">Reading</string>
+    <string name="reader_text_size">Text size</string>
+    <string name="reader_spacing">Line spacing</string>
+    <string name="reader_spacing_compact">Compact</string>
+    <string name="reader_spacing_normal">Normal</string>
+    <string name="reader_spacing_airy">Airy</string>
+    <string name="reader_font">Typeface</string>
+    <string name="reader_font_serif">Newsreader</string>
+    <string name="reader_font_sans">Manrope</string>
+    <string name="reader_theme">Page</string>
+    <string name="reader_theme_paper">Paper</string>
+    <string name="reader_theme_sepia">Sepia</string>
+    <string name="reader_theme_night">Night</string>
+    <string name="reader_lines">Ruled lines</string>
+    <string name="reader_justify">Justify text</string>
+    <string name="reader_volume_keys">Turn pages with volume keys</string>
+    <string name="reader_turn">Page turn</string>
+    <string name="reader_turn_curl">Curl</string>
+    <string name="reader_turn_slide">Slide</string>
+    <string name="reader_turn_instant">Instant</string>
+    <string name="reader_brightness">Brightness</string>
+    <string name="reader_brightness_system">Use phone brightness</string>
+    <string name="cd_brightness_low">Dim</string>
+    <string name="cd_brightness_high">Bright</string>
+    <string name="reader_time_left">%1$d min left in chapter</string>
+    <string name="reader_time_left_soon">Less than a minute left in chapter</string>
+    <string name="cd_text_smaller">Smaller text</string>
+    <string name="cd_text_bigger">Bigger text</string>
+
+    <!-- Writer: my books -->
+    <string name="mybooks_title">YOUR BOOKS</string>
+    <string name="mybooks_summary">Write chapters now, release them when you choose</string>
+    <string name="mybooks_new">New book</string>
+    <string name="mybooks_empty_title">Your first book</string>
+    <string name="mybooks_empty_body">Some stories don\'t fit in one confession. Write them in chapters and let them out one at a time.</string>
+    <string name="mybooks_status_draft">Not published yet</string>
+    <string name="mybooks_status_ongoing">Ongoing</string>
+    <string name="mybooks_status_complete">Complete</string>
+    <string name="mybooks_out">%1$d out</string>
+    <string name="mybooks_scheduled">%1$d scheduled</string>
+    <string name="mybooks_drafts">%1$d drafts</string>
+    <string name="mybooks_next">next %1$s</string>
+    <string name="mybooks_hidden">Hidden after reports</string>
+
+    <!-- Writer: book setup -->
+    <string name="setup_title_new">NEW BOOK</string>
+    <string name="setup_title_edit">EDIT BOOK</string>
+    <string name="setup_cover">Cover</string>
+    <string name="setup_title_hint">Title</string>
+    <string name="setup_blurb_hint">What is it about? (optional)</string>
+    <string name="setup_create">Start writing</string>
+    <string name="setup_save">Save</string>
+    <string name="setup_title_preview">Your title</string>
+
+    <!-- Writer: desk -->
+    <string name="desk_title">WRITER\'S DESK</string>
+    <string name="desk_add_chapter">Add chapter</string>
+    <string name="desk_chapters">CHAPTERS</string>
+    <string name="desk_reorder_hint">Hold and drag to reorder chapters that aren\'t out yet. Release times stay in place.</string>
+    <string name="desk_empty">No chapters yet. Write the first one — you can keep it as a draft until you\'re ready.</string>
+    <string name="desk_preview">See it as a reader</string>
+    <string name="desk_complete">Mark as complete</string>
+    <string name="desk_reopen">Reopen the book</string>
+    <string name="desk_delete">Delete book</string>
+    <string name="desk_delete_title">Delete this book?</string>
+    <string name="desk_delete_body">Every chapter, reaction and response goes with it. This can\'t be undone.</string>
+    <string name="desk_deleted">Book deleted</string>
+    <string name="desk_completed">Marked as complete — readers will see “The end”</string>
+    <string name="desk_reopened">Reopened — you can add more chapters</string>
+    <string name="desk_reordered">New order saved</string>
+    <string name="desk_hidden">This book is hidden after reports. Only you can see it.</string>
+    <string name="state_released">Out %1$s</string>
+    <string name="state_scheduled">%1$s</string>
+    <string name="state_draft">Draft</string>
+    <string name="cd_drag">Drag to reorder</string>
+
+    <!-- Writer: chapter editor -->
+    <string name="chapter_new_label">NEW CHAPTER · %1$d</string>
+    <string name="chapter_edit_label">CHAPTER %1$d</string>
+    <string name="chapter_title_hint">Chapter title (optional)</string>
+    <string name="chapter_body_hint">Begin here…</string>
+    <string name="chapter_release">When should it come out?</string>
+    <string name="chapter_release_now">Publish now</string>
+    <string name="chapter_release_schedule">Schedule</string>
+    <string name="chapter_release_draft">Keep as draft</string>
+    <string name="chapter_pick_time">Pick a date and time</string>
+    <string name="chapter_scheduled_for">Comes out %1$s</string>
+    <string name="chapter_publish">Publish</string>
+    <string name="chapter_schedule_btn">Schedule</string>
+    <string name="chapter_save_draft">Save draft</string>
+    <string name="chapter_save">Save changes</string>
+    <string name="chapter_save_next">Save &amp; write the next one</string>
+    <string name="chapter_released_note">This chapter is out — only its title and responses can change.</string>
+    <string name="chapter_published">Chapter %1$d is out</string>
+    <string name="chapter_scheduled_done">Chapter %1$d is scheduled</string>
+    <string name="chapter_drafted">Chapter %1$d saved as a draft</string>
+    <string name="chapter_saved">Saved</string>
+    <string name="chapter_delete_title">Delete this chapter?</string>
+    <string name="chapter_delete_body">Its reactions and responses go with it.</string>
+    <string name="chapter_deleted">Chapter deleted</string>
+    <string name="chapter_need_time">Pick when it should come out</string>
+    <string name="chapter_time_past">Pick a time in the future</string>
+    <string name="chapter_discard_title">Discard this chapter?</string>
+    <string name="chapter_discard_body">What you wrote here hasn\'t been saved.</string>
+    <string name="chapter_discard">Discard</string>
+    <string name="chapter_keep">Keep writing</string>
+
+    <!-- Chapter editor: naming + the publish page -->
+    <string name="chapter_name_title">Name this chapter</string>
+    <string name="chapter_name_body">Chapter %1$d needs a name before you start. You can change it later.</string>
+    <string name="chapter_name_hint">Chapter title</string>
+    <string name="chapter_name_ok">Start writing</string>
+    <string name="chapter_rename">Rename chapter</string>
+    <string name="chapter_rename_title">Rename chapter</string>
+    <string name="chapter_release_label">WHEN IT COMES OUT</string>
+    <string name="chapter_release_now_sub">Readers can open it the moment you tap Publish.</string>
+    <string name="chapter_release_schedule_sub">Pick a day and time, up to 90 days ahead. Your library readers get a push when it\'s out.</string>
+    <string name="chapter_release_draft_sub">Only you can see it until you publish or schedule it.</string>
+    <string name="chapter_settings_title">Chapter settings</string>
+    <string name="chapter_settings">Settings</string>
+    <string name="chapter_save_next_short">Save &amp; next</string>
+
+    <!-- Report -->
+    <string name="report_book_title">Report this book</string>
+    <string name="report_book_subtitle">About its title or description. To report one chapter, use the chapter\'s own menu.</string>
+    <string name="reported_book">Reported. You won\'t see this book again.</string>
+
+    <!-- Notification settings -->
+    <string name="nprefs_book_chapters">New chapters</string>
+    <string name="nprefs_book_chapters_sub">When a book in your library gets a chapter</string>
+</resources>

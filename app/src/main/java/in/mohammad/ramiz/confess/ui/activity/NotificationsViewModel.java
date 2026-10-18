@@ -16,6 +16,7 @@ import in.mohammad.ramiz.confess.core.ActivityEvents;
 import in.mohammad.ramiz.confess.core.Event;
 import in.mohammad.ramiz.confess.data.api.ApiCallback;
 import in.mohammad.ramiz.confess.data.api.ApiException;
+import in.mohammad.ramiz.confess.data.local.LocalStore;
 import in.mohammad.ramiz.confess.data.model.Notification;
 import in.mohammad.ramiz.confess.data.model.NotificationPage;
 import in.mohammad.ramiz.confess.data.repo.ActivityRepository;
@@ -25,6 +26,8 @@ import retrofit2.Call;
 /**
  * Activity list (server-side now; the old app kept a local Room table of pushes).
  * Newest first, cursor paging, read state per item, filter by kind on device.
+ * Saved on the phone (per Everyone / Following): it opens at once with what came last time,
+ * then the fresh list replaces it (not re-fetched within 20 s).
  */
 public class NotificationsViewModel extends ViewModel {
 
@@ -56,7 +59,10 @@ public class NotificationsViewModel extends ViewModel {
         }
     }
 
+    private static final long FRESH_MS = 20_000;
+
     private final ActivityRepository repo = new ActivityRepository();
+    @Nullable private final LocalStore local = LocalStore.get();
     private final MutableLiveData<State> state = new MutableLiveData<>();
     private final MutableLiveData<Event<ApiException>> errors = new MutableLiveData<>();
 
@@ -76,9 +82,42 @@ public class NotificationsViewModel extends ViewModel {
 
     public void start() {
         if (loaded || firstCall != null) return;
+        if (restore()) {
+            publish();
+            if (local == null || local.ageMs(storeKey()) > FRESH_MS) loadFirst();
+            return;
+        }
         screen = Screen.LOADING;
         publish();
         loadFirst();
+    }
+
+    @NonNull
+    private String storeKey() {
+        return "activity/" + scope;
+    }
+
+    private boolean restore() {
+        if (local == null) return false;
+        NotificationPage saved = local.read(storeKey(), NotificationPage.class);
+        if (saved == null || saved.notifications == null || saved.notifications.isEmpty()) return false;
+        all.clear();
+        addUnique(saved.notifications);
+        cursor = saved.nextCursor;
+        loaded = true;
+        footer = cursor == null ? Footer.END : Footer.NONE;
+        screen = Screen.CONTENT;
+        error = null;
+        return true;
+    }
+
+    private void persist() {
+        if (local == null || !loaded) return;
+        NotificationPage page = new NotificationPage();
+        int n = Math.min(all.size(), 100);
+        page.notifications = new ArrayList<>(all.subList(0, n));
+        page.nextCursor = n == all.size() ? cursor : null;
+        local.write(storeKey(), page);
     }
 
     public void refresh() {
@@ -103,6 +142,7 @@ public class NotificationsViewModel extends ViewModel {
                 error = null;
                 screen = Screen.CONTENT;
                 publish();
+                persist();
             }
 
             @Override
@@ -128,6 +168,7 @@ public class NotificationsViewModel extends ViewModel {
                 cursor = page.nextCursor;
                 footer = cursor == null ? Footer.END : Footer.NONE;
                 publish();
+                persist();
             }
 
             @Override
@@ -156,6 +197,11 @@ public class NotificationsViewModel extends ViewModel {
         error = null;
         refreshing = false;
         footer = Footer.NONE;
+        if (restore()) {
+            publish();
+            loadFirst();
+            return;
+        }
         screen = Screen.LOADING;
         publish();
         loadFirst();
@@ -184,6 +230,7 @@ public class NotificationsViewModel extends ViewModel {
         if (n.read) return;
         setRead(n.id);
         publish();
+        persist();
         repo.markRead(Collections.singletonList(n.id), ignore());
     }
 
@@ -192,6 +239,7 @@ public class NotificationsViewModel extends ViewModel {
         if (!anyUnread()) return;
         for (int i = 0; i < all.size(); i++) if (!all.get(i).read) setRead(all.get(i).id);
         if (publishNow) publish();
+        persist();
         repo.markRead(null, new ApiCallback<JsonObject>() {
             @Override public void onSuccess(JsonObject data) { ActivityEvents.ping(); }   // home's bell re-checks
             @Override public void onError(ApiException e) { }

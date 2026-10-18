@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brand lockup for dark screens: Letty + the CONFESS wordmark in amber. 431 x 59 units. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="190dp" android:height="26dp"
+    android:viewportWidth="431" android:viewportHeight="59">
+    <!-- Letty (74 x 58 crop, scaled to the wordmark's height) -->
+    <group android:scaleX="1.017" android:scaleY="1.017">
+        <group android:translateX="-13" android:translateY="-29">
+            <path android:pathData="M25,32 H75 A9,9 0 0 1 84,41 V75 A9,9 0 0 1 75,84 H25 A9,9 0 0 1 16,75 V41 A9,9 0 0 1 25,32 Z"
+                android:fillColor="@color/paper" android:strokeColor="@color/paper_ink" android:strokeWidth="4" />
+            <path android:pathData="M19.5,35.5 L50,60 L80.5,35.5" android:strokeColor="@color/paper_ink" android:strokeWidth="4"
+                android:strokeLineJoin="round" android:strokeLineCap="round" />
+            <path android:pathData="M41,60 A9,9 0 1 0 59,60 A9,9 0 1 0 41,60 Z" android:fillColor="@color/amber" />
+            <group android:translateX="45.1" android:translateY="54.6" android:scaleX="0.052" android:scaleY="0.052">
+                <path android:fillColor="@color/paper_ink" android:pathData="@string/path_logo_c" />
+            </group>
+            <path android:pathData="M35.7,74 A3.3,3.9 0 1 0 42.3,74 A3.3,3.9 0 1 0 35.7,74 Z M57.7,74 A3.3,3.9 0 1 0 64.3,74 A3.3,3.9 0 1 0 57.7,74 Z"
+                android:fillColor="@color/paper_ink" />
+            <path android:pathData="M27.2,78.5 A3.8,3.8 0 1 0 34.8,78.5 A3.8,3.8 0 1 0 27.2,78.5 Z M65.2,78.5 A3.8,3.8 0 1 0 72.8,78.5 A3.8,3.8 0 1 0 65.2,78.5 Z"
+                android:fillColor="@color/amber" android:fillAlpha="0.5" />
+        </group>
+    </group>
+    <!-- CONFESS -->
+    <group android:translateX="93">
+        <path android:fillColor="@color/amber" android:pathData="@string/path_logo_wordmark" />
+    </group>
+</vector>

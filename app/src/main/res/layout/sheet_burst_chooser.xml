@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    "When someone posts a lot at once": three little animated films (slider · stack card ·
+    one by one), tap one, "Use this". Shown the first time a burst appears in the feed;
+    Settings → Appearance opens it again.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:paddingTop="@dimen/space_lg"
+        android:paddingBottom="@dimen/space_lg">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/burst_choose_title"
+            android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:text="@string/burst_choose_body"
+            android:textAppearance="@style/TextAppearance.Confess.Body"
+            android:textColor="@color/text_secondary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:orientation="horizontal">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/opt0"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/space_xxs"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/surface_raised"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/hairline"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_sm">
+
+                <in.mohammad.ramiz.confess.ui.feed.BurstPreviewView
+                    android:id="@+id/preview0"
+                    android:layout_width="match_parent"
+                    android:layout_height="108dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:gravity="center"
+                    android:text="@string/burst_mode_slider"
+                    android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xxs"
+                    android:gravity="center"
+                    android:text="@string/burst_mode_slider_sub"
+                    android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                    android:textColor="@color/text_secondary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/opt1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/space_xxs"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/surface_raised"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/hairline"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_sm">
+
+                <in.mohammad.ramiz.confess.ui.feed.BurstPreviewView
+                    android:id="@+id/preview1"
+                    android:layout_width="match_parent"
+                    android:layout_height="108dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:gravity="center"
+                    android:text="@string/burst_mode_stack"
+                    android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xxs"
+                    android:gravity="center"
+                    android:text="@string/burst_mode_stack_sub"
+                    android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                    android:textColor="@color/text_secondary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/opt2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/space_xxs"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/surface_raised"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/hairline"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_sm">
+
+                <in.mohammad.ramiz.confess.ui.feed.BurstPreviewView
+                    android:id="@+id/preview2"
+                    android:layout_width="match_parent"
+                    android:layout_height="108dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:gravity="center"
+                    android:text="@string/burst_mode_separate"
+                    android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xxs"
+                    android:gravity="center"
+                    android:text="@string/burst_mode_separate_sub"
+                    android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                    android:textColor="@color/text_secondary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="@string/burst_choose_later"
+            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+            android:textColor="@color/text_muted" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/use"
+            style="@style/Widget.Confess.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="@string/burst_choose_use" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

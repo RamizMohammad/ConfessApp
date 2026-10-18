@@ -31,6 +31,7 @@ import in.mohammad.ramiz.confess.core.push.Push;
 import in.mohammad.ramiz.confess.data.session.SessionManager;
 import in.mohammad.ramiz.confess.databinding.ActivityHomeBinding;
 import in.mohammad.ramiz.confess.ui.base.BaseActivity;
+import in.mohammad.ramiz.confess.ui.books.BooksFragment;
 import in.mohammad.ramiz.confess.ui.feed.FeedFragment;
 import in.mohammad.ramiz.confess.ui.me.MeFragment;
 import in.mohammad.ramiz.confess.ui.nav.Nav;
@@ -38,12 +39,13 @@ import in.mohammad.ramiz.confess.ui.util.EdgeInsets;
 
 /**
  * Home shell. Old: MainActivity + BottomNavigationView (Home / Add / Profile).
- * Feed · (Confess) · Me — the centre is a raised amber button that opens the composer
- * instead of being a tab. Both tabs stay alive (show/hide) so scroll positions survive.
+ * Feed · Search · (Confess) · Books · Me — Confess (centre) opens the composer and Search opens
+ * people search; neither is a tab. All tabs stay alive (show/hide) so scroll positions survive.
  */
 public class HomeActivity extends BaseActivity {
 
     private static final String TAG_FEED = "feed";
+    private static final String TAG_BOOKS = "books";
     private static final String TAG_ME = "me";
     private static final String STATE_TAB = "tab";
 
@@ -67,6 +69,7 @@ public class HomeActivity extends BaseActivity {
             fm.beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.container, new FeedFragment(), TAG_FEED)
+                    .add(R.id.container, new BooksFragment(), TAG_BOOKS)
                     .add(R.id.container, new MeFragment(), TAG_ME)
                     .commitNow();
         } else {
@@ -75,6 +78,11 @@ public class HomeActivity extends BaseActivity {
         show(tab, false);
 
         b.bottomBar.tabFeed.setOnClickListener(v -> select(TAG_FEED));
+        b.bottomBar.tabSearch.setOnClickListener(v -> {
+            Haptics.tick(this);
+            Nav.search(this);
+        });
+        b.bottomBar.tabBooks.setOnClickListener(v -> select(TAG_BOOKS));
         b.bottomBar.tabMe.setOnClickListener(v -> select(TAG_ME));
         b.bottomBar.compose.setOnClickListener(v -> {
             Haptics.click(this);
@@ -84,11 +92,11 @@ public class HomeActivity extends BaseActivity {
         Push.sync(this);
         if (savedInstanceState == null) b.getRoot().postDelayed(this::maybeAskNotifications, 1500);
 
-        // Back on "Me" returns to the feed first, like the old app.
+        // Back on "Books" / "Me" returns to the feed first, like the old app.
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (TAG_ME.equals(tab)) {
+                if (!TAG_FEED.equals(tab)) {
                     select(TAG_FEED);
                 } else {
                     setEnabled(false);
@@ -109,6 +117,11 @@ public class HomeActivity extends BaseActivity {
             String who = DeepLink.consumeAlias();
             if (who != null) Nav.profile(this, who);
             if (DeepLink.consumeActivity()) Nav.notifications(this);
+            DeepLink.Chapter chapter = DeepLink.consumeChapter();
+            if (chapter != null) {
+                if (chapter.edit) Nav.chapterEditor(this, chapter.bookId, chapter.chapterNo);
+                else Nav.reader(this, chapter.bookId, chapter.chapterNo);
+            }
             checkBiometricAfterReset();
             in.mohammad.ramiz.confess.core.GuidelinesReminder.maybeShow(this);
         }
@@ -187,6 +200,7 @@ public class HomeActivity extends BaseActivity {
         if (next.equals(tab)) {
             Fragment f = getSupportFragmentManager().findFragmentByTag(next);
             if (f instanceof FeedFragment) ((FeedFragment) f).scrollToTop();
+            else if (f instanceof BooksFragment) ((BooksFragment) f).scrollToTop();
             else if (f instanceof MeFragment) ((MeFragment) f).scrollToTop();
             return;
         }
@@ -198,23 +212,35 @@ public class HomeActivity extends BaseActivity {
         tab = which;
         FragmentManager fm = getSupportFragmentManager();
         Fragment feed = fm.findFragmentByTag(TAG_FEED);
+        Fragment books = fm.findFragmentByTag(TAG_BOOKS);
         Fragment me = fm.findFragmentByTag(TAG_ME);
         if (feed == null || me == null) return;
+        if (books == null) {                       // restored from a version without the Books tab
+            books = new BooksFragment();
+            fm.beginTransaction().setReorderingAllowed(true).add(R.id.container, books, TAG_BOOKS).hide(books).commitNow();
+        }
 
         androidx.fragment.app.FragmentTransaction tx = fm.beginTransaction().setReorderingAllowed(true);
         if (animate) tx.setCustomAnimations(R.anim.tab_in, R.anim.tab_out);
-        if (TAG_FEED.equals(which)) tx.show(feed).hide(me); else tx.show(me).hide(feed);
+        for (Fragment f : new Fragment[]{feed, books, me}) {
+            if (f == fm.findFragmentByTag(which)) tx.show(f); else tx.hide(f);
+        }
         tx.commit();
 
-        boolean onFeed = TAG_FEED.equals(which);
         int on = ContextCompat.getColor(this, R.color.amber);
         int off = ContextCompat.getColor(this, R.color.text_muted);
+        boolean onFeed = TAG_FEED.equals(which), onBooks = TAG_BOOKS.equals(which), onMe = TAG_ME.equals(which);
         b.bottomBar.iconFeed.setColorFilter(onFeed ? on : off);
         b.bottomBar.labelFeed.setTextColor(onFeed ? on : off);
-        b.bottomBar.iconMe.setColorFilter(onFeed ? off : on);
-        b.bottomBar.labelMe.setTextColor(onFeed ? off : on);
+        b.bottomBar.iconBooks.setColorFilter(onBooks ? on : off);
+        b.bottomBar.labelBooks.setTextColor(onBooks ? on : off);
+        b.bottomBar.iconSearch.setColorFilter(off);
+        b.bottomBar.labelSearch.setTextColor(off);
+        b.bottomBar.iconMe.setColorFilter(onMe ? on : off);
+        b.bottomBar.labelMe.setTextColor(onMe ? on : off);
         b.bottomBar.tabFeed.setSelected(onFeed);
-        b.bottomBar.tabMe.setSelected(!onFeed);
+        b.bottomBar.tabBooks.setSelected(onBooks);
+        b.bottomBar.tabMe.setSelected(onMe);
     }
 
     @Override

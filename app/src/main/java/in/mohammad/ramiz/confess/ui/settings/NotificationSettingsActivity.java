@@ -84,6 +84,11 @@ public class NotificationSettingsActivity extends BaseActivity {
                     public Boolean get(NotificationPrefs p) { return p.newPosts; }
                     public void set(NotificationPrefs p, Boolean v) { p.newPosts = v; }
                 });
+        pref(b.bookChapters, R.drawable.ic_book, R.string.nprefs_book_chapters, R.string.nprefs_book_chapters_sub,
+                new Field() {
+                    public Boolean get(NotificationPrefs p) { return p.bookChapters; }
+                    public void set(NotificationPrefs p, Boolean v) { p.bookChapters = v; }
+                });
         pref(b.nudges, R.drawable.ic_moon, R.string.nprefs_nudges, R.string.nprefs_nudges_sub,
                 new Field() {
                     public Boolean get(NotificationPrefs p) { return p.nudges; }

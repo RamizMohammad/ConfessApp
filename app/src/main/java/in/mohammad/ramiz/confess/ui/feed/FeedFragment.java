@@ -43,10 +43,14 @@ import in.mohammad.ramiz.confess.ui.stories.StoryTrayCache;
 /**
  * S7 · Feed tab. Old: HomeFragment.
  *
- *  - wordmark · search · bell (amber dot when there are unread notifications)
+ *  - wordmark · bell (amber dot when there are unread notifications); search is in the bottom bar
  *  - Latest / Most felt (last 7 days) — each keeps its own list and scroll position
  *  - paper cards: tap → confession, heart → felt (optimistic), ⋯ → delete (mine) / report
  *  - pull to refresh, shimmer on first load, "You're all caught up." at the end
+ *  - bursts (one writer's confessions close together) come from the server as one card — a
+ *    slider, or a stack card for more than 3 — as the reader chose ({@link Bursts}); their
+ *    confessions load a set at a time as you swipe ({@link BurstStore}); the chooser with its
+ *    little animations opens the first time a burst shows up
  */
 public class FeedFragment extends Fragment implements PostCardBinder.Listener {
 
@@ -55,6 +59,8 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     private FragmentFeedBinding b;
     private FeedViewModel vm;
     private PostAdapter adapter;
+    /** Paper tone the cards were last drawn with (Settings can change it). */
+    private int toneSeen = -1;
     private LinearLayoutManager layout;
     private String sort = PostRepository.SORT_LATEST;
     /** Everyone (all) or only people I follow — remembered across launches. */
@@ -83,6 +89,17 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
 
         // List
         adapter = new PostAdapter(this, () -> vm.retryMore(key()));
+        adapter.setBursts(Bursts.mode(requireContext()), new PostAdapter.BurstListener() {
+            @Override
+            public void onOpenBurst(@NonNull Bursts.Group group) {
+                BurstReaderActivity.open(requireContext(), group);
+            }
+
+            @Override
+            public void onBurstShown() {
+                askBurstsOnce();
+            }
+        });
         layout = new LinearLayoutManager(requireContext());
         b.list.setLayoutManager(layout);
         b.list.setAdapter(adapter);
@@ -102,7 +119,6 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
 
         // Top bar
         b.wordmark.setOnClickListener(v -> scrollToTop());
-        b.search.setOnClickListener(v -> Nav.search(requireContext()));
         b.bell.setOnClickListener(v -> Nav.notifications(requireContext()));
         ActivityEvents.pings().observe(getViewLifecycleOwner(), t -> vm.refreshUnread());
         vm.unread().observe(getViewLifecycleOwner(), n ->
@@ -129,6 +145,8 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
                 }));
 
         showSortTabs();
+        adapter.setScope(scope);
+        vm.setBursts(Bursts.mode(requireContext()) != Bursts.SEPARATE);
         vm.state(key()).observe(getViewLifecycleOwner(), stateObserver);
         vm.start(key());
     }
@@ -136,6 +154,12 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     @Override
     public void onResume() {
         super.onResume();
+        int tone = in.mohammad.ramiz.confess.ui.components.PaperTone.stamp(requireContext());
+        if (toneSeen >= 0 && tone != toneSeen) adapter.notifyDataSetChanged();
+        toneSeen = tone;
+        int burstMode = Bursts.mode(requireContext());              // Settings may have changed it
+        adapter.setBurstMode(burstMode);
+        vm.setBursts(burstMode != Bursts.SEPARATE);
         vm.refreshUnread();
         loadStories();
     }
@@ -147,6 +171,27 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
             vm.refreshUnread();
             loadStories();
         }
+    }
+
+    // ── Bursts ───────────────────────────────────────────────────────────────
+
+    private boolean burstAskPending = false;
+
+    /** The first burst on screen: let the reader pick how bursts look (once). */
+    private void askBurstsOnce() {
+        if (burstAskPending || b == null || Bursts.asked(requireContext())) return;
+        burstAskPending = true;
+        b.list.postDelayed(() -> {                               // let the feed settle first
+            if (b == null || !isResumed() || Bursts.asked(requireContext())) {
+                burstAskPending = false;
+                return;
+            }
+            Bursts.markAsked(requireContext());
+            BurstChooser.show(requireContext(), mode -> {
+                if (adapter != null) adapter.setBurstMode(mode);
+                if (vm != null) vm.setBursts(mode != Bursts.SEPARATE);
+            });
+        }, 900);
     }
 
     // ── Sort ─────────────────────────────────────────────────────────────────
@@ -169,6 +214,7 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
 
         sort = nextSort;
         scope = nextScope;
+        adapter.setScope(nextScope);
         shown = null;
         listEntered = false;
         showSortTabs();

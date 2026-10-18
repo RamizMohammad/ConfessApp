@@ -36,6 +36,8 @@ public class ReportSheet extends BottomSheetDialogFragment {
     public static final String KEY_ALIAS = "alias";
     /** Set (instead of a post id) when a response is being reported. */
     public static final String KEY_COMMENT_ID = "comment_id";
+    /** Set (instead of a post id) when a book is being reported. */
+    public static final String KEY_BOOK_ID = "book_id";
     public static final String KEY_REASON = "reason";
     private static final String TAG = "report_sheet";
 
@@ -66,6 +68,16 @@ public class ReportSheet extends BottomSheetDialogFragment {
         sheet.show(fm, TAG);
     }
 
+    /** Report a book (its title / blurb). Listen like a post report; the screen hears {@link Outcome#bookReported}. */
+    public static void showBook(@NonNull FragmentManager fm, @NonNull String bookId) {
+        if (fm.findFragmentByTag(TAG) != null) return;
+        ReportSheet sheet = new ReportSheet();
+        Bundle args = new Bundle();
+        args.putString(KEY_BOOK_ID, bookId);
+        sheet.setArguments(args);
+        sheet.show(fm, TAG);
+    }
+
     /** From an activity: listen with getSupportFragmentManager().setFragmentResultListener(RESULT, …). */
     public static void showIn(@NonNull FragmentManager fm, @NonNull String postId) {
         if (fm.findFragmentByTag(TAG) != null) return;
@@ -85,6 +97,9 @@ public class ReportSheet extends BottomSheetDialogFragment {
 
         /** A response was reported — drop it from the list (it's hidden for me now). */
         default void commentReported(@NonNull String commentId) { }
+
+        /** A book was reported — it's hidden for me now. */
+        default void bookReported(@NonNull String bookId) { }
     }
 
     /** Call from the RESULT listener. */
@@ -96,6 +111,18 @@ public class ReportSheet extends BottomSheetDialogFragment {
             Context app = ctx.getApplicationContext();
             new UserRepository().reportUser(alias, reason, new ApiCallback<JsonObject>() {
                 @Override public void onSuccess(JsonObject data) { o.say(app.getString(R.string.reported_user)); }
+                @Override public void onError(ApiException e) { o.say(e.userMessage(app)); }
+            });
+            return;
+        }
+        String bookId = result.getString(KEY_BOOK_ID);
+        if (bookId != null) {
+            Context app = ctx.getApplicationContext();
+            new in.mohammad.ramiz.confess.data.repo.BookRepository().report(bookId, reason, new ApiCallback<JsonObject>() {
+                @Override public void onSuccess(JsonObject data) {
+                    android.widget.Toast.makeText(app, R.string.reported_book, android.widget.Toast.LENGTH_LONG).show();
+                    o.bookReported(bookId);
+                }
                 @Override public void onError(ApiException e) { o.say(e.userMessage(app)); }
             });
             return;
@@ -129,6 +156,9 @@ public class ReportSheet extends BottomSheetDialogFragment {
             b.title.setText(R.string.report_user_title);
             b.subtitle.setText(R.string.report_user_subtitle);
             b.send.setText(R.string.report_user_send);
+        } else if (requireArguments().getString(KEY_BOOK_ID) != null) {
+            b.title.setText(R.string.report_book_title);
+            b.subtitle.setText(R.string.report_book_subtitle);
         } else if (requireArguments().getString(KEY_COMMENT_ID) != null) {
             b.title.setText(R.string.report_response_title);
             b.subtitle.setText(R.string.report_response_subtitle);
@@ -145,6 +175,7 @@ public class ReportSheet extends BottomSheetDialogFragment {
             result.putString(KEY_POST_ID, requireArguments().getString(KEY_POST_ID));
             result.putString(KEY_ALIAS, requireArguments().getString(KEY_ALIAS));
             result.putString(KEY_COMMENT_ID, requireArguments().getString(KEY_COMMENT_ID));
+            result.putString(KEY_BOOK_ID, requireArguments().getString(KEY_BOOK_ID));
             result.putString(KEY_REASON, reason);
             getParentFragmentManager().setFragmentResult(RESULT, result);
             Haptics.click(requireContext());

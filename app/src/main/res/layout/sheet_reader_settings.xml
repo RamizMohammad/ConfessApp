@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Reader "Aa": text size, spacing, typeface, page turn, page colour + tone, brightness, switches. Scrolls on short screens. -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/margin_screen"
+    android:paddingTop="@dimen/space_lg"
+    android:paddingBottom="@dimen/space_lg">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/reader_settings_title"
+        android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall"
+        android:textColor="@color/text_primary" />
+
+    <!-- Size -->
+    <TextView
+        style="@style/Confess.SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space_md"
+        android:text="@string/reader_text_size" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_plate"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/space_xs">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/smaller"
+            style="@style/Widget.Confess.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_text_smaller"
+            app:icon="@drawable/ic_minus" />
+
+        <TextView
+            android:id="@+id/sizeValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/newsreader"
+            android:gravity="center"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bigger"
+            style="@style/Widget.Confess.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_text_bigger"
+            app:icon="@drawable/ic_plus" />
+    </LinearLayout>
+
+    <!-- Spacing -->
+    <TextView
+        style="@style/Confess.SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space_md"
+        android:text="@string/reader_spacing" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/spacing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/spacingCompact"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/reader_spacing_compact" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/spacingNormal"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/reader_spacing_normal" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/spacingAiry"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/reader_spacing_airy" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <!-- Typeface -->
+    <TextView
+        style="@style/Confess.SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space_md"
+        android:text="@string/reader_font" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/font"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/fontSerif"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/newsreader"
+            android:text="@string/reader_font_serif" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/fontSans"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/manrope"
+            android:text="@string/reader_font_sans" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <!-- Page turn -->
+    <TextView
+        style="@style/Confess.SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space_md"
+        android:text="@string/reader_turn" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/turnStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/turnCurl"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/reader_turn_curl" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/turnSlide"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/reader_turn_slide" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/turnInstant"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/reader_turn_instant" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <!-- Page colour -->
+    <TextView
+        style="@style/Confess.SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space_md"
+        android:text="@string/reader_theme" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/themePaper"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:layout_weight="1"
+            android:fontFamily="@font/newsreader"
+            android:gravity="center"
+            android:text="@string/reader_theme_paper"
+            android:textColor="@color/reader_paper_ink"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/themeSepia"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:layout_weight="1"
+            android:fontFamily="@font/newsreader"
+            android:gravity="center"
+            android:text="@string/reader_theme_sepia"
+            android:textColor="@color/reader_sepia_ink"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/themeNight"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/newsreader"
+            android:gravity="center"
+            android:text="@string/reader_theme_night"
+            android:textColor="@color/reader_night_ink"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- Paper tone: bright paper → soft grey (Paper / Sepia pages, and confession cards) -->
+    <TextView
+        style="@style/Confess.SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space_md"
+        android:text="@string/paper_tone_label" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_plate"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/space_md"
+        android:paddingVertical="@dimen/space_sm">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="@string/cd_paper_light"
+                android:src="@drawable/dot_paper_light" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/tone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_xs"
+                android:layout_weight="1"
+                android:contentDescription="@string/paper_tone"
+                android:stepSize="5"
+                android:value="0"
+                android:valueFrom="0"
+                android:valueTo="100"
+                app:labelBehavior="gone" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="@string/cd_paper_grey"
+                android:src="@drawable/dot_paper_grey" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/text_tone"
+                android:textAppearance="@style/TextAppearance.Confess.Body"
+                android:textColor="@color/text_primary" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/textAuto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/text_tone_auto"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/text_secondary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="@string/cd_text_dark"
+                android:src="@drawable/dot_text_dark" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/textTone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_xs"
+                android:layout_weight="1"
+                android:contentDescription="@string/text_tone"
+                android:stepSize="5"
+                android:value="0"
+                android:valueFrom="0"
+                android:valueTo="100"
+                app:labelBehavior="gone" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="@string/cd_text_light"
+                android:src="@drawable/dot_text_light" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/toneHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/space_xs"
+            android:text="@string/paper_tone_reader_sub"
+            android:textAppearance="@style/TextAppearance.Confess.Meta"
+            android:textColor="@color/text_muted" />
+    </LinearLayout>
+
+    <!-- Brightness (this screen only) -->
+    <TextView
+        style="@style/Confess.SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space_md"
+        android:text="@string/reader_brightness" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_plate"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/space_md"
+        android:paddingVertical="@dimen/space_sm">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="@string/cd_brightness_low"
+                android:src="@drawable/dot_paper_grey" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/brightness"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_xs"
+                android:layout_weight="1"
+                android:contentDescription="@string/reader_brightness"
+                android:stepSize="5"
+                android:value="50"
+                android:valueFrom="0"
+                android:valueTo="100"
+                app:labelBehavior="gone" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="@string/cd_brightness_high"
+                android:src="@drawable/dot_paper_light" />
+        </LinearLayout>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/brightnessSystem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/reader_brightness_system"
+            android:textAppearance="@style/TextAppearance.Confess.Body"
+            android:textColor="@color/text_primary" />
+    </LinearLayout>
+
+    <!-- Switches -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:background="@drawable/bg_plate"
+        android:orientation="vertical">
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/lines"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:paddingHorizontal="@dimen/space_md"
+            android:text="@string/reader_lines"
+            android:textAppearance="@style/TextAppearance.Confess.Body"
+            android:textColor="@color/text_primary" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/hairline"
+            android:background="@color/hairline" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/justify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:paddingHorizontal="@dimen/space_md"
+            android:text="@string/reader_justify"
+            android:textAppearance="@style/TextAppearance.Confess.Body"
+            android:textColor="@color/text_primary" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/hairline"
+            android:background="@color/hairline" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/volumeKeys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:paddingHorizontal="@dimen/space_md"
+            android:text="@string/reader_volume_keys"
+            android:textAppearance="@style/TextAppearance.Confess.Body"
+            android:textColor="@color/text_primary" />
+    </LinearLayout>
+</LinearLayout>
+</androidx.core.widget.NestedScrollView>

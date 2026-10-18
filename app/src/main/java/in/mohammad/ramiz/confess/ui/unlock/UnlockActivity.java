@@ -44,7 +44,10 @@ import retrofit2.Call;
  *
  *  - password → POST users/me/password/verify; on match the session is unlocked
  *  - biometric (if turned on for the account AND available on this phone) opens
- *    automatically, like the old app; it unlocks locally. Android draws the sheet;
+ *    automatically, like the old app; it unlocks locally. It opens at once from the switch
+ *    saved on this phone — no waiting for the network (that's what made it lag on a slow
+ *    connection). The server's answer follows quietly: if fingerprint unlock was switched off
+ *    meanwhile (a password reset), the sheet is closed and the password asked for instead. Android draws the sheet;
  *    around it the avatar pulses amber, a check pops in on success, and the sheet's
  *    "Use password" button drops straight into the password field
  *  - 5 wrong passwords → 30 s pause (the server also rate-limits)
@@ -73,6 +76,7 @@ public class UnlockActivity extends BaseActivity {
     @Nullable private Call<MatchResult> pending;
     @Nullable private ValueAnimator pulse;
     private boolean unlocking = false;
+    @Nullable private androidx.biometric.BiometricPrompt bioPrompt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,22 +92,19 @@ public class UnlockActivity extends BaseActivity {
             return;
         }
 
-        // Cached profile for the face/alias; the fingerprint shortcut waits for the
-        // server's answer (a password reset may have switched it off).
-        boolean justReset = ResetNotice.justReset(this);
-        render(SessionManager.get().cachedMe(), false);
-        users.me(new ApiCallback<Me>() {          // fresh alias/avatar/biometric flag
+        // Face, alias and the fingerprint switch as saved on this phone: the sheet opens now.
+        render(SessionManager.get().cachedMe());
+        if (savedInstanceState == null && bioAllowed) b.getRoot().postDelayed(this::promptBiometric, 250);
+        users.me(new ApiCallback<Me>() {          // fresh alias/avatar/biometric flag, quietly
             @Override public void onSuccess(Me me) {
+                if (isFinishing() || unlocking) return;
                 if (!me.hasPassword) { SessionManager.get().markUnlocked(); done(); return; }
-                render(me, true);
-                if (savedInstanceState == null && bioAllowed) b.getRoot().postDelayed(UnlockActivity.this::promptBiometric, 350);
+                boolean was = bioAllowed;
+                render(me);
+                if (was && !bioAllowed) cancelBiometric();                   // switched off elsewhere
+                else if (!was && bioAllowed && savedInstanceState == null) promptBiometric();
             }
-            @Override public void onError(ApiException e) {
-                // Offline: fall back to the cached flag, unless we know a reset just happened.
-                if (justReset) return;
-                render(SessionManager.get().cachedMe(), true);
-                if (savedInstanceState == null && bioAllowed) promptBiometric();
-            }
+            @Override public void onError(ApiException e) { }               // offline: the saved switch stands
         });
 
         b.passwordInput.addTextChangedListener(new SimpleTextWatcher(t -> {
@@ -128,12 +129,12 @@ public class UnlockActivity extends BaseActivity {
 
     }
 
-    private void render(@Nullable Me me, boolean fresh) {
+    private void render(@Nullable Me me) {
         boolean justReset = ResetNotice.justReset(this);
         if (me != null) {
             b.avatar.setAvatar(me.avatar);
             b.alias.setText(me.alias);
-            bioAllowed = fresh && me.biometricEnabled && !justReset && Biometrics.available(this);
+            bioAllowed = me.biometricEnabled && !me.biometricResetPending && !justReset && Biometrics.available(this);
         }
         b.bioGroup.setVisibility(bioAllowed ? View.VISIBLE : View.GONE);
 
@@ -234,7 +235,7 @@ public class UnlockActivity extends BaseActivity {
     private void promptBiometric() {
         if (!bioAllowed || unlocking || isFinishing()) return;
         startPulse();
-        Biometrics.prompt(this, getString(R.string.unlock_bio_title), getString(R.string.unlock_bio_subtitle),
+        bioPrompt = Biometrics.prompt(this, getString(R.string.unlock_bio_title), getString(R.string.unlock_bio_subtitle),
                 getString(R.string.unlock_bio_use_password),
                 new Biometrics.Callback() {
                     @Override public void onSuccess() {
@@ -253,6 +254,14 @@ public class UnlockActivity extends BaseActivity {
                                 .show(WindowInsetsCompat.Type.ime());
                     }
                 });
+    }
+
+    /** The server says fingerprint unlock is off now: close the sheet, the password it is. */
+    private void cancelBiometric() {
+        androidx.biometric.BiometricPrompt p = bioPrompt;
+        bioPrompt = null;
+        if (p != null) p.cancelAuthentication();
+        stopPulse();
     }
 
     /** Amber ring breathing out of the avatar while the system sheet is up. */

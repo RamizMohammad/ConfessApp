@@ -63,4 +63,12 @@
     <string name="compose_letter_invalid">Who is the letter to?</string>
     <string name="compose_mood_label">HOW SHOULD PEOPLE RESPOND?</string>
     <string name="compose_allow_listen">Just listen — people can react, not reply</string>
+    <!-- Two-step writing: write → before it goes out -->
+    <string name="compose_instant">Instant publish</string>
+    <string name="compose_publish_next">Publish</string>
+    <string name="compose_release_short">Release</string>
+    <string name="compose_options_label">BEFORE IT GOES OUT</string>
+    <string name="compose_options_title">How should it land?</string>
+    <string name="compose_options_back">Edit</string>
+    <string name="compose_options_note">Only your alias and aura are shown. You can delete it anytime.</string>
 </resources>

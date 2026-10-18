@@ -8,6 +8,14 @@ import in.mohammad.ramiz.confess.data.model.AboutRequest;
 import in.mohammad.ramiz.confess.data.model.AliasAvailability;
 import in.mohammad.ramiz.confess.data.model.AuthResponse;
 import in.mohammad.ramiz.confess.data.model.AvatarRequest;
+import in.mohammad.ramiz.confess.data.model.BookDetail;
+import in.mohammad.ramiz.confess.data.model.BurstPage;
+import in.mohammad.ramiz.confess.data.model.BookDownload;
+import in.mohammad.ramiz.confess.data.model.BookPage;
+import in.mohammad.ramiz.confess.data.model.BookRequest;
+import in.mohammad.ramiz.confess.data.model.Book;
+import in.mohammad.ramiz.confess.data.model.ChapterRead;
+import in.mohammad.ramiz.confess.data.model.ChapterRequest;
 import in.mohammad.ramiz.confess.data.model.ChangePasswordRequest;
 import in.mohammad.ramiz.confess.data.model.Comment;
 import in.mohammad.ramiz.confess.data.model.CommentPage;
@@ -50,6 +58,8 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -180,11 +190,20 @@ public interface ConfessApi {
     Call<Post> vote(@Path("postId") String postId, @Body VoteRequest body);
 
     /** sort: "latest" | "top" (most felt, last 7 days) · scope: "all" | "following". */
+    /** bursts=true: one card per burst (its newest, with {@code burst: {id, count}}). */
     @GET("api/v2/posts/feed")
     Call<PostPage> feed(@Query("sort") String sort,
                         @Query("scope") String scope,
                         @Query("cursor") @Nullable String cursor,
-                        @Query("limit") @Nullable Integer limit);
+                        @Query("limit") @Nullable Integer limit,
+                        @Query("bursts") @Nullable Boolean bursts);
+
+    /** One burst, oldest first, a set at a time (the slider / the burst reader). */
+    @GET("api/v2/posts/bursts/{id}")
+    Call<BurstPage> burst(@Path("id") String burstId,
+                          @Query("scope") String scope,
+                          @Query("cursor") @Nullable String cursor,
+                          @Query("limit") int limit);
 
     @GET("api/v2/posts/mine")
     Call<PostPage> myPosts(@Query("cursor") @Nullable String cursor,
@@ -275,4 +294,58 @@ public interface ConfessApi {
     // ── Feedback ──────────────────────────────────────────────────────────
     @POST("api/v2/feedback/feature")
     Call<JsonObject> requestFeature(@Body FeatureRequest body);
+
+    // ── Books (server 3.6) ────────────────────────────────────────────────
+    /** tab: updated · new · following; alias = one writer's books. */
+    @GET("api/v2/books")
+    Call<BookPage> books(@Query("tab") String tab, @Query("alias") @Nullable String alias,
+                         @Query("cursor") @Nullable String cursor, @Query("limit") @Nullable Integer limit);
+
+    @GET("api/v2/books/mine")
+    Call<BookPage> myBooks();
+
+    @POST("api/v2/books")
+    Call<BookDetail> createBook(@Body BookRequest body);
+
+    @GET("api/v2/books/{id}")
+    Call<BookDetail> book(@Path("id") String bookId);
+
+    @PATCH("api/v2/books/{id}")
+    Call<BookDetail> updateBook(@Path("id") String bookId, @Body BookRequest body);
+
+    @DELETE("api/v2/books/{id}")
+    Call<JsonObject> deleteBook(@Path("id") String bookId);
+
+    @POST("api/v2/books/{id}/chapters")
+    Call<BookDetail> addChapters(@Path("id") String bookId, @Body ChapterRequest.Batch body);
+
+    @PATCH("api/v2/books/{id}/chapters/{no}")
+    Call<BookDetail> updateChapter(@Path("id") String bookId, @Path("no") int chapterNo, @Body ChapterRequest body);
+
+    @DELETE("api/v2/books/{id}/chapters/{no}")
+    Call<BookDetail> deleteChapter(@Path("id") String bookId, @Path("no") int chapterNo);
+
+    @PUT("api/v2/books/{id}/order")
+    Call<BookDetail> reorderChapters(@Path("id") String bookId, @Body ChapterRequest.Order body);
+
+    /** Also remembers my furthest chapter on the server. */
+    @GET("api/v2/books/{id}/chapters/{no}")
+    Call<ChapterRead> chapter(@Path("id") String bookId, @Path("no") int chapterNo);
+
+    /** Every released chapter in full, in one answer: the book is kept on the phone once I start reading it. */
+    @GET("api/v2/books/{id}/download")
+    Call<BookDownload> downloadBook(@Path("id") String bookId);
+
+    /** Reading ahead: the same chapter, but the server doesn't count it as reached. */
+    @GET("api/v2/books/{id}/chapters/{no}?peek=true")
+    Call<ChapterRead> peekChapter(@Path("id") String bookId, @Path("no") int chapterNo);
+
+    @POST("api/v2/books/{id}/follow")
+    Call<Book> followBook(@Path("id") String bookId);
+
+    @DELETE("api/v2/books/{id}/follow")
+    Call<Book> unfollowBook(@Path("id") String bookId);
+
+    @POST("api/v2/books/{id}/report")
+    Call<JsonObject> reportBook(@Path("id") String bookId, @Body ReportRequest body);
 }
