@@ -41,3 +41,7 @@ _deliveries/
 .tmp/
 .tmp.driveupload/
 Screenshots/
+*.png
+*.jpg
+*.jpeg
+.bakup/
