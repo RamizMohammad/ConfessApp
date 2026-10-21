@@ -32,12 +32,17 @@ import in.mohammad.ramiz.confess.databinding.SheetChoiceBinding;
  *           .show();
  *
  * Tapping an option picks it and closes the sheet — or, with {@link #confirm}, marks it and the
- * confirm button does the rest (report reasons: you choose, then send).
+ * confirm button does the rest (report reasons: you choose, then send). {@link #onMark} hears
+ * each mark in that mode (the sound library plays the sound you tapped).
  */
 public final class ChoiceSheet {
 
     public interface Confirmed {
         void onConfirm(int index);
+    }
+
+    public interface Marked {
+        void onMark(int index);
     }
 
     private static final class Option {
@@ -65,6 +70,7 @@ public final class ChoiceSheet {
     private boolean confirmDanger;
     @Nullable private Confirmed confirmed;
     @Nullable private Runnable onDismiss;
+    @Nullable private Marked onMark;
 
     private ChoiceSheet(@NonNull Context ctx) {
         this.ctx = ctx;
@@ -130,6 +136,13 @@ public final class ChoiceSheet {
         return this;
     }
 
+    /** Confirm mode: called each time an option is marked (before confirming). */
+    @NonNull
+    public ChoiceSheet onMark(@Nullable Marked m) {
+        onMark = m;
+        return this;
+    }
+
     @NonNull
     public ChoiceSheet onDismiss(@Nullable Runnable r) {
         onDismiss = r;
@@ -174,6 +187,7 @@ public final class ChoiceSheet {
                     chosen[0] = index;
                     mark(rows, index);
                     s.confirm.setEnabled(true);
+                    if (onMark != null) onMark.onMark(index);
                     return;
                 }
                 Haptics.click(ctx);

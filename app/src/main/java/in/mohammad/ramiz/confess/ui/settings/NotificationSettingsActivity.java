@@ -185,6 +185,8 @@ public class NotificationSettingsActivity extends BaseActivity {
         in.mohammad.ramiz.confess.ui.components.ChoiceSheet.with(this)
                 .title(R.string.nsound_title)
                 .subtitle(R.string.nsound_title_sub)
+                .option(R.drawable.ic_music, R.string.nsound_library, R.string.nsound_library_sub,
+                        kind == in.mohammad.ramiz.confess.core.push.NotificationSound.LIBRARY, this::chooseFromLibrary)
                 .option(R.drawable.ic_bell, R.string.nsound_default, R.string.nsound_default_sub,
                         kind == in.mohammad.ramiz.confess.core.push.NotificationSound.DEFAULT, () -> useSound(in.mohammad.ramiz.confess.core.push.NotificationSound.DEFAULT, null, null))
                 .option(R.drawable.ic_settings, R.string.nsound_pick_phone, R.string.nsound_pick_phone_sub,
@@ -193,6 +195,30 @@ public class NotificationSettingsActivity extends BaseActivity {
                         kind == in.mohammad.ramiz.confess.core.push.NotificationSound.FILE, () -> pickFile.launch(new String[]{"audio/*"}))
                 .option(R.drawable.ic_moon, R.string.nsound_silent, R.string.nsound_silent_sub,
                         kind == in.mohammad.ramiz.confess.core.push.NotificationSound.SILENT, () -> useSound(in.mohammad.ramiz.confess.core.push.NotificationSound.SILENT, null, null))
+                .show();
+    }
+
+    /** Confess's own sounds: tap one to hear it, then "Use this sound". */
+    private void chooseFromLibrary() {
+        java.util.List<in.mohammad.ramiz.confess.core.push.SoundLibrary.Sound> sounds =
+                in.mohammad.ramiz.confess.core.push.SoundLibrary.ALL;
+        in.mohammad.ramiz.confess.core.push.SoundLibrary.Sound now =
+                in.mohammad.ramiz.confess.core.push.SoundLibrary.current(this);
+        in.mohammad.ramiz.confess.core.push.SoundLibrary.Preview preview =
+                new in.mohammad.ramiz.confess.core.push.SoundLibrary.Preview();
+        in.mohammad.ramiz.confess.ui.components.ChoiceSheet sheet = in.mohammad.ramiz.confess.ui.components.ChoiceSheet.with(this)
+                .title(R.string.nsound_library)
+                .subtitle(R.string.slib_subtitle);
+        for (in.mohammad.ramiz.confess.core.push.SoundLibrary.Sound s : sounds) {
+            sheet.option(R.drawable.ic_music, s.name, s.about, s == now, null);
+        }
+        sheet.onMark(i -> preview.play(this, sounds.get(i).uri(this)))
+                .confirm(R.string.slib_use, false, i -> {
+                    preview.stop();
+                    in.mohammad.ramiz.confess.core.push.SoundLibrary.Sound s = sounds.get(i);
+                    useSound(in.mohammad.ramiz.confess.core.push.NotificationSound.LIBRARY, s.uri(this), getString(s.name));
+                })
+                .onDismiss(preview::stop)
                 .show();
     }
 

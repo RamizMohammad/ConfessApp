@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -64,6 +65,13 @@
             android:name=".ui.entry.WelcomeActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+
+        <!-- Maintenance: splash got no 200 from GET /ready -->
+        <activity
+            android:name=".ui.entry.MaintenanceActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.entry.GuidelinesActivity"
             android:exported="false"

@@ -20,6 +20,7 @@ import in.mohammad.ramiz.confess.R;
 
 import in.mohammad.ramiz.confess.data.api.ApiCallback;
 import in.mohammad.ramiz.confess.data.api.ApiException;
+import in.mohammad.ramiz.confess.data.api.ServerStatus;
 import in.mohammad.ramiz.confess.data.model.Me;
 import in.mohammad.ramiz.confess.data.repo.AuthRepository;
 import in.mohammad.ramiz.confess.data.repo.UserRepository;
@@ -34,6 +35,7 @@ import in.mohammad.ramiz.confess.ui.base.Router;
  * while we decide where to go.
  *
  *   copy not signed by us (release) → blocking notice, nothing else runs
+ *   server not answering 200 on /ready → Maintenance (skipped when the phone is offline)
  *   refreshable session              → (unlock | home); the network layer refreshes tokens
  *   old-style session (older app)    → quiet Google re-sign-in to get a refreshable one
  *                                      (falls back to the current token while it's valid)
@@ -43,6 +45,9 @@ import in.mohammad.ramiz.confess.ui.base.Router;
  * the app ({@link #playOut}).
  */
 public class LauncherActivity extends AppCompatActivity {
+
+    /** Set by MaintenanceActivity once the server is back, so we don't ask twice. */
+    public static final String EXTRA_SERVER_OK = "server_ok";
 
     /** Never keep the splash longer than this, whatever the network does. */
     private static final long MAX_WAIT_MS = 8_000;
@@ -56,6 +61,7 @@ public class LauncherActivity extends AppCompatActivity {
     private long holdSplashUntil = 0;
     private final Handler handler = new Handler(Looper.getMainLooper());
     @Nullable private CancellationSignal googleCancel;
+    @Nullable private ServerStatus.Check statusCheck;
     /** Where to go once the splash has played its way out. */
     @Nullable private Destination pending;
     private boolean gone = false;
@@ -76,6 +82,21 @@ public class LauncherActivity extends AppCompatActivity {
             return;
         }
 
+        // Ask the server first; the splash stays up meanwhile (ServerStatus times out in seconds).
+        if (getIntent().getBooleanExtra(EXTRA_SERVER_OK, false) || ServerStatus.isDeviceOffline(this)) {
+            route();
+            return;
+        }
+        statusCheck = ServerStatus.check(up -> {
+            statusCheck = null;
+            if (isFinishing() || isDestroyed()) return;
+            if (up) route();
+            else finishWith(Router::toMaintenance);
+        });
+    }
+
+    /** Server is fine (or we're offline): decide where the user goes. */
+    private void route() {
         SessionManager session = SessionManager.get();
         if (!session.isSignedIn() && !session.needsUpgrade()) {
             session.clear();
@@ -174,11 +195,16 @@ public class LauncherActivity extends AppCompatActivity {
      * straight into the app (whose background is the same ink, so nothing flashes).
      */
     private void playOut(@NonNull androidx.core.splashscreen.SplashScreenViewProvider provider) {
-        android.view.View screen = provider.getView();
-        android.view.View icon = provider.getIconView();
+        final android.view.View screen;
+        try {
+            screen = provider.getView();
+        } catch (RuntimeException e) {
+            leaveSplash(provider);
+            return;
+        }
+        final android.view.View icon = splashIcon(provider);
         if (!android.animation.ValueAnimator.areAnimatorsEnabled() || pending == null) {
-            provider.remove();
-            go();
+            leaveSplash(provider);
             return;
         }
         if (icon != null) {
@@ -189,10 +215,29 @@ public class LauncherActivity extends AppCompatActivity {
                     .start();
         }
         screen.animate().alpha(0f).setStartDelay(220).setDuration(260)
-                .withEndAction(() -> {
-                    provider.remove();
-                    go();
-                }).start();
+                .withEndAction(() -> leaveSplash(provider)).start();
+    }
+
+    /**
+     * Opened from a notification (Android 13+), the system splash often has no icon, and the
+     * library's getIconView() then throws instead of returning null — that was the crash on tap.
+     */
+    @Nullable
+    private static android.view.View splashIcon(@NonNull androidx.core.splashscreen.SplashScreenViewProvider provider) {
+        try {
+            return provider.getIconView();
+        } catch (RuntimeException noIcon) {
+            return null;
+        }
+    }
+
+    private void leaveSplash(@NonNull androidx.core.splashscreen.SplashScreenViewProvider provider) {
+        try {
+            provider.remove();
+        } catch (RuntimeException ignored) {
+            // already gone
+        }
+        go();
     }
 
     private void go() {
@@ -206,6 +251,7 @@ public class LauncherActivity extends AppCompatActivity {
     protected void onDestroy() {
         handler.removeCallbacksAndMessages(null);
         if (googleCancel != null) googleCancel.cancel();
+        if (statusCheck != null) statusCheck.cancel();
         super.onDestroy();
     }
 }

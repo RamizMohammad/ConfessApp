@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 
 import in.mohammad.ramiz.confess.data.session.SessionManager;
+import in.mohammad.ramiz.confess.ui.entry.MaintenanceActivity;
 import in.mohammad.ramiz.confess.ui.entry.WelcomeActivity;
 import in.mohammad.ramiz.confess.ui.home.HomeActivity;
 import in.mohammad.ramiz.confess.ui.unlock.UnlockActivity;
@@ -21,6 +22,11 @@ public final class Router {
 
     public static void toWelcome(Activity from) {
         go(from, WelcomeActivity.class);
+    }
+
+    /** Server didn't answer GET /ready with a 200. */
+    public static void toMaintenance(Activity from) {
+        go(from, MaintenanceActivity.class);
     }
 
     private static void go(Activity from, Class<?> target) {

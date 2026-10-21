@@ -21,8 +21,8 @@ import java.io.OutputStream;
 import in.mohammad.ramiz.confess.R;
 
 /**
- * The reader's notification sound: the phone's default, one of the phone's sounds, their own
- * audio file, or silent.
+ * The reader's notification sound: the phone's default, one of Confess's own sounds
+ * ({@link SoundLibrary}), one of the phone's sounds, their own audio file, or silent.
  *
  * Android fixes a channel's sound when the channel is created — the app can't change it later.
  * So every change makes a fresh set of channels ("activity.v4", …) with the new sound and drops
@@ -34,7 +34,7 @@ import in.mohammad.ramiz.confess.R;
  */
 public final class NotificationSound {
 
-    public static final int DEFAULT = 0, PHONE = 1, FILE = 2, SILENT = 3;
+    public static final int DEFAULT = 0, PHONE = 1, FILE = 2, SILENT = 3, LIBRARY = 4;
 
     private static final String PREFS = "notif_sound";
     /** Bigger than this isn't a notification sound. */
@@ -55,7 +55,7 @@ public final class NotificationSound {
 
     public static int kind(@NonNull Context c) {
         int k = prefs(c).getInt("kind", DEFAULT);
-        return k >= DEFAULT && k <= SILENT ? k : DEFAULT;
+        return k >= DEFAULT && k <= LIBRARY ? k : DEFAULT;
     }
 
     /** The sound for the channels (null = silent). */

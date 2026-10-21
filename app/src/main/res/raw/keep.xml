@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Library sounds are played by Android itself through android.resource://…/raw/<name> URIs,
+     which code never references by R.raw id — keep them through resource shrinking. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@raw/notif_*" />

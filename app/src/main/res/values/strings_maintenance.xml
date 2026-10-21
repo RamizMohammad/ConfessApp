@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="maintenance_tag">Maintenance</string>
+    <string name="maintenance_title">Confess is taking a short break</string>
+    <string name="maintenance_body">We\'re fixing a few things behind the scenes. Your confessions, drafts and books are safe. Check back in a few minutes.</string>
+    <string name="maintenance_retry">Try again</string>
+    <string name="maintenance_checking">Checking…</string>
+    <string name="maintenance_still_down">Still under maintenance. We\'ll keep checking.</string>
+</resources>

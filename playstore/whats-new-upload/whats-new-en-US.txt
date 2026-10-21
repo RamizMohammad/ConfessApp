@@ -1,0 +1,4 @@
+New in Confess 5.4.1
+• Confess sounds: 8 notification sounds made for Confess. Tap one to hear it, then keep the one you like (Settings → Notifications → Notification sound)
+• A clear notice when we're under maintenance, and Confess opens by itself once we're back
+• Fixed a crash when opening the app from a notification
