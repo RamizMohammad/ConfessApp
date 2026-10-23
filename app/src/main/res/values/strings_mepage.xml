@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Me page: arranging its sections (Settings → Appearance → Me page) -->
+    <string name="settings_mepage">Me page</string>
+    <string name="mepage_sub">Drag the sections into your order and switch off the ones you don\'t need. Settings always stays at the bottom.</string>
+    <string name="mepage_people">Following &amp; followers</string>
+    <string name="mepage_shown">Shown</string>
+    <string name="mepage_hidden">Hidden</string>
+    <string name="mepage_reset">Back to the original page</string>
+    <string name="mepage_arrange">Arrange this page</string>
+    <string name="cd_show_section">Show %1$s on the Me page</string>
+</resources>

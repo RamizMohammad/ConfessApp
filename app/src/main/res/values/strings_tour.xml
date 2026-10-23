@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The feature tour (TourActivity): shown once after install / an update, and from Settings -->
+    <string name="tour_skip">Skip</string>
+    <string name="tour_next">Next</string>
+    <string name="tour_done">Start confessing</string>
+    <string name="tour_new">NEW</string>
+    <string name="tour_step">%1$d / %2$d</string>
+    <string name="tour_full">See the full tour</string>
+    <string name="settings_tour">Take the tour</string>
+    <string name="settings_tour_sub">Everything Confess can do, in a minute</string>
+    <string name="cd_tour_page">Page %1$d of %2$d</string>
+
+    <string name="tour_welcome_title">Welcome to Confess</string>
+    <string name="tour_welcome_body">Say what you can\'t say anywhere else. Only your alias and aura are ever shown.</string>
+    <string name="tour_welcome_p1">Here\'s a quick look at what you can do</string>
+    <string name="tour_welcome_p2">Swipe or tap Next. Skip any time</string>
+
+    <string name="tour_whatsnew_title">What\'s new</string>
+    <string name="tour_whatsnew_body">A few things arrived since you last looked around.</string>
+
+    <string name="tour_kinds_title">More than words</string>
+    <string name="tour_kinds_body">Every confession can carry a little extra.</string>
+    <string name="tour_kinds_p1">A mood tells people how to respond</string>
+    <string name="tour_kinds_p2">Polls with anonymous votes that are final</string>
+    <string name="tour_kinds_p3">Unsent letters, addressed \"To: …\"</string>
+
+    <string name="tour_gif_title">Say it with a GIF</string>
+    <string name="tour_gif_body">Pick a GIF from GIPHY for a confession or a response.</string>
+    <string name="tour_gif_p1">Tap GIF next to Unsent letter and Poll</string>
+    <string name="tour_gif_p2">A GIF confession says up to 100 characters</string>
+    <string name="tour_gif_p3">Respond with words, a GIF, or both</string>
+
+    <string name="tour_feel_title">Feel it</string>
+    <string name="tour_feel_body">Let someone know their words landed.</string>
+    <string name="tour_feel_p1">Tap to feel it, double-tap a card for a quick ❤️</string>
+    <string name="tour_feel_p2">Hold and slide to pick 🫂 🤝 💪 🥺</string>
+    <string name="tour_feel_p3">Respond, or keep it to reactions with \"Just listen\"</string>
+
+    <string name="tour_stories_title">Stories for a day</string>
+    <string name="tour_stories_body">A short thought that disappears after 24 hours.</string>
+    <string name="tour_stories_p1">A glowing ring means there\'s something new</string>
+    <string name="tour_stories_p2">See who read yours</string>
+
+    <string name="tour_follow_title">Follow the voices you like</string>
+    <string name="tour_follow_body">Keep up with the people whose words stay with you.</string>
+    <string name="tour_follow_p1">A Following feed, just for them</string>
+    <string name="tour_follow_p2">Hear when they confess</string>
+
+    <string name="tour_books_title">Tell it in chapters</string>
+    <string name="tour_books_body">Some stories need more room. Books give it to them.</string>
+    <string name="tour_books_p1">Write chapters and schedule when they come out</string>
+    <string name="tour_books_p2">Read like an e-book, with your own fonts and themes</string>
+    <string name="tour_books_p3">Save books to read with no signal</string>
+
+    <string name="tour_bursts_title">A lot to say?</string>
+    <string name="tour_bursts_body">When someone posts several confessions in a row, they read as one.</string>
+    <string name="tour_bursts_p1">Read from the first, the way it was written</string>
+    <string name="tour_bursts_p2">Choose slider, stack or one by one in Appearance</string>
+
+    <string name="tour_gentle_title">Gentle with heavy things</string>
+    <string name="tour_gentle_body">Confessions that might be hard to read are blurred until you tap them.</string>
+    <string name="tour_gentle_p1">You choose when you\'re ready</string>
+    <string name="tour_gentle_p2">Report or block anyone, any time</string>
+
+    <string name="tour_yours_title">Make it yours</string>
+    <string name="tour_yours_body">Confess can look and feel the way you like.</string>
+    <string name="tour_yours_p1">Arrange the bottom bar and your Me page</string>
+    <string name="tour_yours_p2">Text size, spacing and 8 fonts for confessions and books</string>
+    <string name="tour_yours_p3">Paper tone, from bright to charcoal</string>
+
+    <string name="tour_sounds_title">Confess sounds</string>
+    <string name="tour_sounds_body">Eight notification sounds made for Confess.</string>
+    <string name="tour_sounds_p1">Tap one to hear it before you choose</string>
+    <string name="tour_sounds_p2">Settings → Notifications → Notification sound</string>
+
+    <string name="tour_private_title">Locked to everyone else</string>
+    <string name="tour_private_body">Your confessions stay yours on this phone.</string>
+    <string name="tour_private_p1">A password lock, with fingerprint unlock</string>
+    <string name="tour_private_p2">Shake your phone to lock Confess at once</string>
+    <string name="tour_private_p3">Private screen hides it from recent apps</string>
+
+    <string name="tour_end_title">That\'s Confess</string>
+    <string name="tour_end_body">Whatever\'s on your mind, there\'s room for it here.</string>
+    <string name="tour_end_p1">Find this tour again in Settings</string>
+    <!-- Where to find each feature: shown as a path that lights up step by step. -->
+    <string name="tour_where">Find it</string>
+    <string-array name="tour_where_kinds"><item>Bottom bar</item><item>✎ Write</item><item>Mood · Poll · Letter</item></string-array>
+    <string-array name="tour_where_gif"><item>✎ Write</item><item>GIF</item><item>or GIF in any response</item></string-array>
+    <string-array name="tour_where_feel"><item>Feed</item><item>Any card</item><item>Tap · double-tap · hold</item></string-array>
+    <string-array name="tour_where_stories"><item>Feed</item><item>Top row</item><item>Your story</item></string-array>
+    <string-array name="tour_where_follow"><item>Tap an alias</item><item>Their profile</item><item>Follow</item></string-array>
+    <string-array name="tour_where_books"><item>Books tab</item><item>Your books</item><item>Write a book</item></string-array>
+    <string-array name="tour_where_bursts"><item>Me</item><item>Settings</item><item>Paper, text &amp; bursts</item><item>Bursts</item></string-array>
+    <string-array name="tour_where_gentle"><item>Feed</item><item>Sensitive · tap to read</item></string-array>
+    <string-array name="tour_where_yours"><item>Me</item><item>Settings</item><item>Paper, text &amp; bursts</item></string-array>
+    <string-array name="tour_where_sounds"><item>Me</item><item>Settings</item><item>Choose notifications</item><item>Notification sound</item></string-array>
+    <string-array name="tour_where_private"><item>Me</item><item>Settings</item><item>Lock &amp; privacy</item></string-array>
+</resources>

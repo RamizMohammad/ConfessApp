@@ -14,6 +14,7 @@ public final class LockPrefs {
     private static final String PREFS = "lock";
     private static final String KEY_TIMEOUT = "relock_after_ms";
     private static final String KEY_SECURE = "secure_screen";
+    private static final String KEY_SHAKE = "shake_to_lock";
 
     /** Choices shown in Settings. */
     public static final long[] OPTIONS_MS = {0L, 60_000L, 5 * 60_000L, 15 * 60_000L};
@@ -39,6 +40,15 @@ public final class LockPrefs {
 
     public static void setSecureScreen(@NonNull Context ctx, boolean on) {
         prefs(ctx).edit().putBoolean(KEY_SECURE, on).apply();
+    }
+
+    /** Shake the phone to lock Confess at once ({@link ShakeLock}); off until switched on. */
+    public static boolean shakeToLock(@NonNull Context ctx) {
+        return prefs(ctx).getBoolean(KEY_SHAKE, false);
+    }
+
+    public static void setShakeToLock(@NonNull Context ctx, boolean on) {
+        prefs(ctx).edit().putBoolean(KEY_SHAKE, on).apply();
     }
 
     @StringRes

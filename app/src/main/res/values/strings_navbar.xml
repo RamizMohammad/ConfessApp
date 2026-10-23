@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings → Appearance → Bottom bar -->
+    <string name="settings_navbar">Bottom bar</string>
+    <string name="navbar_sub">Drag the tabs into your order. Confess always stays in the middle.</string>
+    <string name="navbar_left">Left of Confess</string>
+    <string name="navbar_right">Right of Confess</string>
+    <string name="navbar_preview_hint">Tap a tab in the preview to try it</string>
+    <string name="navbar_reset">Back to the original order</string>
+    <string name="navbar_labels">Names under the icons</string>
+    <string name="navbar_labels_always">Always</string>
+    <string name="navbar_labels_selected">Selected</string>
+    <string name="navbar_labels_never">Never</string>
+    <string name="navbar_animate">Animated icons</string>
+    <string name="navbar_animate_sub">Icons draw themselves in when you switch tabs. Stays still when your phone\'s animations are off.</string>
+    <string name="cd_drag_tab">Drag to move %1$s</string>
+</resources>

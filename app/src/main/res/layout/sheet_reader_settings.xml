@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Reader "Aa": text size, spacing, typeface, page turn, page colour + tone, brightness, switches. Scrolls on short screens. -->
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- The title and sample page stay put; only the settings under them scroll (ReaderSettingsSheet
+     opens the sheet at a fixed height). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/space_lg">
 
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingHorizontal="@dimen/margin_screen"
-    android:paddingTop="@dimen/space_lg"
-    android:paddingBottom="@dimen/space_lg">
+    android:paddingHorizontal="@dimen/margin_screen">
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,6 +21,39 @@
         android:text="@string/reader_settings_title"
         android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall"
         android:textColor="@color/text_primary" />
+
+    <!-- Live sample page: every setting below shows here; tap it to see the page turn. -->
+    <in.mohammad.ramiz.confess.ui.books.reader.PagePreview
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:layout_marginTop="@dimen/space_md" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:gravity="center"
+        android:text="@string/reader_preview_hint"
+        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+        android:textColor="@color/text_muted" />
+</LinearLayout>
+
+<androidx.core.widget.NestedScrollView
+    android:id="@+id/settingsScroll"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:clipToPadding="false"
+    android:fadingEdgeLength="16dp"
+    android:requiresFadingEdge="vertical">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/margin_screen"
+    android:paddingBottom="@dimen/space_lg">
 
     <!-- Size -->
     <TextView
@@ -71,7 +106,7 @@
         android:paddingTop="@dimen/space_md"
         android:text="@string/reader_spacing" />
 
-    <com.google.android.material.button.MaterialButtonToggleGroup
+    <in.mohammad.ramiz.confess.ui.components.GlideToggleGroup
         android:id="@+id/spacing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -80,7 +115,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/spacingCompact"
-            style="@style/Widget.Confess.Button.Outlined"
+            style="@style/Widget.Confess.Button.Segment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -88,7 +123,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/spacingNormal"
-            style="@style/Widget.Confess.Button.Outlined"
+            style="@style/Widget.Confess.Button.Segment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -96,12 +131,12 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/spacingAiry"
-            style="@style/Widget.Confess.Button.Outlined"
+            style="@style/Widget.Confess.Button.Segment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/reader_spacing_airy" />
-    </com.google.android.material.button.MaterialButtonToggleGroup>
+    </in.mohammad.ramiz.confess.ui.components.GlideToggleGroup>
 
     <!-- Typeface -->
     <TextView
@@ -111,31 +146,11 @@
         android:paddingTop="@dimen/space_md"
         android:text="@string/reader_font" />
 
-    <com.google.android.material.button.MaterialButtonToggleGroup
+    <!-- Every reading font, each chip written in its own face (FontPicker). -->
+    <in.mohammad.ramiz.confess.ui.components.FontPicker
         android:id="@+id/font"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:selectionRequired="true"
-        app:singleSelection="true">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/fontSerif"
-            style="@style/Widget.Confess.Button.Outlined"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="@font/newsreader"
-            android:text="@string/reader_font_serif" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/fontSans"
-            style="@style/Widget.Confess.Button.Outlined"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="@font/manrope"
-            android:text="@string/reader_font_sans" />
-    </com.google.android.material.button.MaterialButtonToggleGroup>
+        android:layout_height="wrap_content" />
 
     <!-- Page turn -->
     <TextView
@@ -145,7 +160,7 @@
         android:paddingTop="@dimen/space_md"
         android:text="@string/reader_turn" />
 
-    <com.google.android.material.button.MaterialButtonToggleGroup
+    <in.mohammad.ramiz.confess.ui.components.GlideToggleGroup
         android:id="@+id/turnStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -154,7 +169,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/turnCurl"
-            style="@style/Widget.Confess.Button.Outlined"
+            style="@style/Widget.Confess.Button.Segment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -163,7 +178,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/turnSlide"
-            style="@style/Widget.Confess.Button.Outlined"
+            style="@style/Widget.Confess.Button.Segment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -172,13 +187,13 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/turnInstant"
-            style="@style/Widget.Confess.Button.Outlined"
+            style="@style/Widget.Confess.Button.Segment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:maxLines="1"
             android:text="@string/reader_turn_instant" />
-    </com.google.android.material.button.MaterialButtonToggleGroup>
+    </in.mohammad.ramiz.confess.ui.components.GlideToggleGroup>
 
     <!-- Page colour -->
     <TextView
@@ -452,3 +467,4 @@
     </LinearLayout>
 </LinearLayout>
 </androidx.core.widget.NestedScrollView>
+</LinearLayout>

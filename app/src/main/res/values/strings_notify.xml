@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The "allow notifications" popup, shown before Android's own permission prompt -->
+    <string name="notify_ask_title">Know when your words land</string>
+    <string name="notify_ask_body">Get a quiet nudge when someone feels your confession, responds to it or follows you, and when a book you read gets a new chapter. Nothing else. You choose which ones in Settings.</string>
+    <string name="notify_ask_allow">Allow notifications</string>
+    <string name="notify_ask_later">Not now</string>
+    <string name="notify_ask_blocked_body">Notifications are turned off for Confess on this phone, so you won\'t know when someone feels or answers your words. You can turn them on in your phone\'s settings.</string>
+    <string name="notify_ask_open_settings">Open settings</string>
+    <string name="notify_ask_on">Notifications are on. You\'ll know when your words land.</string>
+</resources>

@@ -302,12 +302,35 @@ public class UnlockActivity extends BaseActivity {
 
     // ── Forgot / sign out ────────────────────────────────────────────────────
 
+    /**
+     * "Forgot password?": with fingerprint unlock on, prove it's you first — so someone holding
+     * the phone can't send a reset link to the account's email — then the reset popup.
+     */
     private void confirmForgot() {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.forgot_title)
-                .setMessage(R.string.forgot_body)
-                .setNegativeButton(R.string.action_cancel, null)
-                .setPositiveButton(R.string.forgot_send, (d, w) -> sendReset())
+        if (!bioAllowed) {
+            showForgot();
+            return;
+        }
+        Biometrics.prompt(this, getString(R.string.forgot_verify_title), getString(R.string.forgot_verify_sub),
+                new Biometrics.Callback() {
+                    @Override public void onSuccess() { showForgot(); }
+                    @Override public void onFailure(@NonNull CharSequence reason) {
+                        Haptics.reject(UnlockActivity.this);
+                        Snackbar.make(b.getRoot(), R.string.forgot_verify_failed, Snackbar.LENGTH_LONG).show();
+                    }
+                    @Override public void onNegative() { }   // cancelled: nothing sent
+                });
+    }
+
+    private void showForgot() {
+        in.mohammad.ramiz.confess.ui.components.ConfessDialog.with(this)
+                .icon(R.drawable.ic_mail_open)
+                .title(R.string.forgot_title)
+                .body(R.string.forgot_body)
+                .primary(R.string.forgot_send, d -> {
+                    d.dismiss();
+                    sendReset();
+                })
                 .show();
     }
 

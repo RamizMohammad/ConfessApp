@@ -213,8 +213,7 @@
                             android:fontFamily="@font/newsreader"
                             android:text="@string/compose_to"
                             android:textColor="@color/paper_meta"
-                            android:textSize="20sp"
-                            android:textStyle="italic" />
+                            android:textSize="19sp" />
 
                         <EditText
                             android:id="@+id/letterInput"
@@ -233,8 +232,7 @@
                             android:textColor="@color/paper_ink"
                             android:textColorHint="@color/paper_meta"
                             android:textCursorDrawable="@drawable/cursor_amber"
-                            android:textSize="20sp"
-                            android:textStyle="italic" />
+                            android:textSize="19sp" />
                     </LinearLayout>
 
                     <in.mohammad.ramiz.confess.ui.components.LinedEditText
@@ -256,9 +254,51 @@
                         android:textColor="@color/paper_ink"
                         android:textColorHint="@color/paper_meta"
                         android:textCursorDrawable="@drawable/cursor_amber"
-                        android:textSize="20sp"
-                        android:textStyle="italic"
+                        android:textSize="19sp"
                         tools:text="I bought two train tickets to the coast this morning." />
+
+                    <!-- GIF confession: the chosen GIF (tap to change, × to remove). -->
+                    <FrameLayout
+                        android:id="@+id/gifAttach"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/space_md"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <in.mohammad.ramiz.confess.ui.components.AspectImageView
+                            android:id="@+id/gifPreview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/surface_high"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:scaleType="centerCrop"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearance.Confess.Gif" />
+
+                        <ImageButton
+                            android:id="@+id/gifRemove"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="top|end"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/bg_gif_remove"
+                            android:contentDescription="@string/cd_remove_gif"
+                            android:src="@drawable/ic_close"
+                            app:tint="@color/text_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|start"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/bg_gif_remove"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="2dp"
+                            android:text="@string/giphy"
+                            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                            android:textColor="@color/text_primary" />
+                    </FrameLayout>
 
                     <View
                         android:layout_width="match_parent"
@@ -279,42 +319,40 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Add to it: unsent letter · poll -->
-            <LinearLayout
+            <!-- Add to it, one at a time: unsent letter · poll · GIF. Tap the chosen one again to drop it. -->
+            <in.mohammad.ramiz.confess.ui.components.GlideToggleGroup
+                android:id="@+id/extras"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_md"
-                android:orientation="horizontal">
+                app:selectionRequired="false"
+                app:singleSelection="true">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/letterToggle"
-                    style="@style/Widget.Confess.Button.Outlined"
+                    style="@style/Widget.Confess.Button.Segment"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checkable="true"
-                    android:minHeight="44dp"
-                    android:text="@string/compose_letter"
-                    android:textAppearance="@style/TextAppearance.Confess.Meta"
-                    app:icon="@drawable/ic_mail_open"
-                    app:iconGravity="textStart"
-                    app:iconSize="@dimen/icon_size_sm" />
+                    android:layout_weight="1.3"
+                    android:text="@string/compose_letter" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/pollToggle"
-                    style="@style/Widget.Confess.Button.Outlined"
+                    style="@style/Widget.Confess.Button.Segment"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/space_sm"
                     android:layout_weight="1"
-                    android:checkable="true"
-                    android:minHeight="44dp"
-                    android:text="@string/compose_poll"
-                    android:textAppearance="@style/TextAppearance.Confess.Meta"
-                    app:icon="@drawable/ic_check_check"
-                    app:iconGravity="textStart"
-                    app:iconSize="@dimen/icon_size_sm" />
-            </LinearLayout>
+                    android:text="@string/compose_poll" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/gifToggle"
+                    style="@style/Widget.Confess.Button.Segment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/cd_pick_gif"
+                    android:text="@string/compose_gif" />
+            </in.mohammad.ramiz.confess.ui.components.GlideToggleGroup>
 
             <!-- Poll editor -->
             <LinearLayout

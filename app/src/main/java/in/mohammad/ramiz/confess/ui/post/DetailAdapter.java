@@ -145,7 +145,12 @@ public class DetailAdapter extends ListAdapter<DetailAdapter.Row, RecyclerView.V
         b.authorTag.setVisibility(c.isPostAuthor ? View.VISIBLE : View.GONE);
         String when = Formats.relative(c.createdAt);
         b.time.setText(c.isMine ? when + " · " + b.getRoot().getContext().getString(R.string.feed_you) : when);
+        boolean words = c.text != null && !c.text.trim().isEmpty();
         b.text.setText(c.text);
+        b.text.setVisibility(words ? View.VISIBLE : View.GONE);
+        boolean gif = c.gif != null && c.gif.id != null;
+        b.gif.setVisibility(gif ? View.VISIBLE : View.GONE);
+        in.mohammad.ramiz.confess.ui.gif.GifViews.show(b.gif, gif ? c.gif : null, true);
         b.stripe.setBackgroundColor(ColorUtils.setAlphaComponent(Aura.resolve(avatar).glow, 0xCC));
         b.avatar.setOnClickListener(v -> listener.onResponseAuthor(c));
         b.alias.setOnClickListener(v -> listener.onResponseAuthor(c));

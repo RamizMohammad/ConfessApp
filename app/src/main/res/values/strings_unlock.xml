@@ -24,6 +24,9 @@
     <string name="forgot_title">Reset your password?</string>
     <string name="forgot_body">We\'ll email a reset link to the Google account you signed in with. The link works for one hour.</string>
     <string name="forgot_send">Send link</string>
+    <string name="forgot_verify_title">Confirm it\'s you</string>
+    <string name="forgot_verify_sub">Use your fingerprint before we send a reset link</string>
+    <string name="forgot_verify_failed">We couldn\'t confirm it\'s you, so no reset link was sent.</string>
     <string name="forgot_sent">Check your inbox — the link works for one hour.</string>
 
     <!-- After an emailed password reset -->

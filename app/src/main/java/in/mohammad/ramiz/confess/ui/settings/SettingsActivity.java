@@ -70,10 +70,15 @@ public class SettingsActivity extends BaseActivity {
         b.back.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
         SettingRows.setup(b.appearance, R.drawable.ic_eye, R.string.settings_appearance_row);
+        SettingRows.setup(b.reading, R.drawable.ic_book_open, R.string.settings_reading_row);
         SettingRows.setup(b.push, R.drawable.ic_bell, R.string.settings_push);
         SettingRows.setup(b.pushSystem, R.drawable.ic_settings, R.string.settings_notif_types);
         SettingRows.setup(b.security, R.drawable.ic_lock, R.string.settings_security_row);
         SettingRows.setup(b.blocked, R.drawable.ic_ban, R.string.blocked_title);
+        SettingRows.setup(b.tour, R.drawable.ic_sliders, R.string.settings_tour);
+        SettingRows.chevron(b.tour);
+        SettingRows.subtitle(b.tour, R.string.settings_tour_sub);
+        b.tour.row.setOnClickListener(v -> in.mohammad.ramiz.confess.ui.tour.Tour.open(this));
         SettingRows.setup(b.feature, R.drawable.ic_mail_open, R.string.settings_feature);
         SettingRows.setup(b.guidelines, R.drawable.ic_shield, R.string.settings_guidelines);
         SettingRows.setup(b.privacy, R.drawable.ic_lock, R.string.settings_privacy_policy);
@@ -82,10 +87,11 @@ public class SettingsActivity extends BaseActivity {
 
         SettingRows.toggle(b.push);
         for (in.mohammad.ramiz.confess.databinding.ViewSettingRowBinding r : new in.mohammad.ramiz.confess.databinding.ViewSettingRowBinding[]{
-                b.appearance, b.pushSystem, b.security, b.blocked, b.feature, b.guidelines, b.privacy}) {
+                b.appearance, b.reading, b.pushSystem, b.security, b.blocked, b.feature, b.guidelines, b.privacy}) {
             SettingRows.chevron(r);
         }
         SettingRows.subtitle(b.appearance, R.string.settings_appearance_sub);
+        SettingRows.subtitle(b.reading, R.string.settings_reading_sub);
         SettingRows.subtitle(b.push, R.string.settings_push_sub);
         SettingRows.subtitle(b.pushSystem, R.string.settings_notif_types_sub);
         SettingRows.subtitle(b.security, R.string.settings_security_sub);
@@ -96,6 +102,11 @@ public class SettingsActivity extends BaseActivity {
 
         b.profileCard.setOnClickListener(v -> startActivity(new Intent(this, EditProfileActivity.class)));
         b.appearance.row.setOnClickListener(v -> startActivity(new Intent(this, AppearanceActivity.class)));
+        b.reading.row.setOnClickListener(v -> in.mohammad.ramiz.confess.ui.books.reader.ReaderSettingsSheet.show(this,
+                in.mohammad.ramiz.confess.ui.books.reader.ReaderPrefs.load(this),
+                new in.mohammad.ramiz.confess.ui.books.reader.ReaderSettingsSheet.Listener() {
+                    @Override public void onLayout() { renderReading(); }
+                }));
         b.security.row.setOnClickListener(v -> startActivity(new Intent(this, SecurityActivity.class)));
         b.push.row.setOnClickListener(v -> onPushTapped());
         b.pushSystem.row.setOnClickListener(v -> startActivity(new Intent(this, NotificationSettingsActivity.class)));
@@ -126,6 +137,13 @@ public class SettingsActivity extends BaseActivity {
         });
     }
 
+    /** Reading: "19 · Newsreader". */
+    private void renderReading() {
+        in.mohammad.ramiz.confess.ui.books.reader.ReaderPrefs r = in.mohammad.ramiz.confess.ui.books.reader.ReaderPrefs.load(this);
+        SettingRows.value(b.reading, getString(R.string.settings_reading_value, r.sizeSp,
+                getString(in.mohammad.ramiz.confess.ui.components.ReadingFonts.name(r.font))));
+    }
+
     private void render(@Nullable Me m) {
         // Appearance: "Bright · Slider" / "Dimmed · Stack"
         int burst = in.mohammad.ramiz.confess.ui.feed.Bursts.mode(this);
@@ -135,6 +153,7 @@ public class SettingsActivity extends BaseActivity {
                 : burst == in.mohammad.ramiz.confess.ui.feed.Bursts.SEPARATE ? R.string.burst_mode_separate
                 : R.string.burst_mode_slider);
         SettingRows.value(b.appearance, paper + " · " + bursts);
+        renderReading();
         if (m == null) return;
         me = m;
         b.avatar.setAvatar(m.avatar);

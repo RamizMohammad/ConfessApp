@@ -7,4 +7,6 @@
     <item name="tone_hint" type="id" />
     <item name="tone_drawable" type="id" />
     <item name="tone_icon" type="id" />
+    <!-- MePage: the order/visibility the Me page was last laid out with. -->
+    <item name="me_page_state" type="id" />
 </resources>

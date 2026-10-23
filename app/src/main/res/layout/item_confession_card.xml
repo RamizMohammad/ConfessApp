@@ -148,6 +148,18 @@
                 android:visibility="gone" />
         </FrameLayout>
 
+        <!-- GIF confession: the GIPHY GIF under the words (blurred with them when sensitive). -->
+        <in.mohammad.ramiz.confess.ui.components.AspectImageView
+            android:id="@+id/gif"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:layout_marginEnd="@dimen/space_md"
+            android:background="@color/surface_high"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Confess.Gif" />
+
         <!-- My own sensitive confession: a note that others see it blurred -->
         <TextView
             android:id="@+id/sensitiveNote"

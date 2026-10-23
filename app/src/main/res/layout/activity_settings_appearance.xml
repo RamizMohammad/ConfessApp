@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Settings → Appearance: paper + text tone (cards, composer, book pages) and how bursts look. -->
+<!-- Settings → Appearance: paper + text tone (cards, composer, book pages), how bursts look, the bottom bar and the Me page. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
@@ -194,6 +194,136 @@
                 style="@style/Confess.SectionLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/settings_card_text" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_plate"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/space_md"
+                android:paddingVertical="@dimen/space_sm">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/space_sm"
+                    android:text="@string/card_text_sub"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_secondary" />
+
+                <!-- Live sample: a card in the reader's paper tone, text size, spacing and font. -->
+                <TextView
+                    android:id="@+id/cardPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_paper"
+                    android:padding="@dimen/space_md"
+                    android:text="@string/card_text_preview"
+                    android:textColor="@color/paper_ink" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:text="@string/reader_text_size"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_secondary" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/cardSmaller"
+                        style="@style/Widget.Confess.IconButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/cd_text_smaller"
+                        app:icon="@drawable/ic_minus" />
+
+                    <TextView
+                        android:id="@+id/cardSize"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/newsreader"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary"
+                        android:textSize="20sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/cardBigger"
+                        style="@style/Widget.Confess.IconButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/cd_text_bigger"
+                        app:icon="@drawable/ic_plus" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:layout_marginBottom="@dimen/space_sm"
+                    android:text="@string/reader_spacing"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_secondary" />
+
+                <in.mohammad.ramiz.confess.ui.components.GlideToggleGroup
+                    android:id="@+id/cardSpacing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/cardSpacingCompact"
+                        style="@style/Widget.Confess.Button.Segment"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/reader_spacing_compact" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/cardSpacingNormal"
+                        style="@style/Widget.Confess.Button.Segment"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/reader_spacing_normal" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/cardSpacingAiry"
+                        style="@style/Widget.Confess.Button.Segment"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/reader_spacing_airy" />
+                </in.mohammad.ramiz.confess.ui.components.GlideToggleGroup>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:layout_marginBottom="@dimen/space_sm"
+                    android:text="@string/reader_font"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_secondary" />
+
+                <in.mohammad.ramiz.confess.ui.components.FontPicker
+                    android:id="@+id/cardFont"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/space_sm" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/Confess.SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/settings_bursts" />
 
             <LinearLayout
@@ -212,7 +342,7 @@
                     android:textAppearance="@style/TextAppearance.Confess.Meta"
                     android:textColor="@color/text_secondary" />
 
-                <com.google.android.material.button.MaterialButtonToggleGroup
+                <in.mohammad.ramiz.confess.ui.components.GlideToggleGroup
                     android:id="@+id/burstMode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -221,7 +351,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/burstSlider"
-                        style="@style/Widget.Confess.Button.Outlined"
+                        style="@style/Widget.Confess.Button.Segment"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -230,7 +360,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/burstStack"
-                        style="@style/Widget.Confess.Button.Outlined"
+                        style="@style/Widget.Confess.Button.Segment"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -239,13 +369,13 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/burstSeparate"
-                        style="@style/Widget.Confess.Button.Outlined"
+                        style="@style/Widget.Confess.Button.Segment"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:maxLines="1"
                         android:text="@string/burst_mode_separate" />
-                </com.google.android.material.button.MaterialButtonToggleGroup>
+                </in.mohammad.ramiz.confess.ui.components.GlideToggleGroup>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/burstHow"
@@ -255,6 +385,181 @@
                     android:text="@string/settings_bursts_how"
                     app:icon="@drawable/ic_arrow_right"
                     app:iconGravity="end" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/Confess.SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_navbar" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_plate"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/space_md"
+                android:paddingVertical="@dimen/space_sm">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/space_sm"
+                    android:text="@string/navbar_sub"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_secondary" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/navOrder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never" />
+
+                <!-- Live preview: the real bar, in the reader's order and label style. -->
+                <include
+                    android:id="@+id/navPreview"
+                    layout="@layout/view_bottom_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_lg" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:gravity="center"
+                    android:text="@string/navbar_preview_hint"
+                    android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                    android:textColor="@color/text_muted" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/navReset"
+                    style="@style/Widget.Confess.Button.Link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/navbar_reset" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:layout_marginBottom="@dimen/space_sm"
+                    android:text="@string/navbar_labels"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_secondary" />
+
+                <in.mohammad.ramiz.confess.ui.components.GlideToggleGroup
+                    android:id="@+id/navLabels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/navLabelsAlways"
+                        style="@style/Widget.Confess.Button.Segment"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:maxLines="1"
+                        android:text="@string/navbar_labels_always" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/navLabelsSelected"
+                        style="@style/Widget.Confess.Button.Segment"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:maxLines="1"
+                        android:text="@string/navbar_labels_selected" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/navLabelsNever"
+                        style="@style/Widget.Confess.Button.Segment"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:maxLines="1"
+                        android:text="@string/navbar_labels_never" />
+                </in.mohammad.ramiz.confess.ui.components.GlideToggleGroup>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/navbar_animate"
+                            android:textAppearance="@style/TextAppearance.Confess.Body"
+                            android:textColor="@color/text_primary" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/navbar_animate_sub"
+                            android:textAppearance="@style/TextAppearance.Confess.Meta"
+                            android:textColor="@color/text_muted" />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/navAnimate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_sm"
+                        android:contentDescription="@string/navbar_animate" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/meSectionLabel"
+                style="@style/Confess.SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_mepage" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_plate"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/space_md"
+                android:paddingVertical="@dimen/space_sm">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/space_sm"
+                    android:text="@string/mepage_sub"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_secondary" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/meOrder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/meReset"
+                    style="@style/Widget.Confess.Button.Link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mepage_reset" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

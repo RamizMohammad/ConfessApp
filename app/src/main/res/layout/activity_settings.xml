@@ -128,6 +128,25 @@
                 style="@style/Confess.SectionLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/settings_section_reading" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_plate"
+                android:orientation="vertical">
+
+                <!-- Opens the same reading sheet as the book reader's "Aa" button. -->
+                <include
+                    android:id="@+id/reading"
+                    layout="@layout/view_setting_row" />
+
+            </LinearLayout>
+
+            <TextView
+                style="@style/Confess.SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/settings_section_notifications" />
 
             <LinearLayout
@@ -199,6 +218,16 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_plate"
                 android:orientation="vertical">
+
+                <include
+                    android:id="@+id/tour"
+                    layout="@layout/view_setting_row" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hairline"
+                    android:layout_marginStart="56dp"
+                    android:background="@color/hairline" />
 
                 <include
                     android:id="@+id/feature"

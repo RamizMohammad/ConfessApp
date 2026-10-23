@@ -110,6 +110,18 @@
                 android:textColor="@color/text_primary"
                 android:textIsSelectable="true"
                 tools:text="The curtain line gave me chills. Keep buying things they hated." />
+
+            <!-- A GIF response (GIPHY) — with or without words. -->
+            <in.mohammad.ramiz.confess.ui.components.AspectImageView
+                android:id="@+id/gif"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:background="@color/surface_high"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Confess.Gif" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

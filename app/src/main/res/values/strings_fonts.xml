@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reading fonts (ReadingFonts): name + a short line on each -->
+    <string name="font_manrope">Manrope</string>
+    <string name="font_manrope_sub">Clean and modern</string>
+    <string name="font_newsreader">Newsreader</string>
+    <string name="font_newsreader_sub">Classic newspaper serif</string>
+    <string name="font_literata">Literata</string>
+    <string name="font_literata_sub">Made for long reads</string>
+    <string name="font_lora">Lora</string>
+    <string name="font_lora_sub">Warm, bookish serif</string>
+    <string name="font_atkinson">Atkinson</string>
+    <string name="font_atkinson_sub">Extra easy to read</string>
+    <string name="font_nunito">Nunito</string>
+    <string name="font_nunito_sub">Soft and rounded</string>
+    <string name="font_caveat">Caveat</string>
+    <string name="font_caveat_sub">Handwritten</string>
+    <string name="font_typewriter">Typewriter</string>
+    <string name="font_typewriter_sub">Like a typed letter</string>
+</resources>

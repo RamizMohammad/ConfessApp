@@ -18,6 +18,10 @@
     <string name="settings_bio_unavailable">No fingerprint set up on this phone</string>
     <string name="settings_change_password">Change password</string>
     <string name="settings_privacy_screen">Private screen</string>
+    <string name="settings_shake_lock">Shake to lock</string>
+    <string name="settings_shake_lock_sub">Shake your phone to lock Confess at once</string>
+    <string name="settings_shake_lock_needs_lock">Turn on the app lock first</string>
+    <string name="settings_shake_lock_on">Shake your phone to try it</string>
     <string name="settings_privacy_screen_sub">Hide Confess in recent apps and block screenshots</string>
 
     <string name="autolock_immediately">Immediately</string>
@@ -136,6 +140,13 @@
     <string name="feature_sent">Thank you — we read every one.</string>
     <!-- Appearance: paper tone -->
     <string name="settings_section_appearance">APPEARANCE</string>
+    <string name="settings_section_reading">READING</string>
+    <string name="settings_card_text">Confession text</string>
+    <string name="card_text_sub">How confessions read on cards, and a little bigger on the confession screen.</string>
+    <string name="card_text_preview">I still look for your car at every red light, even though I moved away two years ago.</string>
+    <string name="settings_reading_row">Book reader</string>
+    <string name="settings_reading_sub">Text size, spacing, font, page turns and theme for books</string>
+    <string name="settings_reading_value">%1$d · %2$s</string>
     <string name="settings_section_people">PEOPLE</string>
     <string name="settings_section_paper">PAPER &amp; TEXT</string>
     <string name="settings_profile_card_sub">Your aura &amp; about</string>

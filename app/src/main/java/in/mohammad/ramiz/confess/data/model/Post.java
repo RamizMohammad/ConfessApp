@@ -24,6 +24,8 @@ public class Post {
     @Nullable public String mood;
     /** Unsent letter addressee, or null. */
     @Nullable public String letterTo;
+    /** GIF confession: a GIPHY GIF (the text is then ≤ 150). */
+    @Nullable public Gif gif;
     @Nullable public Poll poll;
     /** Set when this confession is a book chapter (opened from a reaction push, say). */
     @Nullable public ChapterMeta chapter;
@@ -50,6 +52,7 @@ public class Post {
         p.createdAt = createdAt;
         p.mood = mood;
         p.letterTo = letterTo;
+        p.gif = gif;
         p.poll = poll;
         p.chapter = chapter;
         p.burst = burst;

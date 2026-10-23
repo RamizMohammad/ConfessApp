@@ -63,8 +63,7 @@
             android:fontFamily="@font/newsreader"
             android:gravity="center"
             android:textColor="@color/text_secondary"
-            android:textSize="20sp"
-            android:textStyle="italic" />
+            android:textSize="19sp" />
 
         <TextView
             android:id="@+id/endBody"

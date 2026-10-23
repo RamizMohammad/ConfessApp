@@ -233,6 +233,44 @@
             tools:text="432 / 500"
             tools:visibility="visible" />
 
+        <!-- The GIF going with this response (× takes it off). -->
+        <LinearLayout
+            android:id="@+id/gifAttach"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="62dp"
+            android:layout_marginTop="@dimen/space_sm"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <in.mohammad.ramiz.confess.ui.components.AspectImageView
+                android:id="@+id/gifThumb"
+                android:layout_width="72dp"
+                android:layout_height="wrap_content"
+                android:background="@color/surface_high"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Confess.Gif" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_sm"
+                android:text="@string/response_gif_attached"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/text_secondary" />
+
+            <ImageButton
+                android:id="@+id/gifRemove"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@null"
+                android:contentDescription="@string/cd_remove_gif"
+                android:src="@drawable/ic_close"
+                app:tint="@color/text_muted" />
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/inputBar"
             android:layout_width="match_parent"
@@ -248,24 +286,44 @@
                 android:layout_height="36dp"
                 android:layout_marginBottom="4dp" />
 
-            <EditText
-                android:id="@+id/input"
+            <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_input_pill"
-                android:hint="@string/response_hint"
-                android:importantForAutofill="no"
-                android:inputType="textMultiLine|textCapSentences"
-                android:maxLines="5"
-                android:minHeight="44dp"
-                android:paddingHorizontal="18dp"
-                android:paddingVertical="10dp"
-                android:textAppearance="@style/TextAppearance.Confess.Body"
-                android:textColor="@color/text_primary"
-                android:textColorHint="@color/text_muted"
-                android:textCursorDrawable="@drawable/cursor_amber" />
+                android:layout_weight="1">
+
+                <EditText
+                    android:id="@+id/input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input_pill"
+                    android:hint="@string/response_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLines="5"
+                    android:minHeight="44dp"
+                    android:paddingStart="18dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="46dp"
+                    android:paddingBottom="10dp"
+                    android:textAppearance="@style/TextAppearance.Confess.Body"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_muted"
+                    android:textCursorDrawable="@drawable/cursor_amber" />
+
+                <!-- GIF (GIPHY) at the end of the bar -->
+                <ImageButton
+                    android:id="@+id/gifButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@null"
+                    android:contentDescription="@string/cd_pick_gif"
+                    android:src="@drawable/ic_gif"
+                    app:tint="@color/text_secondary" />
+            </FrameLayout>
 
             <FrameLayout
                 android:layout_width="44dp"

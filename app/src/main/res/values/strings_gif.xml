@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- GIFs (GIPHY) -->
+    <string name="giphy" translatable="false">GIPHY</string>
+    <string name="gif_search_hint">Search GIPHY</string>
+    <string name="gif_trending">TRENDING</string>
+    <string name="gif_results">RESULTS FOR “%1$s”</string>
+    <string name="gif_powered_by">Powered by GIPHY</string>
+    <string name="gif_none">No GIFs for that. Try another word.</string>
+    <string name="gif_error">Couldn\'t reach GIPHY. Check your connection and try again.</string>
+    <string name="gif_not_set_up">GIFs aren\'t switched on in this build yet.</string>
+    <string name="cd_gif">GIF</string>
+    <string name="cd_pick_gif">Add a GIF</string>
+    <string name="cd_remove_gif">Remove the GIF</string>
+    <string name="compose_gif">GIF</string>
+    <string name="compose_gif_limit">With a GIF, a confession can say %1$d characters. Take out the struck-out words to post it.</string>
+    <string name="response_gif_attached">GIF added</string>
+</resources>

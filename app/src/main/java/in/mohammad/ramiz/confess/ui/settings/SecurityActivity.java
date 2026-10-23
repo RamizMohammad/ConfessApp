@@ -67,6 +67,11 @@ public class SecurityActivity extends BaseActivity {
         SettingRows.setup(b.bio, R.drawable.ic_fingerprint, R.string.settings_bio);
         SettingRows.setup(b.changePassword, R.drawable.ic_pencil, R.string.settings_change_password);
         SettingRows.setup(b.privacyScreen, R.drawable.ic_eye_off, R.string.settings_privacy_screen);
+        SettingRows.setup(b.shakeLock, R.drawable.ic_vibrate, R.string.settings_shake_lock);
+        SettingRows.toggle(b.shakeLock);
+        boolean shakeHw = in.mohammad.ramiz.confess.core.ShakeLock.available(this);
+        b.shakeLock.getRoot().setVisibility(shakeHw ? android.view.View.VISIBLE : android.view.View.GONE);
+        b.shakeLockDivider.setVisibility(shakeHw ? android.view.View.VISIBLE : android.view.View.GONE);
         SettingRows.toggle(b.lock);
         SettingRows.toggle(b.bio);
         SettingRows.toggle(b.privacyScreen);
@@ -85,6 +90,17 @@ public class SecurityActivity extends BaseActivity {
             b.privacyScreen.toggle.setChecked(on);
             Haptics.tick(this);
             applySecureFlag();
+        });
+
+        b.shakeLock.row.setOnClickListener(v -> {
+            if (me == null || !me.hasPassword) return;
+            boolean on = !LockPrefs.shakeToLock(this);
+            LockPrefs.setShakeToLock(this, on);
+            b.shakeLock.toggle.setChecked(on);
+            Haptics.tick(this);
+            in.mohammad.ramiz.confess.core.ShakeLock.settingChanged(this);
+            if (on) com.google.android.material.snackbar.Snackbar.make(b.getRoot(),
+                    R.string.settings_shake_lock_on, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show();
         });
 
         render(SessionManager.get().cachedMe());
@@ -121,6 +137,10 @@ public class SecurityActivity extends BaseActivity {
 
         SettingRows.enabled(b.changePassword, lock);
         b.privacyScreen.toggle.setChecked(LockPrefs.secureScreen(this));
+
+        b.shakeLock.toggle.setChecked(lock && LockPrefs.shakeToLock(this));
+        SettingRows.subtitle(b.shakeLock, lock ? R.string.settings_shake_lock_sub : R.string.settings_shake_lock_needs_lock);
+        SettingRows.enabled(b.shakeLock, lock);
     }
 
     // ── Security ─────────────────────────────────────────────────────────────
@@ -133,36 +153,28 @@ public class SecurityActivity extends BaseActivity {
             return;
         }
         // Turning off needs the current password.
-        DialogTextInputBinding d = DialogTextInputBinding.inflate(LayoutInflater.from(this));
-        d.input.setHint(R.string.password_current_hint);
-        d.input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        d.layout.setEndIconMode(com.google.android.material.textfield.TextInputLayout.END_ICON_PASSWORD_TOGGLE);
-        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.lock_off_title)
-                .setMessage(R.string.lock_off_body)
-                .setView(d.getRoot())
-                .setNegativeButton(R.string.action_cancel, null)
-                .setPositiveButton(R.string.lock_off_confirm, null)
+        in.mohammad.ramiz.confess.ui.components.ConfessDialog.with(this)
+                .icon(R.drawable.ic_lock)
+                .title(R.string.lock_off_title)
+                .body(R.string.lock_off_body)
+                .password(R.string.password_current_hint)
+                .danger()
+                .primary(R.string.lock_off_confirm, d -> {
+                    d.busy(true);
+                    users.removePassword(d.text(), new ApiCallback<JsonObject>() {
+                        @Override public void onSuccess(JsonObject data) {
+                            d.dismiss();
+                            Haptics.click(SecurityActivity.this);
+                            say(R.string.lock_off_done);
+                            refresh();
+                        }
+                        @Override public void onError(ApiException e) {
+                            d.error(e.is(ErrorCode.WRONG_PASSWORD) ? getString(R.string.error_wrong_password)
+                                    : e.userMessage(SecurityActivity.this));
+                        }
+                    });
+                })
                 .show();
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String pw = d.input.getText() == null ? "" : d.input.getText().toString();
-            if (pw.isEmpty()) return;
-            v.setEnabled(false);
-            users.removePassword(pw, new ApiCallback<JsonObject>() {
-                @Override public void onSuccess(JsonObject data) {
-                    dialog.dismiss();
-                    Haptics.click(SecurityActivity.this);
-                    say(R.string.lock_off_done);
-                    refresh();
-                }
-                @Override public void onError(ApiException e) {
-                    v.setEnabled(true);
-                    Haptics.reject(SecurityActivity.this);
-                    d.layout.setError(e.is(ErrorCode.WRONG_PASSWORD) ? getString(R.string.error_wrong_password)
-                            : e.userMessage(SecurityActivity.this));
-                }
-            });
-        });
     }
 
     private void chooseAutolock() {

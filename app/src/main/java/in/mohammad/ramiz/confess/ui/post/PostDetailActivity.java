@@ -86,6 +86,16 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
         b.more.setOnClickListener(v -> postMenu(v));
         b.input.addTextChangedListener(new SimpleTextWatcher(t -> updateInput()));
         b.send.setOnClickListener(v -> send());
+        b.gifButton.setOnClickListener(v -> {
+            Haptics.tick(this);
+            in.mohammad.ramiz.confess.ui.gif.GifPicker.show(this, this::attachGif);
+        });
+        b.gifThumb.setMaxRatio(1.4f);
+        b.gifThumb.setOnClickListener(v -> in.mohammad.ramiz.confess.ui.gif.GifPicker.show(this, this::attachGif));
+        b.gifRemove.setOnClickListener(v -> {
+            Haptics.tick(this);
+            attachGif(null);
+        });
         b.noticeClose.setOnClickListener(v -> b.notice.setVisibility(View.GONE));
         updateInput();
 
@@ -102,6 +112,7 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
             if (c == null) return;
             Haptics.click(this);
             b.input.setText("");
+            attachGif(null);
             b.notice.setVisibility(View.GONE);
             b.list.postDelayed(() -> {
                 int pos = adapter.lastResponsePosition();
@@ -221,10 +232,21 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
         return b.input.getText() == null ? "" : b.input.getText().toString();
     }
 
+    /** The GIF going with the next response (null = none). */
+    @Nullable private in.mohammad.ramiz.confess.data.model.Gif gif;
+
+    private void attachGif(@Nullable in.mohammad.ramiz.confess.data.model.Gif g) {
+        gif = g;
+        b.gifAttach.setVisibility(g != null ? View.VISIBLE : View.GONE);
+        in.mohammad.ramiz.confess.ui.gif.GifViews.show(b.gifThumb, g, true);
+        b.gifButton.setColorFilter(ContextCompat.getColor(this, g != null ? R.color.amber : R.color.text_secondary));
+        updateInput();
+    }
+
     private void updateInput() {
         int n = input().trim().length();
         boolean busy = Boolean.TRUE.equals(vm == null ? null : vm.sending().getValue());
-        b.send.setEnabled(!busy && n > 0 && n <= MAX_RESPONSE);
+        b.send.setEnabled(!busy && (n > 0 || gif != null) && n <= MAX_RESPONSE);
         b.counter.setVisibility(n >= COUNTER_FROM ? View.VISIBLE : View.GONE);
         b.counter.setText(getString(R.string.response_counter, n, MAX_RESPONSE));
         b.counter.setTextColor(ContextCompat.getColor(this, n > MAX_RESPONSE ? R.color.brick : R.color.text_muted));
@@ -232,9 +254,9 @@ public class PostDetailActivity extends BaseActivity implements DetailAdapter.Li
 
     private void send() {
         String text = input().trim();
-        if (text.isEmpty() || text.length() > MAX_RESPONSE) return;
+        if ((text.isEmpty() && gif == null) || text.length() > MAX_RESPONSE) return;
         b.notice.setVisibility(View.GONE);
-        vm.send(text);
+        vm.send(text, gif);
     }
 
     private void showSendError(ApiException e) {

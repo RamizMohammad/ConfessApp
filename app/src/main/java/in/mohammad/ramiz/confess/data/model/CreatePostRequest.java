@@ -13,6 +13,8 @@ public class CreatePostRequest {
     /** Unsent letter addressee ("my dad"). */
     @Nullable public final String letterTo;
     @Nullable public final PollIn poll;
+    /** GIF confession (text ≤ 150; no letter / poll with it). */
+    @Nullable public final Gif.In gif;
 
     public static class PollIn {
         public final List<String> options;
@@ -30,10 +32,16 @@ public class CreatePostRequest {
 
     public CreatePostRequest(String text, boolean commentsEnabled, @Nullable String mood,
                              @Nullable String letterTo, @Nullable PollIn poll) {
+        this(text, commentsEnabled, mood, letterTo, poll, null);
+    }
+
+    public CreatePostRequest(String text, boolean commentsEnabled, @Nullable String mood,
+                             @Nullable String letterTo, @Nullable PollIn poll, @Nullable Gif gif) {
         this.text = text;
         this.commentsEnabled = commentsEnabled;
         this.mood = mood;
-        this.letterTo = letterTo;
-        this.poll = poll;
+        this.letterTo = gif != null ? null : letterTo;
+        this.poll = gif != null ? null : poll;
+        this.gif = gif == null ? null : new Gif.In(gif);
     }
 }

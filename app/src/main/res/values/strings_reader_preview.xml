@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reading sheet: the sample page (PagePreview) -->
+    <string name="reader_preview_label">CHAPTER ONE</string>
+    <string name="reader_preview_page1">The train left at six, and I let it. I stood on the platform with two tickets in my pocket, watching the lights get smaller, and for the first time in years I didn\'t feel late for anything.</string>
+    <string name="reader_preview_page2">I walked home the long way. The bakery was just opening, the street still wet from the night. Some letters are never sent. Some are only written so you can finally put the pen down.</string>
+    <string name="reader_preview_hint">Tap the page to see it turn</string>
+    <string name="cd_reader_preview">Sample page with your reading settings. Tap to turn the page.</string>
+</resources>

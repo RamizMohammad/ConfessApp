@@ -154,7 +154,9 @@ public class FeedFragment extends Fragment implements PostCardBinder.Listener {
     @Override
     public void onResume() {
         super.onResume();
-        int tone = in.mohammad.ramiz.confess.ui.components.PaperTone.stamp(requireContext());
+        // Paper / text tone or the confession text settings changed in Appearance → redraw the cards.
+        int tone = in.mohammad.ramiz.confess.ui.components.PaperTone.stamp(requireContext()) * 1000
+                + CardText.stamp(requireContext());
         if (toneSeen >= 0 && tone != toneSeen) adapter.notifyDataSetChanged();
         toneSeen = tone;
         int burstMode = Bursts.mode(requireContext());              // Settings may have changed it

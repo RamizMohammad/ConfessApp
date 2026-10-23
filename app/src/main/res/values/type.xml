@@ -55,8 +55,8 @@
     <style name="TextAppearance.Confess.Confession.Card">
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">18sp</item>
-        <item name="android:lineHeight">28sp</item>
-        <item name="lineHeight">28sp</item>
+        <item name="android:lineHeight">29sp</item>
+        <item name="lineHeight">29sp</item>
     </style>
 
     <style name="TextAppearance.Confess.Quote" parent="TextAppearance.Confess.Confession">

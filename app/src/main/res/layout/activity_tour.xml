@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The feature tour. Words up top (badge · typed title · a line · points); below them the stage,
+     where one shape (MorphView) morphs from page to page around the icon or the live sample. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ink"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingHorizontal="@dimen/margin_screen">
+
+        <TextView
+            android:id="@+id/step"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+            android:textColor="@color/text_muted" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/skip"
+            style="@style/Widget.Confess.Button.Ghost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:text="@string/tour_skip" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/stageRoot"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <View
+            android:id="@+id/glow"
+            android:layout_width="340dp"
+            android:layout_height="340dp"
+            android:background="@drawable/bg_tour_glow"
+            android:importantForAccessibility="no" />
+
+        <in.mohammad.ramiz.confess.ui.tour.MorphView
+            android:id="@+id/morph"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no" />
+
+        <!-- The page (swipe left / right anywhere) -->
+        <LinearLayout
+            android:id="@+id/page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/textBlock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="28dp"
+                android:paddingTop="@dimen/space_md">
+
+                <TextView
+                    android:id="@+id/badge"
+                    style="@style/Confess.Tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/space_sm"
+                    android:drawableStart="@drawable/dot_amber"
+                    android:text="@string/tour_new"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textAppearance="@style/TextAppearance.Confess.Headline"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:id="@+id/body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:gravity="start"
+                    android:textAppearance="@style/TextAppearance.Confess.Body"
+                    android:textColor="@color/text_secondary" />
+
+                <LinearLayout
+                    android:id="@+id/whereRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/dot_amber"
+                        android:drawablePadding="6dp"
+                        android:text="@string/tour_where"
+                        android:textAllCaps="true"
+                        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                        android:textColor="@color/text_muted" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/where"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        app:chipSpacingHorizontal="6dp"
+                        app:chipSpacingVertical="6dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/points"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <!-- The stage: the icon, or a live sample (TourDemos), just under the words -->
+            <FrameLayout
+                android:id="@+id/stage"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <FrameLayout
+                    android:id="@+id/iconDisc"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="top|start"
+                    android:layout_marginStart="36dp"
+                    android:layout_marginTop="40dp">
+
+                    <ImageView
+                        android:id="@+id/icon"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/demo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:layout_marginHorizontal="36dp"
+                    android:layout_marginTop="36dp"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:paddingBottom="@dimen/space_lg">
+
+        <LinearLayout
+            android:id="@+id/dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/space_lg"
+            android:gravity="center"
+            android:orientation="horizontal" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/next"
+            style="@style/Widget.Confess.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/tour_next"
+            app:icon="@drawable/ic_arrow_right" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/fullTour"
+            style="@style/Widget.Confess.Button.Link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:text="@string/tour_full"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

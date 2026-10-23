@@ -9,9 +9,10 @@ import androidx.annotation.NonNull;
 public final class ReaderPrefs {
 
     public static final int THEME_PAPER = 0, THEME_SEPIA = 1, THEME_NIGHT = 2;
+    /** Font ids are {@link in.mohammad.ramiz.confess.ui.components.ReadingFonts}'s (0 = Newsreader, 1 = Manrope, …). */
     public static final int FONT_SERIF = 0, FONT_SANS = 1;
     public static final int TURN_CURL = PageTurner.CURL, TURN_SLIDE = PageTurner.SLIDE, TURN_INSTANT = PageTurner.INSTANT;
-    public static final int MIN_SIZE = 14, MAX_SIZE = 30, DEFAULT_SIZE = 19;
+    public static final int MIN_SIZE = 14, MAX_SIZE = 30, DEFAULT_SIZE = 18;
     /** Line height multipliers: compact · normal · airy. */
     static final float[] SPACING = {1.28f, 1.48f, 1.72f};
 
@@ -19,7 +20,7 @@ public final class ReaderPrefs {
 
     public int sizeSp = DEFAULT_SIZE;
     public int spacing = 1;
-    public int font = FONT_SERIF;
+    public int font = in.mohammad.ramiz.confess.ui.components.ReadingFonts.DEFAULT;
     public int theme = THEME_PAPER;
     public boolean justify = true;
     public boolean volumeKeys = true;
@@ -38,7 +39,7 @@ public final class ReaderPrefs {
         ReaderPrefs r = new ReaderPrefs();
         r.sizeSp = clamp(p.getInt("size", DEFAULT_SIZE), MIN_SIZE, MAX_SIZE);
         r.spacing = clamp(p.getInt("spacing", 1), 0, SPACING.length - 1);
-        r.font = clamp(p.getInt("font", FONT_SERIF), 0, 1);
+        r.font = in.mohammad.ramiz.confess.ui.components.ReadingFonts.valid(p.getInt("font", in.mohammad.ramiz.confess.ui.components.ReadingFonts.DEFAULT));
         r.theme = clamp(p.getInt("theme", THEME_PAPER), 0, 2);
         r.justify = p.getBoolean("justify", true);
         r.volumeKeys = p.getBoolean("volume_keys", true);

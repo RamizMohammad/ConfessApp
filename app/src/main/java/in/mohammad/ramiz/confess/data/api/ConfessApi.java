@@ -238,7 +238,7 @@ public interface ConfessApi {
                                @Query("limit") @Nullable Integer limit);
 
     @POST("api/v2/posts/{postId}/comments")
-    Call<Comment> addComment(@Path("postId") String postId, @Body TextRequest body);
+    Call<Comment> addComment(@Path("postId") String postId, @Body in.mohammad.ramiz.confess.data.model.CommentRequest body);
 
     @POST("api/v2/comments/{commentId}/report")
     Call<JsonObject> reportComment(@Path("commentId") String commentId, @Body ReportRequest body);

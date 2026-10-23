@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A soft amber glow behind the tour; drifts a little with each page for depth. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <gradient
+        android:type="radial"
+        android:gradientRadius="170dp"
+        android:startColor="#2EE8A04C"
+        android:centerColor="#0FE8A04C"
+        android:endColor="#00E8A04C" />
+</shape>

@@ -52,7 +52,6 @@ import in.mohammad.ramiz.confess.databinding.ActivityReaderBinding;
 import in.mohammad.ramiz.confess.databinding.ItemReaderEndBinding;
 import in.mohammad.ramiz.confess.databinding.ItemReaderTurnBinding;
 import in.mohammad.ramiz.confess.databinding.SheetReaderContentsBinding;
-import in.mohammad.ramiz.confess.databinding.SheetReaderSettingsBinding;
 import in.mohammad.ramiz.confess.ui.base.BaseActivity;
 import in.mohammad.ramiz.confess.ui.books.BookUi;
 import in.mohammad.ramiz.confess.ui.feed.Reactions;
@@ -535,16 +534,6 @@ public class ReaderActivity extends BaseActivity implements ReaderAdapter.Binder
         getWindow().setAttributes(lp);
     }
 
-    /** The phone's brightness, 0–100 (where the slider starts when "use phone brightness" is turned off). */
-    private int systemBrightness() {
-        try {
-            return Math.round(android.provider.Settings.System.getInt(getContentResolver(),
-                    android.provider.Settings.System.SCREEN_BRIGHTNESS) * 100f / 255f);
-        } catch (Exception e) {
-            return 50;
-        }
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (prefs.volumeKeys && (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
@@ -894,113 +883,12 @@ public class ReaderActivity extends BaseActivity implements ReaderAdapter.Binder
     }
 
     private void showSettings() {
-        BottomSheetDialog d = new BottomSheetDialog(this);
-        SheetReaderSettingsBinding s = SheetReaderSettingsBinding.inflate(getLayoutInflater());
-        Runnable render = () -> {
-            s.sizeValue.setText(String.valueOf(prefs.sizeSp));
-            s.smaller.setEnabled(prefs.sizeSp > ReaderPrefs.MIN_SIZE);
-            s.bigger.setEnabled(prefs.sizeSp < ReaderPrefs.MAX_SIZE);
-            s.spacing.check(prefs.spacing == 0 ? R.id.spacingCompact : prefs.spacing == 2 ? R.id.spacingAiry : R.id.spacingNormal);
-            s.font.check(prefs.font == ReaderPrefs.FONT_SANS ? R.id.fontSans : R.id.fontSerif);
-            themeTile(s.themePaper, R.color.reader_paper_bg, prefs.theme == ReaderPrefs.THEME_PAPER);
-            themeTile(s.themeSepia, R.color.reader_sepia_bg, prefs.theme == ReaderPrefs.THEME_SEPIA);
-            themeTile(s.themeNight, R.color.reader_night_bg, prefs.theme == ReaderPrefs.THEME_NIGHT);
-            s.lines.setChecked(prefs.lines);
-            s.turnStyle.check(prefs.turn == ReaderPrefs.TURN_SLIDE ? R.id.turnSlide
-                    : prefs.turn == ReaderPrefs.TURN_INSTANT ? R.id.turnInstant : R.id.turnCurl);
-            s.brightnessSystem.setChecked(prefs.brightness < 0);
-            s.brightness.setEnabled(prefs.brightness >= 0);
-            s.brightness.setValue(Math.round((prefs.brightness < 0 ? systemBrightness() : prefs.brightness) / 5f) * 5f);
-            boolean lightTheme = prefs.theme != ReaderPrefs.THEME_NIGHT;
-            int textTone = in.mohammad.ramiz.confess.ui.components.PaperTone.text(this);
-            s.tone.setEnabled(lightTheme);
-            s.tone.setAlpha(lightTheme ? 1f : 0.4f);
-            s.textAuto.setEnabled(lightTheme);
-            s.textAuto.setChecked(textTone == in.mohammad.ramiz.confess.ui.components.PaperTone.AUTO);
-            s.textTone.setEnabled(lightTheme && textTone != in.mohammad.ramiz.confess.ui.components.PaperTone.AUTO);
-            s.textTone.setAlpha(lightTheme ? 1f : 0.4f);
-            if (textTone != in.mohammad.ramiz.confess.ui.components.PaperTone.AUTO) s.textTone.setValue(Math.round(textTone / 5f) * 5f);
-            s.justify.setChecked(prefs.justify);
-            s.volumeKeys.setChecked(prefs.volumeKeys);
-        };
-        render.run();
-        s.smaller.setOnClickListener(v -> { prefs.sizeSp = Math.max(ReaderPrefs.MIN_SIZE, prefs.sizeSp - 1); changed(); render.run(); });
-        s.bigger.setOnClickListener(v -> { prefs.sizeSp = Math.min(ReaderPrefs.MAX_SIZE, prefs.sizeSp + 1); changed(); render.run(); });
-        s.spacing.addOnButtonCheckedListener((g, id, checked) -> {
-            if (!checked) return;
-            int sp = id == R.id.spacingCompact ? 0 : id == R.id.spacingAiry ? 2 : 1;
-            if (sp != prefs.spacing) { prefs.spacing = sp; changed(); }
+        ReaderSettingsSheet.show(this, prefs, new ReaderSettingsSheet.Listener() {
+            @Override public void onLayout() { restyle(); }
+            @Override public void onColours() { recolour(); }
+            @Override public void onTurn(int turn) { b.pages.setTurnStyle(turn); }
+            @Override public void onBrightness() { applyBrightness(); }
         });
-        s.font.addOnButtonCheckedListener((g, id, checked) -> {
-            if (!checked) return;
-            int f = id == R.id.fontSans ? ReaderPrefs.FONT_SANS : ReaderPrefs.FONT_SERIF;
-            if (f != prefs.font) { prefs.font = f; changed(); }
-        });
-        s.themePaper.setOnClickListener(v -> { prefs.theme = ReaderPrefs.THEME_PAPER; changed(); render.run(); });
-        s.themeSepia.setOnClickListener(v -> { prefs.theme = ReaderPrefs.THEME_SEPIA; changed(); render.run(); });
-        s.themeNight.setOnClickListener(v -> { prefs.theme = ReaderPrefs.THEME_NIGHT; changed(); render.run(); });
-        s.tone.setValue(Math.round(in.mohammad.ramiz.confess.ui.components.PaperTone.get(this) / 5f) * 5f);
-        s.tone.addOnChangeListener((sl, value, fromUser) -> {
-            if (!fromUser) return;
-            in.mohammad.ramiz.confess.ui.components.PaperTone.set(this, Math.round(value));
-            recolour();                                   // pages change colour as you slide
-        });
-        s.textTone.addOnChangeListener((sl, value, fromUser) -> {
-            if (!fromUser) return;
-            in.mohammad.ramiz.confess.ui.components.PaperTone.setText(this, Math.round(value));
-            recolour();
-        });
-        s.textAuto.setOnCheckedChangeListener((v, auto) -> {
-            boolean wasAuto = in.mohammad.ramiz.confess.ui.components.PaperTone.text(this)
-                    == in.mohammad.ramiz.confess.ui.components.PaperTone.AUTO;
-            if (auto == wasAuto) return;                  // render() re-stating the saved value
-            if (auto) {
-                in.mohammad.ramiz.confess.ui.components.PaperTone.setText(this, in.mohammad.ramiz.confess.ui.components.PaperTone.AUTO);
-            } else {
-                int now = style != null && androidx.core.graphics.ColorUtils.calculateLuminance(style.ink) > 0.5 ? 100 : 0;
-                s.textTone.setValue(now);
-                in.mohammad.ramiz.confess.ui.components.PaperTone.setText(this, now);
-            }
-            s.textTone.setEnabled(!auto);
-            recolour();
-        });
-        s.turnStyle.addOnButtonCheckedListener((g, id, checked) -> {
-            if (!checked) return;
-            int t = id == R.id.turnSlide ? ReaderPrefs.TURN_SLIDE : id == R.id.turnInstant ? ReaderPrefs.TURN_INSTANT : ReaderPrefs.TURN_CURL;
-            if (t == prefs.turn) return;
-            prefs.turn = t;
-            prefs.save(this);
-            b.pages.setTurnStyle(t);
-            Haptics.tick(this);
-        });
-        s.brightness.addOnChangeListener((sl, value, fromUser) -> {
-            if (!fromUser) return;
-            prefs.brightness = Math.round(value);
-            applyBrightness();
-            prefs.save(this);
-        });
-        s.brightnessSystem.setOnCheckedChangeListener((v, system) -> {
-            if (system == (prefs.brightness < 0)) return;           // render() re-stating it
-            prefs.brightness = system ? -1 : Math.round(s.brightness.getValue());
-            s.brightness.setEnabled(!system);
-            applyBrightness();
-            prefs.save(this);
-        });
-        s.lines.setOnCheckedChangeListener((v, on) -> { if (on != prefs.lines) { prefs.lines = on; changed(); } });
-        s.justify.setOnCheckedChangeListener((v, on) -> { if (on != prefs.justify) { prefs.justify = on; changed(); } });
-        s.volumeKeys.setOnCheckedChangeListener((v, on) -> { prefs.volumeKeys = on; prefs.save(this); });
-        d.setContentView(s.getRoot());
-        d.show();
-    }
-
-    private void themeTile(@NonNull TextView tile, int color, boolean selected) {
-        GradientDrawable g = new GradientDrawable();
-        g.setCornerRadius(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, getResources().getDisplayMetrics()));
-        g.setColor(getColor(color));
-        int px = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, selected ? 2 : 1, getResources().getDisplayMetrics()));
-        g.setStroke(px, getColor(selected ? R.color.amber : R.color.hairline));
-        tile.setBackground(g);
-        tile.setSelected(selected);
     }
 
     /** Only colours changed (paper tone): new style + redraw, same pages, same place. */
@@ -1010,10 +898,8 @@ public class ReaderActivity extends BaseActivity implements ReaderAdapter.Binder
         relayout();
     }
 
-    /** A reading setting changed: save it, recolour, and re-typeset the chapter at the same place. */
-    private void changed() {
-        Haptics.tick(this);
-        prefs.save(this);
+    /** A reading setting changed (the sheet saved it): recolour and re-typeset at the same place. */
+    private void restyle() {
         style = new ReaderStyle(this, prefs, statusPx, navPx);
         applyTheme();
         relayout();

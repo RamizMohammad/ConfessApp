@@ -56,6 +56,9 @@ android {
         buildConfigField("long", "CLOUD_PROJECT_NUMBER", "${secret("CLOUD_PROJECT_NUMBER").ifEmpty { "0" }}L")
         // SHA-256 of the certificate(s) allowed to sign this app (Play app-signing key, upload key).
         buildConfigField("String", "SIGNING_CERT_SHA256", "\"${secret("SIGNING_CERT_SHA256")}\"")
+
+        // GIPHY (GIF picker). The app calls GIPHY directly; only the chosen GIF's id reaches our server.
+        buildConfigField("String", "GIPHY_API_KEY", "\"${secret("GIPHY_API_KEY")}\"")
     }
 
     buildTypes {

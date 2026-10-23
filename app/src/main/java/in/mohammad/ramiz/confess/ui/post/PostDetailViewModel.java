@@ -251,11 +251,11 @@ public class PostDetailViewModel extends ViewModel {
         return c.isMine || (post != null && post.isMine);
     }
 
-    public void send(@NonNull String text) {
+    public void send(@NonNull String text, @androidx.annotation.Nullable in.mohammad.ramiz.confess.data.model.Gif gif) {
         String body = text.trim();
-        if (post == null || body.isEmpty() || Boolean.TRUE.equals(sending.getValue())) return;
+        if (post == null || (body.isEmpty() && gif == null) || Boolean.TRUE.equals(sending.getValue())) return;
         sending.setValue(true);
-        repo.addComment(post.postId, body, new ApiCallback<Comment>() {
+        repo.addComment(post.postId, body, gif, new ApiCallback<Comment>() {
             @Override
             public void onSuccess(Comment c) {
                 sending.setValue(false);

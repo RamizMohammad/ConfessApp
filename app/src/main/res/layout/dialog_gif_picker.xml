@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GIF picker (bottom sheet): Letty × GIPHY · search · trending / results grid · "Powered by GIPHY". -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/margin_screen"
+    android:paddingTop="@dimen/space_sm"
+    android:paddingBottom="@dimen/space_sm">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_sheet_handle" />
+
+    <!-- Letty × GIPHY -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/logo_letty" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="×"
+                android:textAppearance="@style/TextAppearance.Confess.Body"
+                android:textColor="@color/text_muted" />
+
+            <!-- GIPHY's official mark when res/drawable*/giphy_logo is added; its name meanwhile. -->
+            <ImageView
+                android:id="@+id/giphyLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="22dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/giphy"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/giphyName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/manrope"
+                android:letterSpacing="0.04"
+                android:text="@string/giphy"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="@null"
+            android:contentDescription="@string/action_close"
+            android:src="@drawable/ic_close"
+            app:tint="@color/text_secondary" />
+    </FrameLayout>
+
+    <EditText
+        android:id="@+id/search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:background="@drawable/bg_input_pill"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/text_muted"
+        android:hint="@string/gif_search_hint"
+        android:imeOptions="actionSearch"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:maxLength="50"
+        android:minHeight="44dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp"
+        android:singleLine="true"
+        android:textAppearance="@style/TextAppearance.Confess.Body"
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_muted"
+        android:textCursorDrawable="@drawable/cursor_amber" />
+
+    <TextView
+        android:id="@+id/heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:layout_marginBottom="@dimen/space_xs"
+        android:text="@string/gif_trending"
+        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+        android:textColor="@color/text_muted" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/space_sm" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/loading"
+            style="@style/Widget.Confess.Progress.Circular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="@dimen/space_lg"
+            android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+            android:textColor="@color/text_secondary"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <!-- Attribution, as GIPHY asks: their "Powered by GIPHY" mark when added, else the words. -->
+    <ImageView
+        android:id="@+id/poweredMark"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/space_xs"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/gif_powered_by"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/poweredText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="@string/gif_powered_by"
+        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+        android:textColor="@color/text_muted" />
+</LinearLayout>

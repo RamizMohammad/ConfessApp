@@ -83,9 +83,12 @@ public class ComposeActivity extends BaseActivity {
     private static final String STATE_POLL = "poll_on";
     private static final String STATE_CHOICES = "poll_choices";
     private static final String STATE_MOOD = "mood";
+    private static final String STATE_GIF = "gif";
     private static final int POLL_MIN = 2, POLL_MAX = 4, CHOICE_MAX = 60;
 
     public static final int MAX_CHARS = 2000;
+    /** A GIF confession says at most this much (server: GIF_POST_MAX). */
+    public static final int GIF_MAX_CHARS = 100;
     private static final int WARN_AT = 1800;
     private static final long DRAFT_DELAY_MS = 700;
 
@@ -101,6 +104,8 @@ public class ComposeActivity extends BaseActivity {
     private boolean working = false;
     private boolean finished = false;
     @Nullable private String mood;
+    /** GIF confession: the chosen GIPHY GIF (null = none). Letter, poll and GIF are one at a time. */
+    @Nullable private in.mohammad.ramiz.confess.data.model.Gif gif;
     /** "Allow responses" as the writer left it, before "just listen" turned it off. */
     private boolean allowBeforeListen = true;
     /** Page 2 ("before it goes out") is showing. */
@@ -244,7 +249,7 @@ public class ComposeActivity extends BaseActivity {
         if (show == onOptions || (show && working)) return;
         if (show) {
             String body = text().trim();
-            if (body.isEmpty() || body.length() > MAX_CHARS) return;
+            if (body.isEmpty() || body.length() > limit()) return;
             Haptics.click(this);
             WindowCompat.getInsetsController(getWindow(), b.input).hide(WindowInsetsCompat.Type.ime());
             String to = letterTo();
@@ -289,20 +294,55 @@ public class ComposeActivity extends BaseActivity {
         return b.input.getText() == null ? "" : b.input.getText().toString();
     }
 
+    /** 150 with a GIF, 2000 otherwise. */
+    private int limit() {
+        return gif != null ? GIF_MAX_CHARS : MAX_CHARS;
+    }
+
     private void updateCounter() {
         int n = text().trim().length();
-        int over = n - MAX_CHARS;
-        int color = over > 0 ? R.color.brick : (n >= WARN_AT ? R.color.amber : R.color.text_secondary);
+        int limit = limit();
+        int over = n - limit;
+        int warn = gif != null ? limit - 20 : WARN_AT;
+        int color = over > 0 ? R.color.brick : (n >= warn ? R.color.amber : R.color.text_secondary);
         b.count.setText(getString(R.string.compose_counter, n));
         b.count.setTextColor(ContextCompat.getColor(this, n == 0 ? R.color.text_muted : color));
+        b.countMax.setText(getString(R.string.compose_counter_max, limit));
         b.tooLong.setVisibility(over > 0 ? View.VISIBLE : View.GONE);
-        if (over > 0) b.tooLong.setText(getString(R.string.compose_too_long, over));
+        if (over > 0) b.tooLong.setText(gif != null ? getString(R.string.compose_gif_limit, GIF_MAX_CHARS)
+                : getString(R.string.compose_too_long, over));
+        markOverflow();
         updateButton();
+    }
+
+    /** Red + struck through: what's past the GIF limit (it stays in the box, it just won't fit). */
+    private static final class OverColor extends android.text.style.ForegroundColorSpan {
+        OverColor(int color) { super(color); }
+    }
+
+    private static final class OverStrike extends android.text.style.StrikethroughSpan { }
+
+    private void markOverflow() {
+        android.text.Editable e = b.input.getText();
+        if (e == null) return;
+        for (Object o : e.getSpans(0, e.length(), OverColor.class)) e.removeSpan(o);
+        for (Object o : e.getSpans(0, e.length(), OverStrike.class)) e.removeSpan(o);
+        if (gif == null) return;
+        // Count like the server: from the first non-space character.
+        int start = 0;
+        while (start < e.length() && Character.isWhitespace(e.charAt(start))) start++;
+        int cut = start + GIF_MAX_CHARS;
+        int end = e.length();
+        while (end > cut && Character.isWhitespace(e.charAt(end - 1))) end--;
+        if (cut >= end) return;
+        e.setSpan(new OverColor(ContextCompat.getColor(this, R.color.brick)), cut, end,
+                android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        e.setSpan(new OverStrike(), cut, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     private void updateButton() {
         int n = text().trim().length();
-        boolean ok = !working && n > 0 && n <= MAX_CHARS;
+        boolean ok = !working && n > 0 && n <= limit();
         b.release.setEnabled(ok);
         b.instant.setEnabled(ok);
         b.next.setEnabled(ok);
@@ -322,6 +362,10 @@ public class ComposeActivity extends BaseActivity {
         buildMoodChips();
 
         b.letterToggle.addOnCheckedChangeListener((btn, on) -> {
+            if (on) {                                   // one at a time: letter · poll · GIF
+                b.pollToggle.setChecked(false);
+                if (gif != null) setGif(null);
+            }
             b.letterRow.setVisibility(on ? View.VISIBLE : View.GONE);
             if (on && btn.isPressed()) {
                 Haptics.tick(this);
@@ -334,6 +378,10 @@ public class ComposeActivity extends BaseActivity {
         }));
 
         b.pollToggle.addOnCheckedChangeListener((btn, on) -> {
+            if (on) {
+                b.letterToggle.setChecked(false);
+                if (gif != null) setGif(null);
+            }
             b.pollEditor.setVisibility(on ? View.VISIBLE : View.GONE);
             if (on && b.pollOptions.getChildCount() == 0) {
                 for (int i = 0; i < POLL_MIN; i++) addChoice(null);
@@ -344,6 +392,21 @@ public class ComposeActivity extends BaseActivity {
                 if (b.pollOptions.getChildCount() > 0) choiceInput(0).requestFocus();
             }
         });
+        // GIF: choosing it opens the picker (closing the picker without one un-chooses it);
+        // tapping it again, or choosing letter / poll, takes the GIF off. The group keeps it one at a time.
+        b.gifToggle.addOnCheckedChangeListener((btn, on) -> {
+            if (on && gif == null) {
+                pickGif();
+            } else if (!on && gif != null) {
+                setGif(null);
+            }
+        });
+        b.gifPreview.setOnClickListener(v -> pickGif());   // tap the GIF to change it
+        b.gifRemove.setOnClickListener(v -> {
+            Haptics.tick(this);
+            setGif(null);
+        });
+
         b.addOption.setOnClickListener(v -> {
             if (b.pollOptions.getChildCount() >= POLL_MAX) return;
             Haptics.tick(this);
@@ -357,8 +420,52 @@ public class ComposeActivity extends BaseActivity {
             if (m != null) selectMood(m);
             b.letterToggle.setChecked(state.getBoolean(STATE_LETTER));
             b.pollToggle.setChecked(state.getBoolean(STATE_POLL));
+            String g = state.getString(STATE_GIF);
+            if (g != null) setGif(in.mohammad.ramiz.confess.data.api.ApiClient.gson()
+                    .fromJson(g, in.mohammad.ramiz.confess.data.model.Gif.class));
         }
         refreshChoices();
+    }
+
+    // ── GIF ──────────────────────────────────────────────────────────────────
+
+    private void pickGif() {
+        if (working) return;
+        Haptics.tick(this);
+        WindowCompat.getInsetsController(getWindow(), b.input).hide(WindowInsetsCompat.Type.ime());
+        in.mohammad.ramiz.confess.ui.gif.GifPicker.show(this, picked -> setGif(picked), () -> {
+            if (gif == null) b.gifToggle.setChecked(false);   // closed without one: the pill fades away
+        });
+    }
+
+    /**
+     * Attach (or with null, remove) the GIF. Attaching turns the letter and poll off and drops
+     * the limit to 100: anything past it is marked, never deleted.
+     */
+    private void setGif(@Nullable in.mohammad.ramiz.confess.data.model.Gif g) {
+        gif = g;
+        if (g != null) {
+            b.letterToggle.setChecked(false);
+            b.pollToggle.setChecked(false);
+            in.mohammad.ramiz.confess.ui.gif.GifViews.show(b.gifPreview, g, false);
+            if (b.gifAttach.getVisibility() != View.VISIBLE) {
+                b.gifAttach.setVisibility(View.VISIBLE);
+                if (android.animation.ValueAnimator.areAnimatorsEnabled()) {
+                    b.gifAttach.setAlpha(0f);
+                    b.gifAttach.setScaleX(0.96f);
+                    b.gifAttach.setScaleY(0.96f);
+                    b.gifAttach.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(220).start();
+                }
+            }
+        } else {
+            in.mohammad.ramiz.confess.ui.gif.GifViews.show(b.gifPreview, null, false);
+            b.gifAttach.setVisibility(View.GONE);
+        }
+        b.gifToggle.setChecked(g != null);
+        // With a GIF the writing lines shrink to what's written, so the GIF sits right under the
+        // last line and moves down as the text grows; without one, the usual six blank lines.
+        b.input.setMinLines(g != null ? 1 : 6);
+        updateCounter();
     }
 
     private void buildMoodChips() {
@@ -542,7 +649,7 @@ public class ComposeActivity extends BaseActivity {
 
     private void release() {
         String body = text().trim();
-        if (working || body.isEmpty() || body.length() > MAX_CHARS) return;
+        if (working || body.isEmpty() || body.length() > limit()) return;
 
         String to = letterTo();
         if (to != null && to.isEmpty()) {
@@ -563,7 +670,7 @@ public class ComposeActivity extends BaseActivity {
             }
         }
         boolean allow = b.allow.isChecked() && !Moods.LISTEN.equals(mood);
-        CreatePostRequest request = new CreatePostRequest(body, allow, mood, to, poll);
+        CreatePostRequest request = new CreatePostRequest(body, allow, mood, to, poll, gif);
 
         handler.removeCallbacks(saveDraft);
         saveDraftNow();                         // safe even if the app dies mid-request
@@ -654,6 +761,9 @@ public class ComposeActivity extends BaseActivity {
         b.letterInput.setEnabled(!on);
         b.letterToggle.setEnabled(!on);
         b.pollToggle.setEnabled(!on);
+        b.gifToggle.setEnabled(!on);
+        b.gifRemove.setEnabled(!on);
+        b.gifPreview.setEnabled(!on);
         b.addOption.setEnabled(!on);
         for (int i = 0; i < b.pollOptions.getChildCount(); i++) {
             LinearLayout row = (LinearLayout) b.pollOptions.getChildAt(i);
@@ -720,6 +830,7 @@ public class ComposeActivity extends BaseActivity {
         out.putBoolean(STATE_POLL, b.pollToggle.isChecked());
         out.putStringArrayList(STATE_CHOICES, rawChoices());
         out.putString(STATE_MOOD, mood);
+        if (gif != null) out.putString(STATE_GIF, in.mohammad.ramiz.confess.data.api.ApiClient.gson().toJson(gif));
     }
 
     @Override

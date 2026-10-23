@@ -69,12 +69,12 @@ final class ReaderStyle {
         }
 
         float size = sp(ctx, p.sizeSp);
-        Typeface bodyFace = ResourcesCompat.getFont(ctx, p.font == ReaderPrefs.FONT_SANS ? R.font.manrope : R.font.newsreader);
+        Typeface bodyFace = in.mohammad.ramiz.confess.ui.components.ReadingFonts.typeface(ctx, p.font);
         Typeface headFace = ResourcesCompat.getFont(ctx, R.font.newsreader_headline);
         Typeface mono = ResourcesCompat.getFont(ctx, R.font.jetbrainsmono);
 
         body.setTypeface(bodyFace);
-        body.setTextSize(size);
+        body.setTextSize(size * in.mohammad.ramiz.confess.ui.components.ReadingFonts.scale(p.font));   // handwriting reads small
         body.setColor(ink);
         // Night: slightly softer ink, like e-ink night mode.
         if (dark) body.setColor(ColorUtils.setAlphaComponent(ink, 235));

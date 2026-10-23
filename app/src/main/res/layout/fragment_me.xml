@@ -162,8 +162,9 @@
                             app:iconSize="@dimen/icon_size_sm" />
                     </LinearLayout>
 
-                    <!-- Following · Followers -->
+                    <!-- Following · Followers. This and the cards below can be reordered / hidden (MePage). -->
                     <LinearLayout
+                        android:id="@+id/sectionPeople"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/space_lg"
@@ -526,6 +527,17 @@
                             android:src="@drawable/ic_chevron_right"
                             app:tint="@color/text_muted" />
                     </LinearLayout>
+
+                    <!-- Opens Settings → Appearance at "Me page". -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/meArrange"
+                        style="@style/Widget.Confess.Button.Link"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:text="@string/mepage_arrange"
+                        app:icon="@drawable/ic_arrow_right"
+                        app:iconGravity="textEnd" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

@@ -66,6 +66,12 @@
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <!-- Feature tour: once after install / an update, and from Settings -->
+        <activity
+            android:name=".ui.tour.TourActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <!-- Maintenance: splash got no 200 from GET /ready -->
         <activity
             android:name=".ui.entry.MaintenanceActivity"

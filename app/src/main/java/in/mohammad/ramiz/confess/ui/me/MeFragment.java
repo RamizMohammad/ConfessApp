@@ -76,6 +76,11 @@ public class MeFragment extends Fragment {
         b.cardFelt.setOnClickListener(v -> Nav.received(requireContext(), ReceivedActivity.MODE_FELT));
         b.cardResponses.setOnClickListener(v -> Nav.received(requireContext(), ReceivedActivity.MODE_RESPONSES));
         b.cardSettings.setOnClickListener(v -> Nav.settings(requireContext()));
+        b.meArrange.setOnClickListener(v -> startActivity(
+                new android.content.Intent(requireContext(), in.mohammad.ramiz.confess.ui.settings.AppearanceActivity.class)
+                        .putExtra(in.mohammad.ramiz.confess.ui.settings.AppearanceActivity.EXTRA_SECTION,
+                                in.mohammad.ramiz.confess.ui.settings.AppearanceActivity.SECTION_ME)));
+        MePage.apply(requireContext(), b);
         b.editAura.setOnClickListener(v -> Nav.editProfile(requireContext()));
         b.editAbout.setOnClickListener(v -> Nav.editProfile(requireContext()));
         b.about.setOnClickListener(v -> Nav.editProfile(requireContext()));
@@ -110,6 +115,7 @@ public class MeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (b != null) MePage.apply(requireContext(), b);   // back from Appearance → Me page
         Me cached = SessionManager.get().cachedMe();
         if (cached != null) renderDrafts(cached.id);
         if (!isHidden()) refresh();

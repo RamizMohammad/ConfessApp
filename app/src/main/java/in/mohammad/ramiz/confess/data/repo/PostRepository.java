@@ -102,7 +102,15 @@ public final class PostRepository {
     }
 
     public Call<Comment> addComment(@NonNull String postId, @NonNull String text, @NonNull ApiCallback<Comment> cb) {
-        return Calls.enqueue(ApiClient.api().addComment(postId, new TextRequest(text)), cb);
+        return addComment(postId, text, null, cb);
+    }
+
+    /** Words, a GIF (GIPHY), or both. */
+    public Call<Comment> addComment(@NonNull String postId, @NonNull String text,
+                                    @androidx.annotation.Nullable in.mohammad.ramiz.confess.data.model.Gif gif,
+                                    @NonNull ApiCallback<Comment> cb) {
+        return Calls.enqueue(ApiClient.api().addComment(postId,
+                new in.mohammad.ramiz.confess.data.model.CommentRequest(text, gif)), cb);
     }
 
     public Call<JsonObject> deleteComment(@NonNull String commentId, @NonNull ApiCallback<JsonObject> cb) {

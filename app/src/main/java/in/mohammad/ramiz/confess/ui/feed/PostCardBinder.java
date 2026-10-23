@@ -52,9 +52,13 @@ public final class PostCardBinder {
         String when = Formats.relative(post.createdAt);
         b.time.setText(post.isMine ? when + " · " + ctx.getString(R.string.feed_you) : when);
         b.text.setText(post.text == null ? "" : post.text.trim());
+        CardText.apply(b.text, false);                  // the reader's size, spacing and font
+        b.text.setMaxLines(post.gif != null ? 2 : 6);   // a GIF card: two lines, the GIF does the rest
+        b.text.setEllipsize(android.text.TextUtils.TruncateAt.END);
         bindMood(b, post);
         bindLetter(b, post);
         bindPoll(b, post, l);
+        bindGif(b, post);
         bindResponses(b, post);
         b.responses.setText(post.commentCount > 0 ? Formats.count(post.commentCount) : "");
         bindFelt(b, post, false);
@@ -84,7 +88,7 @@ public final class PostCardBinder {
     }
 
     /**
-     * The big version on the confession screen: full text, larger type, "1.4k felt" /
+     * The big version on the confession screen: full text, larger upright type (CardText + 4sp), "1.4k felt" /
      * "86 responses" labels, no overflow (the top bar has it), card itself not clickable.
      */
     public static void bindDetail(@NonNull ItemConfessionCardBinding b, @NonNull Post post, @NonNull Listener l) {
@@ -92,8 +96,11 @@ public final class PostCardBinder {
         Context ctx = b.getRoot().getContext();
         b.text.setMaxLines(Integer.MAX_VALUE);
         b.text.setEllipsize(null);
-        b.text.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 22);
-        b.text.setLineSpacing(0f, 1.15f);
+        CardText.apply(b.text, true);                   // the reader's choices, a few sizes up; upright
+        // "To: …" on an unsent letter: upright here (the feed card keeps it italic), one size down.
+        android.graphics.Typeface serif = androidx.core.content.res.ResourcesCompat.getFont(ctx, R.font.newsreader);
+        b.letterTo.setTypeface(android.graphics.Typeface.create(serif, android.graphics.Typeface.NORMAL));
+        b.letterTo.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 16);
         b.text.setTextIsSelectable(false);           // double-tap = feel it, not "select text"; long-press copies
         b.more.setVisibility(View.GONE);
         bindTaps(b, post, l, false);
@@ -437,6 +444,15 @@ public final class PostCardBinder {
         b.score.setVisibility(View.VISIBLE);
     }
 
+    // ── GIF ──────────────────────────────────────────────────────────────────
+
+    /** GIF confession: the GIPHY GIF under the words, in its own shape (very tall ones are cropped). */
+    private static void bindGif(@NonNull ItemConfessionCardBinding b, @NonNull Post post) {
+        boolean has = post.gif != null && post.gif.id != null;
+        b.gif.setVisibility(has ? View.VISIBLE : View.GONE);
+        in.mohammad.ramiz.confess.ui.gif.GifViews.show(b.gif, has ? post.gif : null, false);
+    }
+
     // ── Sensitive ────────────────────────────────────────────────────────────
 
     /**
@@ -449,6 +465,7 @@ public final class PostCardBinder {
         float r = hide ? Sensitive.BLUR_DP * ctx.getResources().getDisplayMetrics().density : 0f;
         Sensitive.blur(b.text, r);
         Sensitive.blur(b.letterTo, r);
+        Sensitive.blur(b.gif, r);
         Sensitive.blur(b.poll, r);
         b.poll.setEnabled(!hide);
         for (int i = 0; i < b.pollOptions.getChildCount(); i++) b.pollOptions.getChildAt(i).setEnabled(!hide);
@@ -467,7 +484,7 @@ public final class PostCardBinder {
             b.sensitive.setVisibility(View.GONE);
             b.sensitive.setAlpha(1f);
         }).start();
-        Sensitive.unblur(new View[]{b.text, b.letterTo, b.poll}, Sensitive.BLUR_DP * ctx.getResources().getDisplayMetrics().density);
+        Sensitive.unblur(new View[]{b.text, b.letterTo, b.poll, b.gif}, Sensitive.BLUR_DP * ctx.getResources().getDisplayMetrics().density);
         b.poll.setEnabled(true);
         for (int i = 0; i < b.pollOptions.getChildCount(); i++) b.pollOptions.getChildAt(i).setEnabled(true);
         b.text.setContentDescription(null);

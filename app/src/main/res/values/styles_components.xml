@@ -15,6 +15,12 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/radius_input</item>
     </style>
+    <!-- GIFs (picker tiles, cards, responses): softly rounded. -->
+    <style name="ShapeAppearance.Confess.Gif" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
     <style name="ShapeAppearance.Confess.Card" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/radius_card</item>
@@ -79,6 +85,21 @@
         <item name="iconPadding">@dimen/space_12</item>
         <item name="iconSize">@dimen/icon_size</item>
         <item name="rippleColor">@color/sl_ripple_dark</item>
+    </style>
+
+    <!-- Segment: one option in a GlideToggleGroup — bare (no fill, no outline). The group draws the
+         one rounded track and the amber pill that glides to the chosen option, and tints the labels;
+         tighter side padding so three fit on a phone. -->
+    <style name="Widget.Confess.Button.Segment" parent="Widget.Confess.Button.Outlined">
+        <item name="backgroundTint">@color/sl_segment_bg</item>
+        <item name="android:textColor">@color/sl_segment_text</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="rippleColor">@color/transparent</item>         <!-- the gliding pill is the feedback -->
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:paddingStart">@dimen/space_xs</item>
+        <item name="android:paddingEnd">@dimen/space_xs</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
     <!-- Danger: brick outline (delete account, sign out). -->

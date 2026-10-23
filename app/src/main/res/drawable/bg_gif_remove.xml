@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Small dark chip over a GIF (remove ×, the GIPHY tag). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#B30F0E13" />
+    <corners android:radius="16dp" />
+</shape>

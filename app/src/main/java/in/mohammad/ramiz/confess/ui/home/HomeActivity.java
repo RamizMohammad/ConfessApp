@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
+import in.mohammad.ramiz.confess.ui.components.ConfessDialog;
 import com.google.gson.JsonObject;
 
 import in.mohammad.ramiz.confess.R;
@@ -55,7 +56,10 @@ public class HomeActivity extends BaseActivity {
             new ActivityResultContracts.StartActivityForResult(),
             r -> { if (r.getResultCode() == RESULT_OK) onReleased(); });
     private final ActivityResultLauncher<String> notificationPermission = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(), granted -> { });
+            new ActivityResultContracts.RequestPermission(), granted -> {
+                if (granted) Snackbar.make(b.container, R.string.notify_ask_on, Snackbar.LENGTH_SHORT)
+                        .setAnchorView(b.bottomBar.getRoot()).show();
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,7 @@ public class HomeActivity extends BaseActivity {
         b = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(b.getRoot());
         EdgeInsets.padBottom(b.bottomBar.getRoot(), false);
+        NavBar.arrange(b.bottomBar, NavBar.order(this));
 
         FragmentManager fm = getSupportFragmentManager();
         if (savedInstanceState == null) {
@@ -79,6 +84,7 @@ public class HomeActivity extends BaseActivity {
 
         b.bottomBar.tabFeed.setOnClickListener(v -> select(TAG_FEED));
         b.bottomBar.tabSearch.setOnClickListener(v -> {
+            NavBar.bump(this, b.bottomBar, NavBar.SEARCH);
             Haptics.tick(this);
             Nav.search(this);
         });
@@ -90,7 +96,6 @@ public class HomeActivity extends BaseActivity {
         });
 
         Push.sync(this);
-        if (savedInstanceState == null) b.getRoot().postDelayed(this::maybeAskNotifications, 1500);
 
         // Back on "Books" / "Me" returns to the feed first, like the old app.
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -110,6 +115,9 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Back from Settings → Appearance: the reader may have changed the bar.
+        NavBar.arrange(b.bottomBar, NavBar.order(this));
+        NavBar.render(this, b.bottomBar, tab, false);
         // Tapped a push: open that confession (only once unlocked).
         if (!SessionManager.get().needsUnlock()) {
             String[] link = DeepLink.consume();
@@ -122,8 +130,12 @@ public class HomeActivity extends BaseActivity {
                 if (chapter.edit) Nav.chapterEditor(this, chapter.bookId, chapter.chapterNo);
                 else Nav.reader(this, chapter.bookId, chapter.chapterNo);
             }
+            // The feature tour, once per install / update — not over a notification just opened.
+            boolean openedLink = link != null || who != null || chapter != null;
+            if (!openedLink && in.mohammad.ramiz.confess.ui.tour.Tour.maybeShow(this)) return;
             checkBiometricAfterReset();
             in.mohammad.ramiz.confess.core.GuidelinesReminder.maybeShow(this);
+            b.getRoot().postDelayed(() -> maybeAskNotifications(0), 1500);
         }
     }
 
@@ -139,18 +151,21 @@ public class HomeActivity extends BaseActivity {
                     return;
                 }
                 if (!ResetNotice.shouldAskBiometricAgain()) return;
-                new MaterialAlertDialogBuilder(HomeActivity.this)
-                        .setIcon(R.drawable.ic_fingerprint)
-                        .setTitle(R.string.bio_again_title)
-                        .setMessage(R.string.bio_again_body)
-                        .setCancelable(false)
-                        .setNegativeButton(R.string.bio_again_no, (d, w) -> clearBiometricNotice(false))
-                        .setPositiveButton(R.string.bio_again_yes, (d, w) -> Biometrics.prompt(HomeActivity.this,
-                                getString(R.string.bio_prompt_title), getString(R.string.bio_prompt_subtitle),
-                                new Biometrics.Callback() {
-                                    @Override public void onSuccess() { clearBiometricNotice(true); }
-                                    @Override public void onFailure(@NonNull CharSequence reason) { }
-                                }))
+                in.mohammad.ramiz.confess.ui.components.ConfessDialog.with(HomeActivity.this)
+                        .icon(R.drawable.ic_fingerprint)
+                        .title(R.string.bio_again_title)
+                        .body(R.string.bio_again_body)
+                        .cancelable(false)
+                        .secondary(R.string.bio_again_no, () -> clearBiometricNotice(false))
+                        .primary(R.string.bio_again_yes, d -> {
+                            d.dismiss();
+                            Biometrics.prompt(HomeActivity.this,
+                                    getString(R.string.bio_prompt_title), getString(R.string.bio_prompt_subtitle),
+                                    new Biometrics.Callback() {
+                                        @Override public void onSuccess() { clearBiometricNotice(true); }
+                                        @Override public void onFailure(@NonNull CharSequence reason) { }
+                                    });
+                        })
                         .show();
             }
             @Override public void onError(ApiException e) { }
@@ -171,15 +186,49 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
-    /** Android 13+: ask once for notification permission (the old app asked on first launch). */
-    private void maybeAskNotifications() {
-        if (isFinishing()) return;
+    private boolean notifyAskedThisRun;
+
+    /**
+     * Android 13+: our own popup first (what notifications are for), then Android's prompt.
+     * "Not now" asks again after 3 days, then after a week, then never. If Android has stopped
+     * showing its prompt (denied before), the popup offers the phone's notification settings.
+     * Waits its turn if another popup (fingerprint re-setup, guidelines) is on screen.
+     */
+    private void maybeAskNotifications(int tries) {
+        if (isFinishing() || isDestroyed() || notifyAskedThisRun) return;
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 == PackageManager.PERMISSION_GRANTED) return;
         SharedPreferences p = getSharedPreferences("home", MODE_PRIVATE);
-        if (p.getBoolean("asked_notifications", false)) return;
-        p.edit().putBoolean("asked_notifications", true).apply();
-        notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS);
+        int shown = p.getInt("notify_ask_count", 0);
+        if (shown >= 3 || System.currentTimeMillis() < p.getLong("notify_ask_next", 0)) return;
+        if (!hasWindowFocus()) {                                  // another popup is up: wait for it
+            if (tries < 20) b.getRoot().postDelayed(() -> maybeAskNotifications(tries + 1), 1500);
+            return;
+        }
+        notifyAskedThisRun = true;
+        long day = 24L * 60 * 60 * 1000;
+        p.edit().putInt("notify_ask_count", shown + 1)
+                .putLong("notify_ask_next", System.currentTimeMillis() + (shown == 0 ? 3 : 7) * day).apply();
+
+        // Asked before and Android won't show its prompt again → only the settings can turn them on.
+        boolean blocked = p.getBoolean("asked_notifications", false)
+                && !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS);
+        ConfessDialog.with(this)
+                .icon(R.drawable.ic_bell)
+                .title(R.string.notify_ask_title)
+                .body(blocked ? R.string.notify_ask_blocked_body : R.string.notify_ask_body)
+                .primary(blocked ? R.string.notify_ask_open_settings : R.string.notify_ask_allow, d -> {
+                    d.dismiss();
+                    if (blocked) {
+                        startActivity(new android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                                .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, getPackageName()));
+                    } else {
+                        p.edit().putBoolean("asked_notifications", true).apply();
+                        notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS);
+                    }
+                })
+                .secondary(R.string.notify_ask_later, null)
+                .show();
     }
 
     /** Composer → on release: back to the feed, Latest, scrolled to the new confession. */
@@ -227,20 +276,7 @@ public class HomeActivity extends BaseActivity {
         }
         tx.commit();
 
-        int on = ContextCompat.getColor(this, R.color.amber);
-        int off = ContextCompat.getColor(this, R.color.text_muted);
-        boolean onFeed = TAG_FEED.equals(which), onBooks = TAG_BOOKS.equals(which), onMe = TAG_ME.equals(which);
-        b.bottomBar.iconFeed.setColorFilter(onFeed ? on : off);
-        b.bottomBar.labelFeed.setTextColor(onFeed ? on : off);
-        b.bottomBar.iconBooks.setColorFilter(onBooks ? on : off);
-        b.bottomBar.labelBooks.setTextColor(onBooks ? on : off);
-        b.bottomBar.iconSearch.setColorFilter(off);
-        b.bottomBar.labelSearch.setTextColor(off);
-        b.bottomBar.iconMe.setColorFilter(onMe ? on : off);
-        b.bottomBar.labelMe.setTextColor(onMe ? on : off);
-        b.bottomBar.tabFeed.setSelected(onFeed);
-        b.bottomBar.tabBooks.setSelected(onBooks);
-        b.bottomBar.tabMe.setSelected(onMe);
+        NavBar.render(this, b.bottomBar, which, animate);   // TAG_* are NavBar's tab keys
     }
 
     @Override

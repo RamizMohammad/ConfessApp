@@ -188,24 +188,51 @@ public class PasswordActivity extends BaseActivity {
         update();
     }
 
-    /** Forgot the current password: email a reset link, then sign out of this phone right away. */
+    /**
+     * Forgot the current password: with fingerprint unlock on, prove it's you first; then email a
+     * reset link and sign out of this phone right away.
+     */
     private void confirmForgot() {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.forgot_title)
-                .setMessage(R.string.forgot_logout_body)
-                .setNegativeButton(R.string.action_cancel, null)
-                .setPositiveButton(R.string.forgot_logout_confirm, (d, w) -> new AuthRepository().forgotPassword(new ApiCallback<JsonObject>() {
-                    @Override public void onSuccess(JsonObject data) {
-                        android.widget.Toast.makeText(PasswordActivity.this, R.string.forgot_signed_out,
-                                android.widget.Toast.LENGTH_LONG).show();
-                        Push.signOut(PasswordActivity.this);
-                        Router.toWelcome(PasswordActivity.this);
-                    }
-                    @Override public void onError(ApiException e) {
-                        Snackbar.make(b.getRoot(), e.userMessage(PasswordActivity.this), Snackbar.LENGTH_LONG)
+        Me me = SessionManager.get().cachedMe();
+        boolean bio = me != null && me.biometricEnabled && !me.biometricResetPending
+                && in.mohammad.ramiz.confess.ui.auth.Biometrics.available(this);
+        if (!bio) {
+            showForgot();
+            return;
+        }
+        in.mohammad.ramiz.confess.ui.auth.Biometrics.prompt(this, getString(R.string.forgot_verify_title),
+                getString(R.string.forgot_verify_sub), new in.mohammad.ramiz.confess.ui.auth.Biometrics.Callback() {
+                    @Override public void onSuccess() { showForgot(); }
+                    @Override public void onFailure(@androidx.annotation.NonNull CharSequence reason) {
+                        in.mohammad.ramiz.confess.core.Haptics.reject(PasswordActivity.this);
+                        Snackbar.make(b.getRoot(), R.string.forgot_verify_failed, Snackbar.LENGTH_LONG)
                                 .setAnchorView(b.bottom).show();
                     }
-                }))
+                    @Override public void onNegative() { }
+                });
+    }
+
+    private void showForgot() {
+        in.mohammad.ramiz.confess.ui.components.ConfessDialog.with(this)
+                .icon(R.drawable.ic_mail_open)
+                .title(R.string.forgot_title)
+                .body(R.string.forgot_logout_body)
+                .danger()
+                .primary(R.string.forgot_logout_confirm, d -> {
+                    d.busy(true);
+                    new AuthRepository().forgotPassword(new ApiCallback<JsonObject>() {
+                        @Override public void onSuccess(JsonObject data) {
+                            d.dismiss();
+                            android.widget.Toast.makeText(PasswordActivity.this, R.string.forgot_signed_out,
+                                    android.widget.Toast.LENGTH_LONG).show();
+                            Push.signOut(PasswordActivity.this);
+                            Router.toWelcome(PasswordActivity.this);
+                        }
+                        @Override public void onError(ApiException e) {
+                            d.error(e.userMessage(PasswordActivity.this));
+                        }
+                    });
+                })
                 .show();
     }
 
