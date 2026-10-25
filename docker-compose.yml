@@ -1,5 +1,5 @@
 # The web app on the VPS, behind the central nginx (deploy/app.confess.mohammadramiz.in.conf),
-# which reaches it as http://confess-web:8080 on proxy_network.
+# which reaches it as http://confess-web:8012 on proxy_network.
 #   docker network create proxy_network   # once, if it doesn't exist yet
 #   docker compose up --build -d           # also on http://127.0.0.1:8012 for a local check
 # Build args come from the `.env` file next to this one (PUBLIC values only) — the same .env

@@ -17,13 +17,13 @@ npm run build                   # type-check + production build → dist/
 
 ```bash
 docker build -t confess-web --build-arg VITE_API_BASE=https://… .   # runs the tests, then builds
-docker run --rm -p 8012:8080 confess-web            # → http://localhost:8012
+docker run --rm -p 8012:8012 confess-web            # → http://localhost:8012
 docker compose up --build -d                        # same, on 127.0.0.1:8012, hardened
 ```
 
 - Stage 1 (`node:22-alpine`): `npm ci` inside the image (right binaries for Linux — never copy
   `node_modules` in), `npm test`, `npm run build`. A failing test stops the build.
-- Stage 2 (`nginx-unprivileged`, non-root, port 8080): serves `dist/` with the **same security
+- Stage 2 (`nginx-unprivileged`, non-root, port 8012): serves `dist/` with the **same security
   headers as `vercel.json`** — they're generated from it (`docker/nginx-headers.mjs`), so the two
   can't drift. `/healthz` for health checks.
 - Build args (`--build-arg` or a `.env` next to `docker-compose.yml`): `VITE_API_BASE`,
@@ -32,7 +32,7 @@ docker compose up --build -d                        # same, on 127.0.0.1:8012, h
 - Compose: localhost-only port, read-only filesystem, all capabilities dropped, no-new-privileges.
 
 On the VPS it runs like the API: the container joins `proxy_network` and the central nginx
-proxies `app.confess.mohammadramiz.in` → `http://confess-web:8080` — copy
+proxies `app.confess.mohammadramiz.in` → `http://confess-web:8012` — copy
 `deploy/app.confess.mohammadramiz.in.conf` into nginx's sites, get the certificate with certbot,
 reload. Don't add security headers in the proxy; the container already sends them.
 
