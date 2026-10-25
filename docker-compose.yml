@@ -1,5 +1,7 @@
-# Local / VPS run of the web app behind your existing nginx reverse proxy.
-#   docker compose up --build -d      → http://127.0.0.1:8012
+# The web app on the VPS, behind the central nginx (deploy/app.confess.mohammadramiz.in.conf),
+# which reaches it as http://confess-web:8080 on proxy_network.
+#   docker network create proxy_network   # once, if it doesn't exist yet
+#   docker compose up --build -d           # also on http://127.0.0.1:8012 for a local check
 # Build args come from the `.env` file next to this one (PUBLIC values only) — the same .env
 # Vite uses for `npm run build`. VITE_API_BASE is required.
 
@@ -24,13 +26,30 @@ services:
     image: confess-web:latest
     container_name: confess-web
     restart: unless-stopped
-    # Localhost only: public traffic comes through the reverse proxy (TLS there).
+    # Localhost only: public traffic comes through the central nginx (TLS there).
     ports:
       - "127.0.0.1:${WEB_HOST_PORT:-8012}:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
     read_only: true
     tmpfs:
       - /tmp
     cap_drop: [ALL]
     security_opt:
       - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 64M
     logging: *default-logging
+    networks:
+      - proxy_network          # central nginx
+
+networks:
+  proxy_network:
+    external: true
