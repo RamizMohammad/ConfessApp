@@ -3,7 +3,8 @@ import { isIOS, isStandalone } from "./lib/device.ts";
 import { SessionProvider, useSession } from "./lib/session.tsx";
 import { prefs } from "./lib/storage.ts";
 import { Boot, InstallGuide, Welcome } from "./screens/Entry.tsx";
-import { Home } from "./screens/Home.tsx";
+import { Main } from "./screens/Home.tsx";
+import { ToastProvider } from "./components/toast.tsx";
 import { AliasStep, AvatarStep, Guidelines } from "./screens/Onboarding.tsx";
 import { FaceIdOffer, LockScreen, ReauthDialog } from "./screens/Secure.tsx";
 import { Button } from "./components/ui.tsx";
@@ -27,7 +28,7 @@ function Screens() {
     case "locked":
       return <LockScreen />;
     case "ready":
-      return <Home />;
+      return <Main />;
   }
 }
 
@@ -51,9 +52,11 @@ function UpdateToast() {
 export default function App() {
   return (
     <SessionProvider>
-      <Screens />
-      <ReauthDialog />
-      <UpdateToast />
+      <ToastProvider>
+        <Screens />
+        <ReauthDialog />
+        <UpdateToast />
+      </ToastProvider>
     </SessionProvider>
   );
 }

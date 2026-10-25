@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { createPortal } from "react-dom";
 import googleG from "../assets/google-g.svg";
 import lockup from "../assets/lockup.svg";
 import letty from "../assets/letty.svg";
@@ -70,4 +71,9 @@ export function TopBar({ onBack, right, step, total }: { onBack?: () => void; ri
 export function Notice({ kind = "error", children }: { kind?: "error" | "info" | "ok"; children: ReactNode }) {
   if (!children) return null;
   return <div className={`notice ${kind}`} role={kind === "error" ? "alert" : "status"}>{children}</div>;
+}
+
+/** Sheets and dialogs render at the top of the page, never inside a card or an animated screen. */
+export function Portal({ children }: { children: ReactNode }) {
+  return createPortal(children, document.body);
 }

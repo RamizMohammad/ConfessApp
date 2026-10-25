@@ -5,7 +5,7 @@ import { isAndroid, isIOSSafari, biometricName } from "../lib/device.ts";
 import { errorMessage, useSession } from "../lib/session.tsx";
 import { prefs } from "../lib/storage.ts";
 import { FaceIdError } from "../lib/webauthn.ts";
-import { Button, FaceIdGlyph, GoogleButton, Letty, Lockup, Notice } from "../components/ui.tsx";
+import { Button, FaceIdGlyph, GoogleButton, Letty, Lockup, Notice, Portal } from "../components/ui.tsx";
 import { GuidelinesList } from "./Onboarding.tsx";
 
 export function Boot() {
@@ -146,19 +146,19 @@ function SignInSheet({ onClose }: { onClose: () => void }) {
 
   if (guidelines) {
     return (
-      <div className="overlay" onClick={onClose}>
+      <Portal><div className="overlay" onClick={onClose}>
         <section className="sheet stack" role="dialog" aria-modal="true" aria-label="Community guidelines" onClick={(e) => e.stopPropagation()}>
           <div className="grabber" />
           <Button variant="ghost" onClick={() => setGuidelines(false)}>← Back</Button>
           <h2 className="title">Community guidelines</h2>
           <GuidelinesList />
         </section>
-      </div>
+      </div></Portal>
     );
   }
 
   return (
-    <div className="overlay" onClick={onClose}>
+    <Portal><div className="overlay" onClick={onClose}>
       <section className="sheet" role="dialog" aria-modal="true" aria-labelledby="signin-title" onClick={(e) => e.stopPropagation()}>
         <div className="grabber" />
         <div className="stack">
@@ -186,6 +186,6 @@ function SignInSheet({ onClose }: { onClose: () => void }) {
           </p>
         </div>
       </section>
-    </div>
+    </div></Portal>
   );
 }

@@ -5,7 +5,7 @@ import { errorMessage, reauthWithFaceId, reauthWithGoogle, useSession } from "..
 import { prefs } from "../lib/storage.ts";
 import { FaceIdError } from "../lib/webauthn.ts";
 import { Aura } from "../components/Aura.tsx";
-import { Button, FaceIdGlyph, Lockup, Notice } from "../components/ui.tsx";
+import { Button, FaceIdGlyph, Lockup, Notice, Portal } from "../components/ui.tsx";
 
 const cancelled = (e: unknown) => e instanceof FaceIdError && e.kind === "cancelled";
 
@@ -146,7 +146,7 @@ export function ReauthDialog() {
   }
 
   return (
-    <div className="overlay center">
+    <Portal><div className="overlay center">
       <section className="dialog stack" role="alertdialog" aria-modal="true" aria-labelledby="reauth-title">
         <FaceIdGlyph />
         <h2 id="reauth-title" className="title">Confirm it's you</h2>
@@ -159,6 +159,6 @@ export function ReauthDialog() {
         )}
         <Button variant="ghost" block onClick={() => reauth.resolve(false)}>Cancel</Button>
       </section>
-    </div>
+    </div></Portal>
   );
 }
