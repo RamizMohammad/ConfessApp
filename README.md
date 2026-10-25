@@ -31,15 +31,10 @@ docker compose up --build -d                        # same, on 127.0.0.1:8012, h
   public values only. `VITE_API_BASE` is required; compose reads it from `.env`.
 - Compose: localhost-only port, read-only filesystem, all capabilities dropped, no-new-privileges.
 
-On the VPS, put it behind your central nginx (TLS there) and don't add security headers in
-that proxy — the container already sends them:
-
-```nginx
-server {
-    server_name app.confess.mohammadramiz.in;
-    location / { proxy_pass http://127.0.0.1:8012; proxy_set_header Host $host; }
-}
-```
+On the VPS it runs like the API: the container joins `proxy_network` and the central nginx
+proxies `app.confess.mohammadramiz.in` → `http://confess-web:8080` — copy
+`deploy/app.confess.mohammadramiz.in.conf` into nginx's sites, get the certificate with certbot,
+reload. Don't add security headers in the proxy; the container already sends them.
 
 ## Security model — nothing secret in the browser
 
@@ -101,7 +96,8 @@ sw.template.js       service worker (build fills in the file list)
 vercel.json          hosting + security headers (source of truth for Docker's too)
 Dockerfile           test + build, then non-root nginx
 docker/              nginx.conf + nginx-headers.mjs (vercel.json → nginx headers)
-docker-compose.yml   hardened local / VPS run
+docker-compose.yml   hardened VPS run (proxy_network, like the API)
+deploy/              central-nginx site for app.confess.mohammadramiz.in
 ```
 
 Phase 4a (feed, responses, compose, drafts, report/block) is in. Next: 4b — profile, avatar studio, follow, notifications, settings.
