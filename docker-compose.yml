@@ -1,0 +1,36 @@
+# Local / VPS run of the web app behind your existing nginx reverse proxy.
+#   docker compose up --build -d      → http://127.0.0.1:8012
+# Build args come from the `.env` file next to this one (PUBLIC values only) — the same .env
+# Vite uses for `npm run build`. VITE_API_BASE is required.
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+      args:
+        VITE_API_BASE: ${VITE_API_BASE:?set VITE_API_BASE in .env}
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+        VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY:-}
+        VITE_PLAY_STORE_URL: ${VITE_PLAY_STORE_URL:-https://play.google.com/store/apps/details?id=in.mohammad.ramiz.confess}
+        VITE_WEBSITE_URL: ${VITE_WEBSITE_URL:-https://confess.mohammadramiz.in}
+    image: confess-web:latest
+    container_name: confess-web
+    restart: unless-stopped
+    # Localhost only: public traffic comes through the reverse proxy (TLS there).
+    ports:
+      - "127.0.0.1:${WEB_HOST_PORT:-8012}:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging

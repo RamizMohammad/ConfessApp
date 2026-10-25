@@ -6,32 +6,46 @@ import { errorMessage, useSession } from "../lib/session.tsx";
 import { prefs } from "../lib/storage.ts";
 import { FaceIdError } from "../lib/webauthn.ts";
 import { Aura } from "../components/Aura.tsx";
-import { Button, Lockup, Notice } from "../components/ui.tsx";
+import { Button, Lockup, Notice, Portal } from "../components/ui.tsx";
 import { GuidelinesList } from "./Onboarding.tsx";
+import { Feather } from "../components/icons.tsx";
+import { navigate, useRoute } from "../lib/router.ts";
+import { Compose } from "./Compose.tsx";
+import { Drafts } from "./Drafts.tsx";
+import { Feed } from "./Feed.tsx";
+import { PostDetail } from "./PostDetail.tsx";
 
-/** Inside Confess. The feed, compose, profile… arrive in phase 4; this is the shell. */
-export function Home() {
+/** Inside Confess: the feed stays mounted (keeps its place) while other screens open on top. */
+export function Main() {
   const { me } = useSession();
+  const route = useRoute();
   const [settings, setSettings] = useState(false);
+  const onFeed = route.name === "feed";
 
   return (
-    <main className="screen">
-      <div className="topbar">
-        <span className="spacer" />
-        <Lockup />
-        <button className="icon-btn" aria-label="Settings" onClick={() => setSettings(true)}>
-          <Aura value={me?.avatar} size={32} />
-        </button>
-      </div>
-      <div className="stack">
-        <div className="paper stack-sm">
-          <span className="meta">@{me?.alias} · just now</span>
-          <p className="quote">“You made it in. The room is quiet for now — your letters arrive with the next update.”</p>
+    <>
+      <main className="screen main" hidden={!onFeed}>
+        <div className="topbar">
+          <span className="spacer" />
+          <Lockup />
+          <button className="icon-btn" aria-label="Me and settings" onClick={() => setSettings(true)}>
+            <Aura value={me?.avatar} size={32} />
+          </button>
         </div>
-        <p className="small muted">You're on the Confess web app. Confessions, responses, stories and books are on their way here.</p>
-      </div>
+        <Feed active={onFeed} />
+      </main>
+      {route.name === "post" ? <PostDetail key={route.id} id={route.id} /> : null}
+      {route.name === "write" ? <Compose key={route.draftId ?? "new"} draftId={route.draftId} /> : null}
+      {route.name === "drafts" ? <Drafts /> : null}
+      {onFeed ? (
+        <nav className="tabbar" aria-label="Main">
+          <button className="tab on" aria-current="page" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Feed</button>
+          <button className="write-fab" aria-label="Write a confession" onClick={() => navigate({ name: "write" })}><Feather /></button>
+          <button className="tab" onClick={() => setSettings(true)}>Me</button>
+        </nav>
+      ) : null}
       {settings ? <Settings onClose={() => setSettings(false)} /> : null}
-    </main>
+    </>
   );
 }
 
@@ -48,7 +62,7 @@ function when(iso: string | null): string {
   return new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 }
 
-function Settings({ onClose }: { onClose: () => void }) {
+export function Settings({ onClose }: { onClose: () => void }) {
   const { me, enableFaceId, signOut, canUseFaceId } = useSession();
   const [keys, setKeys] = useState<Passkey[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -96,7 +110,7 @@ function Settings({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="overlay" onClick={onClose}>
+    <Portal><div className="overlay" onClick={onClose}>
       <section className="sheet" role="dialog" aria-modal="true" aria-label="Settings" onClick={(e) => e.stopPropagation()}>
         <div className="grabber" />
         {guidelines ? (
@@ -137,12 +151,13 @@ function Settings({ onClose }: { onClose: () => void }) {
             ) : null}
 
             <hr className="divider" />
+            <Button variant="ghost" block onClick={() => { onClose(); navigate({ name: "drafts" }); }}>Drafts</Button>
             <Button variant="ghost" block onClick={() => setGuidelines(true)}>Community guidelines</Button>
             <a className="btn btn-ghost block" href={`${config.websiteUrl}/privacy`} target="_blank" rel="noopener noreferrer">Privacy policy</a>
             <Button variant="danger" block onClick={() => void signOut()}>Sign out</Button>
           </div>
         )}
       </section>
-    </div>
+    </div></Portal>
   );
 }

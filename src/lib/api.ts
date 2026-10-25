@@ -61,6 +61,7 @@ export function _setFetch(f: typeof fetch): void {
 }
 
 function url(path: string, query?: RequestOptions["query"]): string {
+  if (!config.apiBase) throw new ApiError(0, "CONFIG", "This build has no API address (VITE_API_BASE).");
   const u = new URL(`${config.apiBase}/api/v2${path}`);
   for (const [k, v] of Object.entries(query ?? {})) if (v !== undefined) u.searchParams.set(k, String(v));
   return u.toString();

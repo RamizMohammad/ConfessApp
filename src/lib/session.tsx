@@ -12,6 +12,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { config } from "../config.ts";
 import { ApiError, api, refreshSession, setApiHooks, type SessionInfo } from "./api.ts";
 import { finishGoogleSignIn, isGoogleCallback, startGoogleSignIn } from "./google.ts";
+import { wipeDrafts } from "./drafts.ts";
 import { prefs } from "./storage.ts";
 import { turnstileToken } from "./turnstile.ts";
 import { createCredential, faceIdAvailable, FaceIdError, getCredential } from "./webauthn.ts";
@@ -126,6 +127,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const toSignedOut = useCallback((notice?: string) => {
     window.clearTimeout(refreshTimer.current);
+    void wipeDrafts();                                   // unsent confessions never outlive the session
+    if (window.location.pathname !== "/") window.history.replaceState(null, "", "/");
     idToken.current = null;
     setMe(null);
     setDraftState(EMPTY_DRAFT);

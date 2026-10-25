@@ -7,10 +7,38 @@ React 19 + Vite 7 + TypeScript. Five dev dependencies, two runtime ones (react, 
 
 ```bash
 npm install
-cp .env.example .env.local      # fill in — PUBLIC values only
+cp .env.example .env            # fill in — PUBLIC values only (VITE_API_BASE is required)
 npm run dev                     # http://localhost:5173
 npm test                        # unit tests (Node's built-in runner, no extra packages)
 npm run build                   # type-check + production build → dist/
+```
+
+## Docker
+
+```bash
+docker build -t confess-web --build-arg VITE_API_BASE=https://… .   # runs the tests, then builds
+docker run --rm -p 8012:8080 confess-web            # → http://localhost:8012
+docker compose up --build -d                        # same, on 127.0.0.1:8012, hardened
+```
+
+- Stage 1 (`node:22-alpine`): `npm ci` inside the image (right binaries for Linux — never copy
+  `node_modules` in), `npm test`, `npm run build`. A failing test stops the build.
+- Stage 2 (`nginx-unprivileged`, non-root, port 8080): serves `dist/` with the **same security
+  headers as `vercel.json`** — they're generated from it (`docker/nginx-headers.mjs`), so the two
+  can't drift. `/healthz` for health checks.
+- Build args (`--build-arg` or a `.env` next to `docker-compose.yml`): `VITE_API_BASE`,
+  `VITE_GOOGLE_CLIENT_ID`, `VITE_TURNSTILE_SITE_KEY`, `VITE_PLAY_STORE_URL`, `VITE_WEBSITE_URL` —
+  public values only. `VITE_API_BASE` is required; compose reads it from `.env`.
+- Compose: localhost-only port, read-only filesystem, all capabilities dropped, no-new-privileges.
+
+On the VPS, put it behind your central nginx (TLS there) and don't add security headers in
+that proxy — the container already sends them:
+
+```nginx
+server {
+    server_name app.confess.mohammadramiz.in;
+    location / { proxy_pass http://127.0.0.1:8012; proxy_set_header Host $host; }
+}
 ```
 
 ## Security model — nothing secret in the browser
@@ -25,6 +53,8 @@ npm run build                   # type-check + production build → dist/
 | Face ID | Passkeys. The private key never leaves the phone's Secure Enclave; the server keeps only the public key. The phone lists it as "Confess account", never the alias. |
 | Local storage | Only flags: `confess.faceid`, `confess.faceid_declined`, `confess.install_dismissed`. |
 | Offline cache | The service worker caches the app's own files only — never API responses or any other origin. |
+| Drafts | Unsent confessions stay on the device in IndexedDB, AES-GCM encrypted with a non-extractable key; wiped on sign-out. |
+| GIFs | Searched through the Confess server; images load only from `media.giphy.com`, no referrer. |
 
 Headers (`vercel.json`): strict CSP (`default-src 'none'`, scripts only from this site + Cloudflare
 Turnstile, connections only to the API), no framing, no referrer, HSTS, COOP, Permissions-Policy
@@ -47,7 +77,8 @@ iOS app switcher shows nothing.
 4. **Vercel**: import this folder, framework Vite, set the `VITE_*` variables, add the domain
    `app.confess.mohammadramiz.in` (CNAME to Vercel). `vercel.json` is picked up automatically.
 
-If the API ever moves, update `connect-src` in `vercel.json` too.
+The API address lives only in `.env` (`VITE_API_BASE`). `vercel.json` / nginx allow `connect-src 'self' https:`
+and the build pins the exact API in the page's own CSP (`vite.config.ts`), so moving the API is a `.env` change.
 
 ## Layout
 
@@ -58,11 +89,19 @@ src/
   lib/google.ts      Google sign-in (redirect + state/nonce checks)
   lib/webauthn.ts    Face ID (passkeys) ↔ JSON
   lib/turnstile.ts   bot check
-  screens/           Entry (install guide, welcome), Onboarding, Secure (Face ID, lock), Home
-  components/        Aura avatars, buttons, logos
+  lib/posts.ts       confessions, responses, reactions, reports, blocks
+  lib/postStore.ts   keeps every open list in step (react / report / block / delete anywhere)
+  lib/drafts.ts      encrypted on-device drafts
+  lib/router.ts      /, /p/<id>, /write, /drafts (back-swipe works)
+  screens/           Entry, Onboarding, Secure (Face ID, lock), Home (frame + settings),
+                     Feed, PostDetail, Compose, Drafts
+  components/        post.tsx (card, reactions, poll, report/block/delete), GifPicker, Aura, toast
   data/terms.json    community guidelines (same file as the Android app)
 sw.template.js       service worker (build fills in the file list)
-vercel.json          hosting + security headers
+vercel.json          hosting + security headers (source of truth for Docker's too)
+Dockerfile           test + build, then non-root nginx
+docker/              nginx.conf + nginx-headers.mjs (vercel.json → nginx headers)
+docker-compose.yml   hardened local / VPS run
 ```
 
-Phase 4 (feed, compose, profile…) builds on `Home.tsx`.
+Phase 4a (feed, responses, compose, drafts, report/block) is in. Next: 4b — profile, avatar studio, follow, notifications, settings.

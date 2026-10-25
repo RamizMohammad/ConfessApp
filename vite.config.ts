@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 
 /** Emits /sw.js with this build's id and the exact list of shell files to cache. */
@@ -23,8 +23,40 @@ function serviceWorker(): Plugin {
   };
 }
 
-export default defineConfig({
-  plugins: [react(), serviceWorker()],
+/**
+ * The API address comes only from VITE_API_BASE (.env / build arg). It must be set, and https
+ * unless it's a local test server. The build then pins it in the page's own CSP:
+ *   vercel.json / nginx send `connect-src 'self' https:` (they can't read .env), and this meta
+ *   tag adds `connect-src 'self' <api>`. Browsers enforce both, so only the API is reachable.
+ */
+function apiOrigin(mode: string): string {
+  const raw = (loadEnv(mode, process.cwd(), "VITE_").VITE_API_BASE ?? "").trim().replace(/\/+$/, "");
+  if (!raw) throw new Error("VITE_API_BASE is not set — add it to .env (e.g. VITE_API_BASE=https://your-api.example)");
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    throw new Error(`VITE_API_BASE isn't a URL: ${raw}`);
+  }
+  const local = ["localhost", "127.0.0.1"].includes(u.hostname);
+  if (u.protocol !== "https:" && !local) throw new Error(`VITE_API_BASE must be https:// (got ${raw})`);
+  return u.origin;
+}
+
+function pinApi(origin: string): Plugin {
+  return {
+    name: "confess-csp-api",
+    apply: "build",
+    transformIndexHtml: () => [{
+      tag: "meta",
+      attrs: { "http-equiv": "Content-Security-Policy", content: `connect-src 'self' ${origin}` },
+      injectTo: "head-prepend",
+    }],
+  };
+}
+
+export default defineConfig(({ mode }) => ({
+  plugins: [react(), serviceWorker(), pinApi(apiOrigin(mode))],
   build: {
     target: "es2022",
     sourcemap: false,          // don't publish source maps
@@ -32,4 +64,4 @@ export default defineConfig({
   },
   server: { port: 5173, strictPort: true },
   preview: { port: 4173, strictPort: true },
-});
+}));
