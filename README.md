@@ -32,9 +32,12 @@ docker compose up --build -d                        # same, on 127.0.0.1:8012, h
 - Compose: localhost-only port, read-only filesystem, all capabilities dropped, no-new-privileges.
 
 On the VPS it runs like the API: the container joins `proxy_network` and the central nginx
-proxies `app.confess.mohammadramiz.in` → `http://confess-web:8012` — copy
-`deploy/app.confess.mohammadramiz.in.conf` into nginx's sites, get the certificate with certbot,
+proxies `web.confessapp.in` → `http://confess-web:8012` — copy
+`deploy/web.confessapp.in.conf` into nginx's sites, get the certificate with certbot,
 reload. Don't add security headers in the proxy; the container already sends them.
+The API must be on the same site as the app (`api.confessapp.in` → `confess-api:8011`,
+`deploy/api.confessapp.in.conf`): the sign-in cookies are `SameSite=Strict`, and Safari blocks
+cookies from another site. Set `VITE_API_BASE=https://api.confessapp.in`.
 
 ## Security model — nothing secret in the browser
 
@@ -62,15 +65,15 @@ iOS app switcher shows nothing.
 ## Setup checklist
 
 1. **Google Cloud Console → Credentials → OAuth client ID → Web application**
-   - Authorized JavaScript origins: `https://app.confess.mohammadramiz.in`
-   - Authorized redirect URIs: `https://app.confess.mohammadramiz.in/auth/google`
+   - Authorized JavaScript origins: `https://web.confessapp.in`
+   - Authorized redirect URIs: `https://web.confessapp.in/auth/google`
    - Put the client ID in `VITE_GOOGLE_CLIENT_ID` **and** add it to the server's `GOOGLE_CLIENT_ID` (comma-separated after the Android one).
-2. **Cloudflare Turnstile** widget for `app.confess.mohammadramiz.in` (Invisible or Managed):
+2. **Cloudflare Turnstile** widget for `web.confessapp.in` (Invisible or Managed):
    site key → `VITE_TURNSTILE_SITE_KEY`, secret key → server `TURNSTILE_SECRET` (`TURNSTILE_MODE=report`, later `enforce`).
-3. **Server** `.env.prod`: `WEB_APP_ORIGIN=https://app.confess.mohammadramiz.in`,
-   `PASSKEY_RP_ID=confess.mohammadramiz.in`, run `sql/0022_passkeys.sql`, deploy.
+3. **Server** `.env.prod`: `WEB_APP_ORIGIN=https://web.confessapp.in`,
+   `PASSKEY_RP_ID=confessapp.in`, run `sql/0022_passkeys.sql`, deploy.
 4. **Vercel**: import this folder, framework Vite, set the `VITE_*` variables, add the domain
-   `app.confess.mohammadramiz.in` (CNAME to Vercel). `vercel.json` is picked up automatically.
+   `web.confessapp.in` (CNAME to Vercel). `vercel.json` is picked up automatically.
 
 The API address lives only in `.env` (`VITE_API_BASE`). `vercel.json` / nginx allow `connect-src 'self' https:`
 and the build pins the exact API in the page's own CSP (`vite.config.ts`), so moving the API is a `.env` change.
@@ -97,7 +100,7 @@ vercel.json          hosting + security headers (source of truth for Docker's to
 Dockerfile           test + build, then non-root nginx
 docker/              nginx.conf + nginx-headers.mjs (vercel.json → nginx headers)
 docker-compose.yml   hardened VPS run (proxy_network, like the API)
-deploy/              central-nginx site for app.confess.mohammadramiz.in
+deploy/              central-nginx sites: web.confessapp.in (this app) + api.confessapp.in (the API)
 ```
 
 Phase 4a (feed, responses, compose, drafts, report/block) is in. Next: 4b — profile, avatar studio, follow, notifications, settings.
