@@ -4,7 +4,7 @@
 #
 #   docker build -t confess-web --build-arg VITE_API_BASE=https://… .
 #   docker compose up --build        (reads the same values from .env)
-#   docker run --rm -p 8012:8080 confess-web      → http://localhost:8012
+#   docker run --rm -p 8012:8012 confess-web      → http://localhost:8012
 #
 # Build args are PUBLIC values only (they end up in the JavaScript) — never pass a secret here.
 
