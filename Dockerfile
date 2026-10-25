@@ -45,11 +45,22 @@ RUN npm test \
 # ── Stage 2: serve ────────────────────────────────────────────────────────────
 FROM nginxinc/nginx-unprivileged:1.27-alpine AS runtime
 
+# Logs: IST times (POSIX form, no tzdata needed), colours on (LOG_COLORS=0 to turn off),
+# no entrypoint start-up chatter. nginx logs into a pipe that docker/logfmt.awk prints readably.
+ENV TZ=IST-5:30 \
+    LOG_COLORS=1 \
+    NGINX_ENTRYPOINT_QUIET_LOGS=1
+
+COPY docker/nginx-main.conf /etc/nginx/nginx.conf
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker/logfmt.awk /etc/nginx/logfmt.awk
+COPY --chmod=755 docker/start.sh /usr/local/bin/confess-start
 COPY --from=build /app/security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
 USER nginx
+ENTRYPOINT ["/usr/local/bin/confess-start"]
+CMD []
 EXPOSE 8012
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget -q -O /dev/null http://127.0.0.1:8012/healthz || exit 1
