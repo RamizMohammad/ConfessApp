@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Push template "digest" (activity waiting): ink card with an amber rim. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="20dp" />
+    <gradient android:angle="315" android:startColor="@color/paper_ink" android:endColor="@color/story_night" />
+    <stroke android:width="1.5dp" android:color="@color/amber" />
+</shape>

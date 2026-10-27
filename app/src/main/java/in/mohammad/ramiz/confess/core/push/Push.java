@@ -43,6 +43,9 @@ public final class Push {
     public static final String CHANNEL_ACTIVITY = "activity";
     public static final String CHANNEL_NEW_POSTS = "new_posts";
     public static final String CHANNEL_REMINDERS = "reminders";
+    /** Letty's pushes (nudges, teasers, digests, win-backs) — high importance so they pop up. A new
+     *  id because a channel's importance can't be raised once it exists. */
+    public static final String CHANNEL_LETTY = "letty";
 
     private Push() { }
 
@@ -78,7 +81,8 @@ public final class Push {
         Me me = SessionManager.get().cachedMe();
         String tag = NotificationSound.tag(app);
         // A new sound = new channel ids: the server must hear the tag, so it's part of the pair.
-        String pair = (me != null ? me.id : "session") + ":" + token.hashCode() + tag;
+        // Same for the template version: an app update that draws new templates re-registers.
+        String pair = (me != null ? me.id : "session") + ":" + token.hashCode() + tag + ":t" + PushTemplates.VERSION;
         if (!force && pair.equals(p.getString(KEY_REGISTERED_FOR, null))) return;
 
         new ActivityRepository().registerPushToken(token, tag, new ApiCallback<JsonObject>() {
@@ -126,6 +130,8 @@ public final class Push {
                 NotificationManager.IMPORTANCE_DEFAULT, sound));
         current.add(create(nm, context, CHANNEL_REMINDERS, R.string.channel_reminders, R.string.channel_reminders_desc,
                 NotificationManager.IMPORTANCE_DEFAULT, sound));
+        current.add(create(nm, context, CHANNEL_LETTY, R.string.channel_letty, R.string.channel_letty_desc,
+                NotificationManager.IMPORTANCE_HIGH, sound));
         for (NotificationChannel ch : nm.getNotificationChannels()) {
             String id = ch.getId();
             if (!current.contains(id) && ours(id)) nm.deleteNotificationChannel(id);
@@ -134,7 +140,7 @@ public final class Push {
     }
 
     private static boolean ours(@NonNull String id) {
-        for (String base : new String[]{CHANNEL_ACTIVITY, CHANNEL_NEW_POSTS, CHANNEL_REMINDERS}) {
+        for (String base : new String[]{CHANNEL_ACTIVITY, CHANNEL_NEW_POSTS, CHANNEL_REMINDERS, CHANNEL_LETTY}) {
             if (id.equals(base) || id.startsWith(base + ".v")) return true;
         }
         return false;

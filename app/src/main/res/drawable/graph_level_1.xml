@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Confession graph legend square, level 1. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="3dp" />
+    <solid android:color="@color/graph_level_1" />
+</shape>

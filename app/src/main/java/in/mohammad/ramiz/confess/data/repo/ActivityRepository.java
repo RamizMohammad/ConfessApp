@@ -40,10 +40,12 @@ public final class ActivityRepository {
         return Calls.enqueue(ApiClient.api().registerPushToken(new PushTokenRequest(token)), cb);
     }
 
-    /** With this phone's channel tag (".v3"), so pushes ring with the reader's chosen sound. */
+    /** With this phone's channel tag (".v3"), so pushes ring with the reader's chosen sound, and the
+     *  notification templates this build draws (so the server sends those pushes data-only). */
     public Call<JsonObject> registerPushToken(@NonNull String token, @NonNull String channelTag,
                                               @NonNull ApiCallback<JsonObject> cb) {
-        return Calls.enqueue(ApiClient.api().registerPushToken(new PushTokenRequest(token, channelTag)), cb);
+        return Calls.enqueue(ApiClient.api().registerPushToken(new PushTokenRequest(token, channelTag,
+                in.mohammad.ramiz.confess.core.push.PushTemplates.VERSION)), cb);
     }
 
     public Call<JsonObject> setPushEnabled(boolean enabled, @NonNull ApiCallback<JsonObject> cb) {

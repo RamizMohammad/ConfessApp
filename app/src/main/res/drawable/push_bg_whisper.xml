@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Push template "whisper" (night / Sunday scaries): deep plum night sky with a few stars. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <gradient android:angle="270" android:startColor="@color/story_night" android:endColor="@color/ink" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/push_stars" android:gravity="top|end" android:width="160dp" android:height="64dp" />
+</layer-list>

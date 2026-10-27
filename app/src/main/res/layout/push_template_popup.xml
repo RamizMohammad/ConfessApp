@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pop-up (heads-up) Confess push: the expanded card, fitted to the pop-up, with its button inside.
+     Height budget: stock Android 12+ allows a heads-up 136–148dp in total (notification_max_heads_up_height).
+     Card = fixed 112dp: eyebrow, serif title, one body line, the button (the push's cta), big Letty.
+     Under the card: 13dp clear of the bottom edge of Android's pop-up → 125dp in all.
+     Background, colours, button style and pose are set by PushTemplates. Measure with
+     scripts/push_lab.sh before changing heights. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="13dp">
+
+    <LinearLayout
+        android:id="@+id/push_card"
+        android:layout_width="match_parent"
+        android:layout_height="112dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/push_eyebrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.12"
+                android:maxLines="1"
+                android:textAllCaps="true"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/push_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:fontFamily="serif"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/push_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/push_cta"
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textSize="12.5sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/push_art"
+            android:layout_width="72dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="10dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter" />
+    </LinearLayout>
+</LinearLayout>

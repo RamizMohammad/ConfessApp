@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Expanded Confess push template: a themed card (background, colours and Letty's pose are set
+     per template by PushTemplates). Keep it under the system's 252dp cap. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/push_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="4dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="18dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="16dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/push_eyebrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.12"
+            android:maxLines="1"
+            android:textAllCaps="true"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/push_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:fontFamily="serif"
+            android:lineSpacingMultiplier="1.05"
+            android:maxLines="2"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/push_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"
+            android:lineSpacingMultiplier="1.1"
+            android:maxLines="3"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/push_cta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:paddingStart="16dp"
+            android:paddingTop="7dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="7dp"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/push_art"
+        android:layout_width="96dp"
+        android:layout_height="86dp"
+        android:layout_marginStart="8dp"
+        android:importantForAccessibility="no"
+        android:scaleType="fitCenter" />
+</LinearLayout>

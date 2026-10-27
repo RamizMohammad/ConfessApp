@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Letty peeking: pose "peek" for Confess notification templates (the server sends art="peek"). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp" android:height="90dp"
+    android:viewportWidth="100" android:viewportHeight="90">
+    <group android:translateY="-2">
+        <path android:pathData="M25,32 H75 A9,9 0 0 1 84,41 V75 A9,9 0 0 1 75,84 H25 A9,9 0 0 1 16,75 V41 A9,9 0 0 1 25,32 Z" android:fillColor="@color/paper" android:strokeColor="@color/paper_ink" android:strokeWidth="4" />
+        <path android:pathData="M19.5,35.5 L50,60 L80.5,35.5" android:strokeColor="@color/paper_ink" android:strokeWidth="4" android:strokeLineCap="round" android:strokeLineJoin="round" />
+        <path android:pathData="M41,60 A9,9 0 1 0 59,60 A9,9 0 1 0 41,60 Z" android:fillColor="@color/amber" />
+        <group android:translateX="45.1" android:translateY="54.6" android:scaleX="0.052" android:scaleY="0.052">
+            <path android:fillColor="@color/paper_ink" android:pathData="@string/path_logo_c" />
+        </group>
+        <path android:pathData="M38.2,72.5 A3.3,3.9 0 1 0 44.8,72.5 A3.3,3.9 0 1 0 38.2,72.5 Z M60.2,72.5 A3.3,3.9 0 1 0 66.8,72.5 A3.3,3.9 0 1 0 60.2,72.5 Z" android:fillColor="@color/paper_ink" />
+        <path android:pathData="M27.2,78.5 A3.8,3.8 0 1 0 34.8,78.5 A3.8,3.8 0 1 0 27.2,78.5 Z M65.2,78.5 A3.8,3.8 0 1 0 72.8,78.5 A3.8,3.8 0 1 0 65.2,78.5 Z" android:fillColor="@color/amber" android:fillAlpha="0.5" />
+        <path android:pathData="M86,16 L87.8,20.2 L92,22 L87.8,23.8 L86,28 L84.2,23.8 L80,22 L84.2,20.2 Z" android:fillColor="@color/story_gold" />
+        <path android:pathData="M94,34 L95.2,36.8 L98,38 L95.2,39.2 L94,42 L92.8,39.2 L90,38 L92.8,36.8 Z" android:fillColor="@color/amber" />
+    </group>
+</vector>

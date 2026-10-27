@@ -109,6 +109,18 @@ public interface ConfessApi {
     @GET("api/v2/users/me")
     Call<Me> me();
 
+    /** My confessions per day for the Me page graph (1–53 weeks) + my streak. */
+    @GET("api/v2/users/me/graph")
+    Call<in.mohammad.ramiz.confess.data.model.ConfessionGraph> confessionGraph(@Query("weeks") int weeks);
+
+    @POST("api/v2/users/me/graph")
+    Call<JsonObject> updateGraph(@Body in.mohammad.ramiz.confess.data.model.GraphStyleRequest body);
+
+    /** Someone's confession graph — {hidden: true} when they keep it to themselves. */
+    @GET("api/v2/users/{alias}/graph")
+    Call<in.mohammad.ramiz.confess.data.model.ConfessionGraph> userGraph(@Path("alias") String alias,
+                                                                        @Query("weeks") int weeks);
+
     @POST("api/v2/users/me/about")
     Call<JsonObject> updateAbout(@Body AboutRequest body);
 

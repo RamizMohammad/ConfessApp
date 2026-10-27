@@ -24,4 +24,9 @@ public class Me {
     public int following;
     /** Per-type push switches (null on an old cached copy → treat as all on). */
     @androidx.annotation.Nullable public NotificationPrefs notifications;
+    /** Days in a row I opened the app (null on an old cached copy). */
+    @androidx.annotation.Nullable public ConfessionGraph.Streak streak;
+    /** My confession graph's look ("" = default) and whether others can see it. */
+    @androidx.annotation.Nullable public String graphStyle;
+    public boolean graphPublic = true;
 }

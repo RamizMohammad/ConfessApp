@@ -27,10 +27,10 @@ import in.mohammad.ramiz.confess.databinding.FragmentMeBinding;
  */
 public final class MePage {
 
-    public static final String PEOPLE = "people", LETTERS = "letters", DRAFTS = "drafts",
+    public static final String PEOPLE = "people", GRAPH = "graph", LETTERS = "letters", DRAFTS = "drafts",
             FELT = "felt", RESPONSES = "responses";
     public static final List<String> DEFAULT_ORDER =
-            Collections.unmodifiableList(Arrays.asList(PEOPLE, LETTERS, DRAFTS, FELT, RESPONSES));
+            Collections.unmodifiableList(Arrays.asList(PEOPLE, GRAPH, LETTERS, DRAFTS, FELT, RESPONSES));
 
     private static final String PREFS = "me_page";
 
@@ -38,7 +38,7 @@ public final class MePage {
 
     // ── The reader's choices ──────────────────────────────────────────────
 
-    /** Every section once; sections added in a later version join at the end. */
+    /** Every section once; a section added in a later version joins at its default position. */
     @NonNull
     public static List<String> order(@NonNull Context c) {
         String raw = prefs(c).getString("order", null);
@@ -46,7 +46,10 @@ public final class MePage {
         if (raw != null) {
             for (String k : raw.split(",")) if (DEFAULT_ORDER.contains(k) && !out.contains(k)) out.add(k);
         }
-        for (String k : DEFAULT_ORDER) if (!out.contains(k)) out.add(k);
+        for (int i = 0; i < DEFAULT_ORDER.size(); i++) {
+            String k = DEFAULT_ORDER.get(i);
+            if (!out.contains(k)) out.add(Math.min(i, out.size()), k);
+        }
         return out;
     }
 
@@ -79,6 +82,7 @@ public final class MePage {
     @DrawableRes
     public static int icon(@NonNull String key) {
         switch (key) {
+            case GRAPH: return R.drawable.ic_flame;
             case LETTERS: return R.drawable.ic_letters;
             case DRAFTS: return R.drawable.ic_pencil;
             case FELT: return R.drawable.ic_heart;
@@ -90,6 +94,7 @@ public final class MePage {
     @StringRes
     public static int name(@NonNull String key) {
         switch (key) {
+            case GRAPH: return R.string.me_card_graph;
             case LETTERS: return R.string.me_card_letters;
             case DRAFTS: return R.string.me_card_drafts;
             case FELT: return R.string.me_card_felt;
@@ -101,6 +106,7 @@ public final class MePage {
     @NonNull
     private static View view(@NonNull FragmentMeBinding b, @NonNull String key) {
         switch (key) {
+            case GRAPH: return b.cardGraph;
             case LETTERS: return b.cardLetters;
             case DRAFTS: return b.cardDrafts;
             case FELT: return b.cardFelt;

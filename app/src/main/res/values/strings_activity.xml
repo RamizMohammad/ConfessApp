@@ -26,7 +26,19 @@
     <string name="channel_new_posts_desc">From people you follow, and the occasional new confession from everyone else</string>
     <string name="channel_reminders">Daily check-ins</string>
     <string name="channel_reminders_desc">A gentle nudge a few times a day, and a recap when things happened while you were away</string>
+    <string name="channel_letty">Letty\'s picks</string>
+    <string name="channel_letty_desc">Daily check-ins, new confessions worth a read, and a hello from Letty when you\'ve been away</string>
     <string name="push_default_title">Confess</string>
     <string name="push_default_body">Something new is waiting for you.</string>
     <string name="push_private_body">New activity on your confessions</string>
+    <!-- Push template eyebrows (small caps line above the title) -->
+    <string name="push_eyebrow_spark">Fresh on Confess</string>
+    <string name="push_eyebrow_whisper">Late-night Confess</string>
+    <string name="push_eyebrow_teaser">A new letter just landed</string>
+    <string name="push_eyebrow_digest">While you were away</string>
+    <string name="push_eyebrow_digest_count">%d waiting for you</string>
+    <string name="push_eyebrow_winback">Letty misses you</string>
+    <string name="push_eyebrow_streak">Streak on fire</string>
+    <string name="push_eyebrow_streak_count">🔥 %d-day streak</string>
+    <string name="push_cta_default">Open Confess</string>
 </resources>

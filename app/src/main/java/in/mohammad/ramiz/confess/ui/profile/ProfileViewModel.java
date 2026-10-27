@@ -62,6 +62,8 @@ public class ProfileViewModel extends ViewModel {
         public final boolean blocked;
         /** "" / null = automatic; see ui.components.Banner. Carried along by the with…() copies. */
         @Nullable public String banner;
+        /** Their confession graph once loaded (null = not loaded / they keep it to themselves). */
+        @Nullable public in.mohammad.ramiz.confess.data.model.ConfessionGraph graph;
 
         Header(boolean isMe, @NonNull String alias, @Nullable String about, @Nullable String avatar,
                @Nullable String createdAt, int postCount, @Nullable Integer feltCount,
@@ -87,12 +89,12 @@ public class ProfileViewModel extends ViewModel {
 
         Header withPostCount(int n) {
             return new Header(isMe, alias, about, avatar, createdAt, Math.max(0, n), feltCount,
-                    followers, following, isFollowing, blocked).banner(banner);
+                    followers, following, isFollowing, blocked).banner(banner).graph(graph);
         }
 
         Header withFollow(boolean nowFollowing, int nowFollowers) {
             return new Header(isMe, alias, about, avatar, createdAt, postCount, feltCount,
-                    Math.max(0, nowFollowers), following, nowFollowing, blocked).banner(banner);
+                    Math.max(0, nowFollowers), following, nowFollowing, blocked).banner(banner).graph(graph);
         }
 
         /** Blocking also ends any follow between us (the server removes it both ways). */
@@ -100,11 +102,16 @@ public class ProfileViewModel extends ViewModel {
             boolean f = !nowBlocked && isFollowing;
             int n = nowBlocked && isFollowing ? Math.max(0, followers - 1) : followers;
             return new Header(isMe, alias, about, avatar, createdAt, postCount, feltCount, n, following, f, nowBlocked)
-                    .banner(banner);
+                    .banner(banner).graph(graph);
         }
 
         Header banner(@Nullable String b) {
             banner = b;
+            return this;
+        }
+
+        Header graph(@Nullable in.mohammad.ramiz.confess.data.model.ConfessionGraph g) {
+            graph = g;
             return this;
         }
     }
@@ -259,15 +266,30 @@ public class ProfileViewModel extends ViewModel {
         } else if (alias != null) {
             users.profile(alias, new ApiCallback<PublicProfile>() {
                 @Override public void onSuccess(PublicProfile p) {
-                    header = headerOf(p);
+                    in.mohammad.ramiz.confess.data.model.ConfessionGraph g = header != null ? header.graph : null;
+                    header = headerOf(p).graph(g);
                     if (local != null) local.write(headerKey(), p);
                     screen = Screen.CONTENT;
                     error = null;
                     publish();
+                    loadGraph(p.alias);
                 }
                 @Override public void onError(ApiException e) { headerFailed(e); }
             });
         }
+    }
+
+    /** Their confession graph (in their look); stays hidden when they keep it to themselves. */
+    private void loadGraph(@Nullable String who) {
+        if (who == null) return;
+        users.userGraph(who, 26, new ApiCallback<in.mohammad.ramiz.confess.data.model.ConfessionGraph>() {
+            @Override public void onSuccess(in.mohammad.ramiz.confess.data.model.ConfessionGraph g) {
+                if (header == null || !who.equalsIgnoreCase(header.alias)) return;
+                header = header.graph(g.hidden || g.days == null ? null : g);
+                publish();
+            }
+            @Override public void onError(ApiException e) { }
+        });
     }
 
     private void headerFailed(ApiException e) {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Letty waving hello: pose "wave" for Confess notification templates (the server sends art="wave"). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp" android:height="90dp"
+    android:viewportWidth="100" android:viewportHeight="90">
+    <group android:translateY="-2">
+        <path android:pathData="M25,32 H75 A9,9 0 0 1 84,41 V75 A9,9 0 0 1 75,84 H25 A9,9 0 0 1 16,75 V41 A9,9 0 0 1 25,32 Z" android:fillColor="@color/paper" android:strokeColor="@color/paper_ink" android:strokeWidth="4" />
+        <path android:pathData="M19.5,35.5 L50,60 L80.5,35.5" android:strokeColor="@color/paper_ink" android:strokeWidth="4" android:strokeLineCap="round" android:strokeLineJoin="round" />
+        <path android:pathData="M41,60 A9,9 0 1 0 59,60 A9,9 0 1 0 41,60 Z" android:fillColor="@color/amber" />
+        <group android:translateX="45.1" android:translateY="54.6" android:scaleX="0.052" android:scaleY="0.052">
+            <path android:fillColor="@color/paper_ink" android:pathData="@string/path_logo_c" />
+        </group>
+        <path android:pathData="M35.7,74 A3.3,3.9 0 1 0 42.3,74 A3.3,3.9 0 1 0 35.7,74 Z M57.7,74 A3.3,3.9 0 1 0 64.3,74 A3.3,3.9 0 1 0 57.7,74 Z" android:fillColor="@color/paper_ink" />
+        <path android:pathData="M27.2,78.5 A3.8,3.8 0 1 0 34.8,78.5 A3.8,3.8 0 1 0 27.2,78.5 Z M65.2,78.5 A3.8,3.8 0 1 0 72.8,78.5 A3.8,3.8 0 1 0 65.2,78.5 Z" android:fillColor="@color/amber" android:fillAlpha="0.5" />
+        <path android:pathData="M83,64 Q92,58 93,45" android:strokeColor="@color/paper_ink" android:strokeWidth="4" android:strokeLineCap="round" android:strokeLineJoin="round" />
+        <path android:pathData="M89,42 A4,4 0 1 0 97,42 A4,4 0 1 0 89,42 Z" android:fillColor="@color/paper" android:strokeColor="@color/paper_ink" android:strokeWidth="2.5" />
+        <path android:pathData="M86,30 L88,25 M94,30 L98,26" android:strokeColor="@color/amber" android:strokeWidth="2.5" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    </group>
+</vector>

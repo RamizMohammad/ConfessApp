@@ -11,6 +11,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import in.mohammad.ramiz.confess.R;
@@ -20,6 +22,7 @@ import in.mohammad.ramiz.confess.core.PostEvents;
 import in.mohammad.ramiz.confess.data.api.ApiCallback;
 import in.mohammad.ramiz.confess.data.drafts.Drafts;
 import in.mohammad.ramiz.confess.data.api.ApiException;
+import in.mohammad.ramiz.confess.data.model.ConfessionGraph;
 import in.mohammad.ramiz.confess.data.model.Me;
 import in.mohammad.ramiz.confess.data.repo.UserRepository;
 import in.mohammad.ramiz.confess.data.session.SessionManager;
@@ -34,6 +37,7 @@ import in.mohammad.ramiz.confess.ui.util.Motion;
  * S11 · Me tab. Old: ProfileFragment (profile + a grid of setting buttons).
  *
  * Profile header, then four cards stacked vertically:
+ *   Graph      → my confessions per day (last 6 months) + my streak
  *   Letters    → all my letters
  *   Felt       → given · received   → who felt each letter (expand per letter)
  *   Responses  → made · received    → responses on each letter (expand per letter)
@@ -76,6 +80,8 @@ public class MeFragment extends Fragment {
         b.cardFelt.setOnClickListener(v -> Nav.received(requireContext(), ReceivedActivity.MODE_FELT));
         b.cardResponses.setOnClickListener(v -> Nav.received(requireContext(), ReceivedActivity.MODE_RESPONSES));
         b.cardSettings.setOnClickListener(v -> Nav.settings(requireContext()));
+        b.graph.setOnDayTap(this::onGraphDay);
+        b.graphCustomize.setOnClickListener(v -> openGraphStyle());
         b.meArrange.setOnClickListener(v -> startActivity(
                 new android.content.Intent(requireContext(), in.mohammad.ramiz.confess.ui.settings.AppearanceActivity.class)
                         .putExtra(in.mohammad.ramiz.confess.ui.settings.AppearanceActivity.EXTRA_SECTION,
@@ -122,6 +128,7 @@ public class MeFragment extends Fragment {
     }
 
     private void refresh() {
+        loadGraph();
         users.me(new ApiCallback<Me>() {
             @Override public void onSuccess(Me me) {
                 if (b == null) return;
@@ -157,6 +164,71 @@ public class MeFragment extends Fragment {
         b.feltReceived.value.setText(Formats.count(me.likesReceived));
         b.responsesMade.value.setText(Formats.count(me.commentsMade));
         b.responsesReceived.value.setText(Formats.count(me.commentsReceived));
+        if (me.streak != null) {                        // the chip right away; the graph follows
+            b.graphStreak.setText(me.streak.days > 0 ? getResources().getQuantityString(R.plurals.graph_streak, me.streak.days, me.streak.days)
+                    : getString(R.string.graph_streak_start));
+        }
+    }
+
+    // ── Confession graph ─────────────────────────────────────────────────────
+
+    private static final int GRAPH_WEEKS = 26;
+    private static final DateTimeFormatter DAY = DateTimeFormatter.ofPattern("EEE, d MMM", Locale.getDefault());
+
+    @Nullable private ConfessionGraph lastGraph;
+
+    private void openGraphStyle() {
+        Me me = SessionManager.get().cachedMe();
+        GraphStyle style = GraphStyle.parse(lastGraph != null ? lastGraph.style : me != null ? me.graphStyle : null);
+        boolean isPublic = lastGraph != null ? lastGraph.isPublic : me == null || me.graphPublic;
+        GraphStyleSheet.show(requireContext(), lastGraph, style, isPublic, (chosen, pub) -> {
+            if (b == null) return;
+            if (lastGraph != null) {
+                lastGraph.style = chosen.spec();
+                lastGraph.isPublic = pub;
+            }
+            applyGraphStyle(chosen);
+        });
+    }
+
+    private void applyGraphStyle(@NonNull GraphStyle style) {
+        b.graph.setGraphStyle(style);
+        style.paintLegend(b.graphLegend);
+    }
+
+    private void loadGraph() {
+        if (!MePage.shown(requireContext(), MePage.GRAPH)) return;
+        users.confessionGraph(GRAPH_WEEKS, new ApiCallback<ConfessionGraph>() {
+            @Override public void onSuccess(ConfessionGraph g) {
+                if (b != null) renderGraph(g);
+            }
+            @Override public void onError(ApiException e) { }
+        });
+    }
+
+    private void renderGraph(@NonNull ConfessionGraph g) {
+        if (g.start == null || g.days == null) return;
+        lastGraph = g;
+        applyGraphStyle(GraphStyle.parse(g.style));
+        try {
+            b.graph.setData(LocalDate.parse(g.start), g.days);
+        } catch (Exception e) {
+            return;
+        }
+        String total = getResources().getQuantityString(R.plurals.graph_total, g.total, g.total);
+        int best = g.streak != null ? g.streak.best : 0;
+        b.graphSub.setText(total);
+        int streak = g.streak != null ? g.streak.days : 0;
+        b.graphStreak.setText(streak > 0 ? getResources().getQuantityString(R.plurals.graph_streak, streak, streak) : getString(R.string.graph_streak_start));
+        b.graphDay.setText(best > 1 ? getString(R.string.graph_hint_best, best) : getString(R.string.graph_hint));
+        b.graph.setContentDescription(getString(R.string.graph_cd, total, b.graphStreak.getText()));
+    }
+
+    private void onGraphDay(@NonNull LocalDate day, int count) {
+        if (b == null) return;
+        String d = day.format(DAY);
+        b.graphDay.setText(count > 0 ? getResources().getQuantityString(R.plurals.graph_day, count, count, d)
+                : getString(R.string.graph_day_none, d));
     }
 
     // ── Banner ───────────────────────────────────────────────────────────────

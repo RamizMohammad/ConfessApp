@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The button under the pop-up card: amber pill (reads on both dark and light pop-up backgrounds). -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="#33000000">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="999dp" />
+            <solid android:color="@color/amber" />
+        </shape>
+    </item>
+</ripple>

@@ -270,6 +270,97 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Their confession graph, in their look (hidden when they keep it to themselves) -->
+        <LinearLayout
+            android:id="@+id/graphCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:background="@drawable/bg_plate"
+            android:orientation="vertical"
+            android:padding="@dimen/space_md"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/graph_their_title"
+                    android:textAppearance="@style/TextAppearance.Confess.Body"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:id="@+id/graphSub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_muted"
+                    tools:text="23 confessions · 6 months" />
+            </LinearLayout>
+
+            <in.mohammad.ramiz.confess.ui.me.ConfessionGraphView
+                android:id="@+id/graph"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/graphDay"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/graph_hint"
+                    android:textAppearance="@style/TextAppearance.Confess.Meta"
+                    android:textColor="@color/text_secondary" />
+
+                <LinearLayout
+                    android:id="@+id/graphLegend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:text="@string/graph_less"
+                        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                        android:textColor="@color/text_muted" />
+
+                    <View android:tag="swatch" android:layout_width="10dp" android:layout_height="10dp" android:layout_marginEnd="3dp" />
+                    <View android:tag="swatch" android:layout_width="10dp" android:layout_height="10dp" android:layout_marginEnd="3dp" />
+                    <View android:tag="swatch" android:layout_width="10dp" android:layout_height="10dp" android:layout_marginEnd="3dp" />
+                    <View android:tag="swatch" android:layout_width="10dp" android:layout_height="10dp" android:layout_marginEnd="3dp" />
+                    <View android:tag="swatch" android:layout_width="10dp" android:layout_height="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="@string/graph_more"
+                        android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                        android:textColor="@color/text_muted" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
         <!-- "MY LETTERS (14)" -->
         <TextView
             android:id="@+id/lettersTitle"

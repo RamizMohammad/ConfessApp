@@ -1,0 +1,6 @@
+New in Confess 5.5
+• GIFs: add one to a confession or a response
+• Read your way: 8 typefaces, text size and spacing for confessions and books
+• Arrange your bottom bar and Me page, with animated tab icons
+• Shake to lock, plus safer password and fingerprint steps
+• A quick tour with live samples that shows where everything lives

@@ -185,6 +185,38 @@ public class ProfileAdapter extends ListAdapter<ProfileAdapter.Row, RecyclerView
 
         b.lettersTitle.setText(ctx.getString(h.isMe ? R.string.profile_my_letters : R.string.profile_their_letters,
                 Formats.count(h.postCount)));
+        bindGraph(b, h);
+    }
+
+    /** Their confession graph in their own look — only when they show it (never their streak). */
+    private void bindGraph(ItemProfileHeaderBinding b, ProfileViewModel.Header h) {
+        in.mohammad.ramiz.confess.data.model.ConfessionGraph g = h.isMe || h.blocked ? null : h.graph;
+        if (g == null || g.start == null || g.days == null) {
+            b.graphCard.setVisibility(View.GONE);
+            return;
+        }
+        Context ctx = b.getRoot().getContext();
+        java.time.LocalDate start;
+        try {
+            start = java.time.LocalDate.parse(g.start);
+        } catch (Exception e) {
+            b.graphCard.setVisibility(View.GONE);
+            return;
+        }
+        b.graphCard.setVisibility(View.VISIBLE);
+        in.mohammad.ramiz.confess.ui.me.GraphStyle style = in.mohammad.ramiz.confess.ui.me.GraphStyle.parse(g.style);
+        b.graph.setGraphStyle(style);
+        style.paintLegend(b.graphLegend);
+        b.graph.setData(start, g.days);
+        b.graphSub.setText(ctx.getResources().getQuantityString(R.plurals.graph_total, g.total, g.total));
+        b.graphDay.setText(R.string.graph_hint);
+        java.time.format.DateTimeFormatter day =
+                java.time.format.DateTimeFormatter.ofPattern("EEE, d MMM", java.util.Locale.getDefault());
+        b.graph.setOnDayTap((d, n) -> {
+            String ds = d.format(day);
+            b.graphDay.setText(n > 0 ? ctx.getResources().getQuantityString(R.plurals.graph_day, n, n, ds)
+                    : ctx.getString(R.string.graph_day_none, ds));
+        });
     }
 
     private void bindFooter(ItemResponsesFooterBinding b, Row row) {

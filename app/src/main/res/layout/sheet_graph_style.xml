@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GraphStyleSheet: live preview · colours · shapes · show on my profile · save. -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/space_sm"
+    android:paddingBottom="@dimen/space_md">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_sheet_handle" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:text="@string/graph_style_title"
+        android:textAppearance="@style/TextAppearance.Confess.HeadlineSmall"
+        android:textColor="@color/text_primary" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xxs"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:text="@string/graph_style_sub"
+        android:textAppearance="@style/TextAppearance.Confess.BodyMedium"
+        android:textColor="@color/text_secondary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_screen"
+        android:layout_marginTop="@dimen/space_md"
+        android:background="@drawable/bg_me_card"
+        android:orientation="vertical"
+        android:padding="@dimen/space_md">
+
+        <in.mohammad.ramiz.confess.ui.me.ConfessionGraphView
+            android:id="@+id/preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/legend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/space_12"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="@string/graph_less"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:textColor="@color/text_muted" />
+
+            <View android:tag="swatch" android:layout_width="10dp" android:layout_height="10dp" android:layout_marginEnd="3dp" />
+            <View android:tag="swatch" android:layout_width="10dp" android:layout_height="10dp" android:layout_marginEnd="3dp" />
+            <View android:tag="swatch" android:layout_width="10dp" android:layout_height="10dp" android:layout_marginEnd="3dp" />
+            <View android:tag="swatch" android:layout_width="10dp" android:layout_height="10dp" android:layout_marginEnd="3dp" />
+            <View android:tag="swatch" android:layout_width="10dp" android:layout_height="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="@string/graph_more"
+                android:textAppearance="@style/TextAppearance.Confess.MetaSmall"
+                android:textColor="@color/text_muted" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        style="@style/Confess.SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:text="@string/graph_style_colour" />
+
+    <HorizontalScrollView
+        android:id="@+id/paletteScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/palettes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <TextView
+        style="@style/Confess.SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:text="@string/graph_style_shape" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/shapes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:id="@+id/publicRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:background="@drawable/bg_row_ripple"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/margin_screen"
+        android:paddingVertical="@dimen/space_sm">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/graph_style_public"
+                android:textAppearance="@style/TextAppearance.Confess.Body"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/graph_style_public_sub"
+                android:textAppearance="@style/TextAppearance.Confess.Meta"
+                android:textColor="@color/text_muted" />
+        </LinearLayout>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/publicSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_sm" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/margin_screen">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel"
+            style="@style/Widget.Confess.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/action_cancel" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/save"
+            style="@style/Widget.Confess.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_sm"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:maxLines="1"
+            android:text="@string/graph_style_save" />
+    </LinearLayout>
+</LinearLayout>
+</androidx.core.widget.NestedScrollView>

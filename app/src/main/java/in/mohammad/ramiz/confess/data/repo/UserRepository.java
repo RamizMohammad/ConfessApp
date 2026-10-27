@@ -51,6 +51,34 @@ public final class UserRepository {
         });
     }
 
+    /** GET users/me/graph — my confessions per day for the last {@code weeks} weeks + my streak. */
+    public Call<in.mohammad.ramiz.confess.data.model.ConfessionGraph> confessionGraph(
+            int weeks, @NonNull ApiCallback<in.mohammad.ramiz.confess.data.model.ConfessionGraph> cb) {
+        return Calls.enqueue(ApiClient.api().confessionGraph(weeks), cb);
+    }
+
+    /** POST users/me/graph — my graph's look ("" = default) and whether others can see it. */
+    public Call<JsonObject> updateGraph(@NonNull String style, boolean isPublic, @NonNull ApiCallback<JsonObject> cb) {
+        return Calls.enqueue(ApiClient.api().updateGraph(
+                new in.mohammad.ramiz.confess.data.model.GraphStyleRequest(style, isPublic)), new ApiCallback<JsonObject>() {
+            @Override public void onSuccess(JsonObject data) {
+                Me cached = SessionManager.get().cachedMe();
+                if (cached != null) {
+                    cached.graphStyle = style;
+                    cached.graphPublic = isPublic;
+                }
+                cb.onSuccess(data);
+            }
+            @Override public void onError(ApiException e) { cb.onError(e); }
+        });
+    }
+
+    /** GET users/{alias}/graph — someone's confession graph (hidden = they keep it to themselves). */
+    public Call<in.mohammad.ramiz.confess.data.model.ConfessionGraph> userGraph(
+            @NonNull String alias, int weeks, @NonNull ApiCallback<in.mohammad.ramiz.confess.data.model.ConfessionGraph> cb) {
+        return Calls.enqueue(ApiClient.api().userGraph(alias, weeks), cb);
+    }
+
     public Call<JsonObject> updateAbout(@NonNull String about, @NonNull ApiCallback<JsonObject> cb) {
         return Calls.enqueue(ApiClient.api().updateAbout(new AboutRequest(about)), cb);
     }

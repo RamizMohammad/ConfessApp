@@ -44,4 +44,14 @@
     <!-- Misc -->
     <color name="scrim">#B30F0E13</color>
     <color name="transparent">#00000000</color>
+    <!-- Push templates: muted body text on the compact cards -->
+    <color name="push_muted_night">#C9C0D6</color>
+    <color name="push_muted_paper">#5A4F45</color>
+    <color name="push_muted_amber">#3A2A18</color>
+    <!-- Confession graph (Me page): empty day → most confessions -->
+    <color name="graph_level_0">#14ECE8E1</color>
+    <color name="graph_level_1">#59E8A04C</color>
+    <color name="graph_level_2">#8CE8A04C</color>
+    <color name="graph_level_3">#C7E8A04C</color>
+    <color name="graph_level_4">#FFF6C76A</color>
 </resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Confession graph (Me page) -->
+    <string name="me_card_graph">Confession graph</string>
+    <plurals name="graph_total">
+        <item quantity="one">%d confession · 6 months</item>
+        <item quantity="other">%d confessions · 6 months</item>
+    </plurals>
+    <string name="graph_hint_best">Best streak %d days · tap a day</string>
+    <plurals name="graph_streak">
+        <item quantity="one">🔥 %d day</item>
+        <item quantity="other">🔥 %d days</item>
+    </plurals>
+    <string name="graph_streak_start">Start a streak</string>
+    <string name="graph_hint">Tap a day</string>
+    <plurals name="graph_day">
+        <item quantity="one">%1$d confession · %2$s</item>
+        <item quantity="other">%1$d confessions · %2$s</item>
+    </plurals>
+    <string name="graph_day_none">Nothing that day · %s</string>
+    <string name="graph_less">Less</string>
+    <string name="graph_more">More</string>
+    <string name="graph_cd">Confession graph: %1$s. %2$s</string>
+    <string name="graph_mon">M</string>
+    <string name="graph_wed">W</string>
+    <string name="graph_fri">F</string>
+    <!-- Graph look (GraphStyleSheet) -->
+    <string name="graph_customize">Customise graph</string>
+    <string name="graph_style_title">Your graph\'s look</string>
+    <string name="graph_style_sub">Everyone who sees your graph sees it this way.</string>
+    <string name="graph_style_colour">Colour</string>
+    <string name="graph_style_shape">Shape</string>
+    <string name="graph_style_public">Show on my profile</string>
+    <string name="graph_style_public_sub">Others see how many confessions you posted each day — never your streak.</string>
+    <string name="graph_style_save">Save look</string>
+    <string name="graph_style_saved">Graph updated</string>
+    <string name="graph_palette_amber">Amber</string>
+    <string name="graph_palette_ember">Ember</string>
+    <string name="graph_palette_ocean">Ocean</string>
+    <string name="graph_palette_mint">Mint</string>
+    <string name="graph_palette_rose">Rose</string>
+    <string name="graph_palette_violet">Violet</string>
+    <string name="graph_palette_mono">Mono</string>
+    <string name="graph_shape_round">Rounded</string>
+    <string name="graph_shape_square">Square</string>
+    <string name="graph_shape_circle">Dots</string>
+    <string name="graph_shape_heart">Hearts</string>
+    <string name="graph_shape_diamond">Diamonds</string>
+    <!-- On someone else's profile -->
+    <string name="graph_their_title">Confession graph</string>
+</resources>

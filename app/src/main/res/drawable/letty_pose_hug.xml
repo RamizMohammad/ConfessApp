@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Letty hugging: pose "hug" for Confess notification templates (the server sends art="hug"). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp" android:height="90dp"
+    android:viewportWidth="100" android:viewportHeight="90">
+    <group android:translateY="-2">
+        <path android:pathData="M25,32 H75 A9,9 0 0 1 84,41 V75 A9,9 0 0 1 75,84 H25 A9,9 0 0 1 16,75 V41 A9,9 0 0 1 25,32 Z" android:fillColor="@color/paper" android:strokeColor="@color/paper_ink" android:strokeWidth="4" />
+        <path android:pathData="M19.5,35.5 L50,60 L80.5,35.5" android:strokeColor="@color/paper_ink" android:strokeWidth="4" android:strokeLineCap="round" android:strokeLineJoin="round" />
+        <path android:pathData="M41,60 A9,9 0 1 0 59,60 A9,9 0 1 0 41,60 Z" android:fillColor="@color/amber" />
+        <group android:translateX="45.1" android:translateY="54.6" android:scaleX="0.052" android:scaleY="0.052">
+            <path android:fillColor="@color/paper_ink" android:pathData="@string/path_logo_c" />
+        </group>
+        <path android:pathData="M35.5,74.5 Q39,70.5 42.5,74.5 M57.5,74.5 Q61,70.5 64.5,74.5" android:strokeColor="@color/paper_ink" android:strokeWidth="2.6" android:strokeLineCap="round" android:strokeLineJoin="round" />
+        <path android:pathData="M27.2,78.5 A3.8,3.8 0 1 0 34.8,78.5 A3.8,3.8 0 1 0 27.2,78.5 Z M65.2,78.5 A3.8,3.8 0 1 0 72.8,78.5 A3.8,3.8 0 1 0 65.2,78.5 Z" android:fillColor="@color/amber" android:fillAlpha="0.5" />
+        <path android:pathData="M17,62 Q20,90 43,88" android:strokeColor="@color/paper_ink" android:strokeWidth="4" android:strokeLineCap="round" android:strokeLineJoin="round" />
+        <path android:pathData="M83,62 Q80,90 57,88" android:strokeColor="@color/paper_ink" android:strokeWidth="4" android:strokeLineCap="round" android:strokeLineJoin="round" />
+        <path android:pathData="M50,26 C50,26 41,20 41,14.5 A4.5,4.5 0 0 1 50,13 A4.5,4.5 0 0 1 59,14.5 C59,20 50,26 50,26 Z" android:fillColor="@color/amber" />
+    </group>
+</vector>
