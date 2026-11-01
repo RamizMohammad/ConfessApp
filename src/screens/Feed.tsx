@@ -6,6 +6,9 @@ import { navigate } from "../lib/router.ts";
 import { MOODS, type Mood, type Post } from "../lib/types.ts";
 import { PostCard } from "../components/post.tsx";
 import { Button } from "../components/ui.tsx";
+import { BurstCard, BurstChooser } from "../components/bursts.tsx";
+import { StoryTray } from "../components/stories.tsx";
+import { burstAsked, burstMode, onBurstMode, type BurstMode } from "../lib/bursts.ts";
 
 type Load = "idle" | "loading" | "more" | "error" | "moreError";
 
@@ -13,6 +16,8 @@ export function Feed({ active }: { active: boolean }) {
   const [sort, setSort] = useState<P.Sort>("latest");
   const [scope, setScope] = useState<P.Scope>("all");
   const [mood, setMood] = useState<Mood | null>(null);
+  const [bursts, setBursts] = useState<BurstMode>(burstMode);
+  const [chooser, setChooser] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [state, setState] = useState<Load>("loading");
@@ -25,7 +30,7 @@ export function Feed({ active }: { active: boolean }) {
     const mine = ++seq.current;
     setState(more ? "more" : "loading");
     try {
-      const r = await P.feed({ sort, scope, mood, cursor: more ? c : null });
+      const r = await P.feed({ sort, scope, mood, cursor: more ? c : null, bursts: bursts !== "separate" });
       if (mine !== seq.current) return;
       remember(r.posts);
       setPosts((cur) => (more ? [...cur, ...r.posts.filter((p) => !cur.some((x) => x.postId === p.postId))] : r.posts));
@@ -36,7 +41,13 @@ export function Feed({ active }: { active: boolean }) {
       setError(errorMessage(e));
       setState(more ? "moreError" : "error");
     }
-  }, [sort, scope, mood]);
+  }, [sort, scope, mood, bursts]);
+
+  useEffect(() => onBurstMode(setBursts), []);
+  const anyBurst = posts.some((p) => (p.burst?.count ?? 1) > 1);
+  useEffect(() => {
+    if (active && anyBurst && !burstAsked()) setChooser(true);
+  }, [active, anyBurst]);
 
   useEffect(() => {
     void load(false, null);
@@ -75,6 +86,7 @@ export function Feed({ active }: { active: boolean }) {
 
   return (
     <section className="feed" hidden={!active} aria-label="Feed">
+      <StoryTray active={active} />
       <div className="feed-controls">
         <div className="segmented" role="tablist">
           <button role="tab" aria-selected={sort === "latest"} onClick={() => pickSort("latest")}>Latest</button>
@@ -105,13 +117,24 @@ export function Feed({ active }: { active: boolean }) {
       {state === "idle" && !posts.length ? (
         <div className="empty">
           <h2 className="title">{sort === "top" ? "Nothing has been felt this week yet." : scope === "following" ? "No letters from people you follow yet." : "No confessions yet."}</h2>
-          <p className="small">Be the first to say the thing out loud.</p>
-          <Button onClick={() => navigate({ name: "write" })}>Write a confession</Button>
+          {scope === "following" && sort !== "top" ? (
+            <>
+              <p className="small">Follow writers whose letters stay with you — their new ones will gather here.</p>
+              <Button variant="outline" onClick={() => navigate({ name: "search" })}>Find people</Button>
+            </>
+          ) : (
+            <>
+              <p className="small">Be the first to say the thing out loud.</p>
+              <Button onClick={() => navigate({ name: "write" })}>Write a confession</Button>
+            </>
+          )}
         </div>
       ) : null}
 
       <div className="cards">
-        {posts.map((p) => <PostCard key={p.postId} post={p} actions={actions} />)}
+        {posts.map((p) => (p.burst && p.burst.count > 1 && bursts !== "separate"
+          ? <BurstCard key={`burst:${p.burst.id}`} head={p} mode={bursts} ctx={{ scope, mood }} />
+          : <PostCard key={p.postId} post={p} actions={actions} />))}
       </div>
 
       <div ref={sentinel} className="feed-end">
@@ -121,6 +144,7 @@ export function Feed({ active }: { active: boolean }) {
           <div className="caught-up"><p className="quote">You're all caught up.</p><span className="meta">Sit with it for a moment.</span></div>
         ) : null}
       </div>
+      {chooser ? <BurstChooser onClose={() => setChooser(false)} /> : null}
     </section>
   );
 }

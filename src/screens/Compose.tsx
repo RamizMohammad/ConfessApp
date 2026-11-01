@@ -109,7 +109,9 @@ export function Compose({ draftId }: { draftId?: string }) {
       released.current = true;
       await deleteDraft(id.current);
       emit({ type: "created", post });
-      toast("Released. Your words are out there now.");
+      toast(post.pendingReview
+        ? "Posted. Others will see it once our safety check is back — usually within minutes."
+        : "Released. Your words are out there now.");
       navigate({ name: "feed" }, true);
     } catch (e) {
       if (e instanceof ApiError && e.status === 451) {

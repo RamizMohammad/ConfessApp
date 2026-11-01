@@ -4,7 +4,8 @@ import { ago, count } from "../lib/format.ts";
 import * as P from "../lib/posts.ts";
 import { errorMessage } from "../lib/session.tsx";
 import { MOODS, REACTIONS, REPORT_REASONS, type Gif, type Post, type Reaction } from "../lib/types.ts";
-import { Aura } from "./Aura.tsx";
+import { navigate } from "../lib/router.ts";
+import { hasStory, RingAvatar } from "./stories.tsx";
 import { Ban, Close, Flag, Heart, Message, MessageOff, More, Trash, UserX } from "./icons.tsx";
 import { useToast } from "./toast.tsx";
 import { Button, Notice, Portal } from "./ui.tsx";
@@ -121,6 +122,10 @@ function PollView({ post, onChange }: { post: Post; onChange: (p: Post) => void 
 
 /* ── Card ───────────────────────────────────────────────────────────────── */
 
+export function openProfile(alias: string, mine?: boolean): void {
+  navigate(mine ? { name: "me" } : { name: "profile", alias });
+}
+
 export interface CardActions {
   onChange: (p: Post) => void;
   /** Gone for me: reported, deleted. */
@@ -178,16 +183,28 @@ export function PostCard({ post, detail, actions }: { post: Post; detail?: boole
   return (
     <article className={`paper card${detail ? " detail" : ""}`} aria-label={`Confession by ${post.author.alias}, ${ago(post.createdAt)}`}>
       <header className="card-head">
-        <Aura value={post.author.avatar} size={32} />
-        <div className="card-who">
-          <span className="alias">@{post.author.alias}{post.isMine ? <em> · you</em> : null}</span>
-          <span className="meta">{ago(post.createdAt)}{mood ? ` · ${mood.label}` : ""}{post.chapter ? ` · Chapter ${post.chapter.chapterNo}` : ""}</span>
-        </div>
+        <span className="card-author">
+          <button className="avatar-btn" onClick={() => (hasStory(post.author.alias) ? navigate({ name: "stories", alias: post.author.alias }) : openProfile(post.author.alias, post.isMine))}
+                  aria-label={hasStory(post.author.alias) ? `@${post.author.alias}'s story` : `Open ${post.isMine ? "your" : `@${post.author.alias}'s`} profile`}>
+            <RingAvatar alias={post.author.alias} avatar={post.author.avatar} size={32} />
+          </button>
+          <button className="card-who link-plain" onClick={() => openProfile(post.author.alias, post.isMine)}
+                  aria-label={`Open ${post.isMine ? "your" : `@${post.author.alias}'s`} profile`}>
+            <span className="alias">@{post.author.alias}{post.isMine ? <em> · you</em> : null}</span>
+            <span className="meta">{ago(post.createdAt)}{mood ? ` · ${mood.label}` : ""}{post.chapter ? ` · Chapter ${post.chapter.chapterNo}` : ""}</span>
+          </button>
+        </span>
         <button className="icon-btn" aria-label={post.isMine ? "More options" : "Report or more"} onClick={() => setMenu(true)}>
           <More />
         </button>
       </header>
 
+      {post.pendingReview ? (
+        <p className="pending-note" role="status">
+          <span className="tag">Waiting for a safety check</span>
+          Only you can see this for now. It goes out to everyone once it's checked — usually within minutes.
+        </p>
+      ) : null}
       <div className={`card-body${revealed ? "" : " veiled-content"}`} onClick={revealed ? onCardClick : undefined}>
         {post.letterTo ? <p className="letter-to">To: {post.letterTo}</p> : null}
         {post.chapter?.title ? <p className="chapter-title">{post.chapter.title}</p> : null}

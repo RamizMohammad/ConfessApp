@@ -13,7 +13,10 @@ import { config } from "../config.ts";
 import { ApiError, api, refreshSession, setApiHooks, type SessionInfo } from "./api.ts";
 import { finishGoogleSignIn, isGoogleCallback, startGoogleSignIn } from "./google.ts";
 import { wipeDrafts } from "./drafts.ts";
+import { wipePlaces } from "./books.ts";
+import { clearTray } from "./stories.ts";
 import { prefs } from "./storage.ts";
+import { disablePush, resyncPush } from "./webpush.ts";
 import { turnstileToken } from "./turnstile.ts";
 import { createCredential, faceIdAvailable, FaceIdError, getCredential } from "./webauthn.ts";
 
@@ -24,10 +27,20 @@ export interface Me {
   avatar: string;
   banner: string;
   hasPassword: boolean;
+  biometricEnabled?: boolean;
+  pushEnabled?: boolean;
   createdAt: string;
   postCount: number;
+  likesReceived?: number;
+  likesGiven?: number;
+  commentsReceived?: number;
+  commentsMade?: number;
   followers: number;
   following: number;
+  notifications?: Record<"likes" | "comments" | "follows" | "followingPosts" | "newPosts" | "nudges" | "bookChapters", boolean>;
+  streak?: { days: number; best: number; today: boolean };
+  graphStyle?: string;
+  graphPublic?: boolean;
 }
 
 export interface Draft {
@@ -65,6 +78,12 @@ interface SessionApi {
   signOut: () => Promise<void>;
   cancelOnboarding: () => void;
   setMe: (m: Me) => void;
+  /** Patch my profile locally after a change (about, avatar, banner, counts…). */
+  patchMe: (p: Partial<Me>) => void;
+  /** Re-read /users/me (stats, settings). */
+  refreshMe: () => Promise<void>;
+  /** Account deleted: wipe everything local and show the welcome screen. */
+  accountDeleted: () => void;
   /** Open while the server wants a fresh Face ID / Google check. */
   reauth: { open: boolean; resolve: (ok: boolean) => void } | null;
   canUseFaceId: boolean;
@@ -128,6 +147,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const toSignedOut = useCallback((notice?: string) => {
     window.clearTimeout(refreshTimer.current);
     void wipeDrafts();                                   // unsent confessions never outlive the session
+    wipePlaces();                                        // nor where I was reading
+    clearTray();
     if (window.location.pathname !== "/") window.history.replaceState(null, "", "/");
     idToken.current = null;
     setMe(null);
@@ -297,13 +318,34 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return match;
   }, []);
 
+  // Notifications on this iPhone follow the session: re-linked on every start once inside.
+  useEffect(() => {
+    if (phase.name === "ready") void resyncPush();
+  }, [phase.name]);
+
   const signOut = useCallback(async () => {
+    await disablePush(true).catch(() => undefined);    // the next account here doesn't inherit them
     try {
       await api("/auth/web/logout", { method: "POST", raw: true });
     } catch {
       /* cookies are cleared server-side; signed out locally regardless */
     }
     toSignedOut();
+  }, [toSignedOut]);
+
+  const patchMe = useCallback((p: Partial<Me>) => setMe((cur) => (cur ? { ...cur, ...p } : cur)), []);
+  const refreshMe = useCallback(async () => {
+    try {
+      setMe(await api<Me>("/users/me"));
+    } catch {
+      /* keep what we have */
+    }
+  }, []);
+  const accountDeleted = useCallback(() => {
+    void disablePush(false);
+    prefs.faceId = false;
+    prefs.faceIdDeclined = false;
+    toSignedOut("Your account is gone. Take care.");
   }, [toSignedOut]);
 
   const value = useMemo<SessionApi>(() => ({
@@ -322,10 +364,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     signOut,
     cancelOnboarding: () => toSignedOut(),
     setMe,
+    patchMe,
+    refreshMe,
+    accountDeleted,
     reauth,
     canUseFaceId,
   }), [phase, me, draft, signInWithGoogle, signInWithFaceId, register, enableFaceId, skipFaceId, unlockWithFaceId,
-       unlockWithPassword, signOut, toSignedOut, reauth, canUseFaceId]);
+       unlockWithPassword, signOut, toSignedOut, reauth, canUseFaceId, patchMe, refreshMe, accountDeleted]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

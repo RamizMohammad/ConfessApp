@@ -4,7 +4,7 @@ import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 
 /** Emits /sw.js with this build's id and the exact list of shell files to cache. */
-function serviceWorker(): Plugin {
+function serviceWorker(api: string): Plugin {
   return {
     name: "confess-sw",
     apply: "build",
@@ -17,7 +17,8 @@ function serviceWorker(): Plugin {
       const build = createHash("sha256").update(shell.join("|")).digest("hex").slice(0, 12);
       const source = readFileSync(new URL("./sw.template.js", import.meta.url), "utf8")
         .replace("__BUILD__", build)
-        .replace("__ASSETS__", JSON.stringify(shell));
+        .replace("__ASSETS__", JSON.stringify(shell))
+        .replace("__API__", JSON.stringify(api));
       this.emitFile({ type: "asset", fileName: "sw.js", source });
     },
   };
@@ -56,7 +57,7 @@ function pinApi(origin: string): Plugin {
 }
 
 export default defineConfig(({ mode }) => ({
-  plugins: [react(), serviceWorker(), pinApi(apiOrigin(mode))],
+  plugins: [react(), serviceWorker(apiOrigin(mode)), pinApi(apiOrigin(mode))],
   build: {
     target: "es2022",
     sourcemap: false,          // don't publish source maps
