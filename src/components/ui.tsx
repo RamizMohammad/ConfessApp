@@ -77,3 +77,46 @@ export function Notice({ kind = "error", children }: { kind?: "error" | "info" |
 export function Portal({ children }: { children: ReactNode }) {
   return createPortal(children, document.body);
 }
+
+/** A screen's header: back, a small caps title, an optional action. */
+export function Header({ title, onBack, right }: { title: string; onBack?: () => void; right?: ReactNode }) {
+  return (
+    <div className="topbar">
+      {onBack ? <button className="icon-btn" onClick={onBack} aria-label="Back"><BackIcon /></button> : <span className="spacer" />}
+      <h1 className="screen-title">{title}</h1>
+      {right ?? <span className="spacer" />}
+    </div>
+  );
+}
+
+/** iOS-style switch with its label. */
+export function Toggle({ label, sub, on, busy, disabled, onChange }:
+  { label: string; sub?: string; on: boolean; busy?: boolean; disabled?: boolean; onChange: (on: boolean) => void }) {
+  return (
+    <label className={`setting-row toggle-row${disabled ? " disabled" : ""}`}>
+      <span className="grow stack-xs">
+        <span className="setting-label">{label}</span>
+        {sub ? <span className="small">{sub}</span> : null}
+      </span>
+      {busy ? <span className="spinner" aria-hidden /> : null}
+      <input type="checkbox" role="switch" className="switch" checked={on} disabled={disabled} aria-busy={busy || undefined}
+             onChange={(e) => onChange(e.target.checked)} />
+    </label>
+  );
+}
+
+/** A row that opens something. */
+export function NavRow({ label, sub, value, icon, danger, onClick }:
+  { label: string; sub?: string; value?: string; icon?: ReactNode; danger?: boolean; onClick: () => void }) {
+  return (
+    <button type="button" className={`setting-row nav-row${danger ? " danger" : ""}`} onClick={onClick}>
+      {icon ? <span className="row-icon">{icon}</span> : null}
+      <span className="grow stack-xs">
+        <span className="setting-label">{label}</span>
+        {sub ? <span className="small">{sub}</span> : null}
+      </span>
+      {value ? <span className="meta">{value}</span> : null}
+      <span className="chev" aria-hidden>›</span>
+    </button>
+  );
+}

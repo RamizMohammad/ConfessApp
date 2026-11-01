@@ -35,9 +35,10 @@ On the VPS it runs like the API: the container joins `proxy_network` and the cen
 proxies `web.confessapp.in` → `http://confess-web:8012` — copy
 `deploy/web.confessapp.in.conf` into nginx's sites, get the certificate with certbot,
 reload. Don't add security headers in the proxy; the container already sends them.
-The API must be on the same site as the app (`api.confessapp.in` → `confess-api:8011`,
-`deploy/api.confessapp.in.conf`): the sign-in cookies are `SameSite=Strict`, and Safari blocks
-cookies from another site. Set `VITE_API_BASE=https://api.confessapp.in`.
+The same site file also sends `web.confessapp.in/api/…` to `confess-api:8011`, so the app calls
+its API on its own address (`VITE_API_BASE=https://web.confessapp.in`). It has to: the sign-in
+cookies are `SameSite=Strict`, and Safari blocks cookies from another site. The Android app keeps
+using `confess.api.mohammadramiz.in` — same container.
 
 ## Security model — nothing secret in the browser
 
@@ -50,6 +51,7 @@ cookies from another site. Set `VITE_API_BASE=https://api.confessapp.in`.
 | Google | Only the public client ID. The ID token comes back in the URL fragment, is checked (state, nonce, audience, expiry), wiped from the address bar at once, sent to the server and never stored. |
 | Face ID | Passkeys. The private key never leaves the phone's Secure Enclave; the server keeps only the public key. The phone lists it as "Confess account", never the alias. |
 | Local storage | Only flags: `confess.faceid`, `confess.faceid_declined`, `confess.install_dismissed`. |
+| Notifications | Web push, only from the Home Screen app and only after a tap. The server encrypts each push for this iPhone (RFC 8291) and signs it (VAPID — the private key lives only in the server's `.env`). Private by default: the lock screen says just "Confess · Something new is waiting for you". Tied to the session — signing out turns them off. |
 | Offline cache | The service worker caches the app's own files only — never API responses or any other origin. |
 | Drafts | Unsent confessions stay on the device in IndexedDB, AES-GCM encrypted with a non-extractable key; wiped on sign-out. |
 | GIFs | Searched through the Confess server; images load only from `media.giphy.com`, no referrer. |
@@ -91,16 +93,23 @@ src/
   lib/postStore.ts   keeps every open list in step (react / report / block / delete anywhere)
   lib/drafts.ts      encrypted on-device drafts
   lib/router.ts      /, /p/<id>, /write, /drafts (back-swipe works)
-  screens/           Entry, Onboarding, Secure (Face ID, lock), Home (frame + settings),
-                     Feed, PostDetail, Compose, Drafts
-  components/        post.tsx (card, reactions, poll, report/block/delete), GifPicker, Aura, toast
+  lib/avatar.ts      designed avatars ("av1:…") — port of AvatarSpec + AvatarRenderer
+  lib/banner.ts      profile banners ("bn1:…") — port of BannerView (same java.util.Random seeds)
+  lib/graph.ts       confession graph looks ("g1:…")
+  lib/users.ts       profiles, follows, people, account settings
+  lib/activity.ts    activity + unread badge (polls once a minute while open)
+  screens/           Entry, Onboarding, Secure (Face ID, lock), Home (frame + tabs),
+                     Feed, PostDetail, Compose, Drafts, Activity, Me, Profile, People
+                     (followers, search, letters, felt/responses), AvatarStudio, Settings
+  components/        post.tsx (card, reactions, poll, report/block/delete), art.tsx (avatar, banner, graph),
+                     people.tsx (follow), GifPicker, Aura, toast
   data/terms.json    community guidelines (same file as the Android app)
 sw.template.js       service worker (build fills in the file list)
 vercel.json          hosting + security headers (source of truth for Docker's too)
 Dockerfile           test + build, then non-root nginx
 docker/              nginx.conf + nginx-headers.mjs (vercel.json → nginx headers)
 docker-compose.yml   hardened VPS run (proxy_network, like the API)
-deploy/              central-nginx sites: web.confessapp.in (this app) + api.confessapp.in (the API)
+deploy/              central-nginx site for web.confessapp.in (app + /api → confess-api)
 ```
 
-Phase 4a (feed, responses, compose, drafts, report/block) is in. Next: 4b — profile, avatar studio, follow, notifications, settings.
+Phase 4a (feed, responses, compose, drafts, report/block), 4b (profiles, avatar studio, banners, confession graph, follow, activity, settings) 4c (stories, books + reader + writer's desk, bursts) and 5 (notifications on the Home Screen app) are in. Next: 6 — hardening and soft launch.

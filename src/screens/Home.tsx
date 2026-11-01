@@ -1,163 +1,106 @@
-import { useCallback, useEffect, useState } from "react";
-import { config } from "../config.ts";
-import { api } from "../lib/api.ts";
-import { biometricName } from "../lib/device.ts";
-import { errorMessage, useSession } from "../lib/session.tsx";
-import { prefs } from "../lib/storage.ts";
-import { FaceIdError } from "../lib/webauthn.ts";
+import { useEffect } from "react";
+import { refreshUnread, useUnread } from "../lib/activity.ts";
+import { navigate, parse, switchTab, useRoute, type Tab } from "../lib/router.ts";
+import { useSession } from "../lib/session.tsx";
 import { Aura } from "../components/Aura.tsx";
-import { Button, Lockup, Notice, Portal } from "../components/ui.tsx";
-import { GuidelinesList } from "./Onboarding.tsx";
-import { Feather } from "../components/icons.tsx";
-import { navigate, useRoute } from "../lib/router.ts";
+import { Bell, BookIcon, Feather, Home as HomeIcon, Search as SearchIcon } from "../components/icons.tsx";
+import { Lockup } from "../components/ui.tsx";
+import { Activity } from "./Activity.tsx";
+import { AvatarStudioScreen } from "./AvatarStudio.tsx";
 import { Compose } from "./Compose.tsx";
 import { Drafts } from "./Drafts.tsx";
 import { Feed } from "./Feed.tsx";
+import { MePage } from "./Me.tsx";
+import { MyLetters, People, Received, Search } from "./People.tsx";
 import { PostDetail } from "./PostDetail.tsx";
+import { Profile } from "./Profile.tsx";
+import { SettingsScreen } from "./Settings.tsx";
+import { BookPage, BooksShelf, BookSetup, ChapterEditor, Desk, MyBooks } from "./Books.tsx";
+import { Reader } from "./Reader.tsx";
+import { StoryCompose, StoryViewer } from "./Stories.tsx";
+import { BurstList } from "../components/bursts.tsx";
+import { back } from "../lib/router.ts";
+import { Header } from "../components/ui.tsx";
 
-/** Inside Confess: the feed stays mounted (keeps its place) while other screens open on top. */
+/**
+ * Inside Confess. The feed stays mounted (keeps its place) while other screens open on top;
+ * Feed · Activity · Me are tabs with the bar; everything else is a screen with a back button.
+ */
 export function Main() {
   const { me } = useSession();
   const route = useRoute();
-  const [settings, setSettings] = useState(false);
+  const unread = useUnread();
   const onFeed = route.name === "feed";
+  const tab: Tab | null = route.name === "feed" || route.name === "books" || route.name === "activity" || route.name === "me" ? route.name : null;
+
+  // Tapped a notification while Confess was open: the service worker asks us to go there.
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) return;
+    const onMsg = (e: MessageEvent) => {
+      const d = e.data as { type?: string; url?: string } | null;
+      if (d?.type === "confess:open" && typeof d.url === "string" && d.url.startsWith("/") && !d.url.startsWith("//")) {
+        navigate(parse(d.url));
+        void refreshUnread();
+      }
+    };
+    navigator.serviceWorker.addEventListener("message", onMsg);
+    return () => navigator.serviceWorker.removeEventListener("message", onMsg);
+  }, []);
+
+  // A new screen starts at the top (the feed restores its own place).
+  useEffect(() => {
+    if (!onFeed) window.scrollTo(0, 0);
+  }, [route, onFeed]);
 
   return (
     <>
       <main className="screen main" hidden={!onFeed}>
         <div className="topbar">
-          <span className="spacer" />
+          <button className="icon-btn" aria-label="Find people" onClick={() => navigate({ name: "search" })}><SearchIcon /></button>
           <Lockup />
-          <button className="icon-btn" aria-label="Me and settings" onClick={() => setSettings(true)}>
+          <button className="icon-btn" aria-label="Me" onClick={() => switchTab("me")}>
             <Aura value={me?.avatar} size={32} />
           </button>
         </div>
         <Feed active={onFeed} />
       </main>
+      {route.name === "activity" ? <main className="screen main"><Activity /></main> : null}
+      {route.name === "me" ? <MePage /> : null}
       {route.name === "post" ? <PostDetail key={route.id} id={route.id} /> : null}
       {route.name === "write" ? <Compose key={route.draftId ?? "new"} draftId={route.draftId} /> : null}
       {route.name === "drafts" ? <Drafts /> : null}
-      {onFeed ? (
+      {route.name === "profile" ? <Profile key={route.alias.toLowerCase()} alias={route.alias} /> : null}
+      {route.name === "people" ? <People key={route.kind} kind={route.kind} /> : null}
+      {route.name === "received" ? <Received key={route.kind} kind={route.kind} /> : null}
+      {route.name === "letters" ? <MyLetters /> : null}
+      {route.name === "search" ? <Search /> : null}
+      {route.name === "settings" ? <SettingsScreen key={route.page ?? "home"} page={route.page} /> : null}
+      {route.name === "avatar" ? <AvatarStudioScreen /> : null}
+      {route.name === "books" ? <main className="screen main"><BooksShelf /></main> : null}
+      {route.name === "book" ? <BookPage key={route.id} id={route.id} /> : null}
+      {route.name === "read" ? <Reader key={`${route.id}:${route.no}`} id={route.id} no={route.no} /> : null}
+      {route.name === "myBooks" ? <MyBooks /> : null}
+      {route.name === "bookSetup" ? <BookSetup key={route.id ?? "new"} id={route.id} /> : null}
+      {route.name === "desk" ? <Desk key={route.id} id={route.id} /> : null}
+      {route.name === "chapter" ? <ChapterEditor key={`${route.id}:${route.no ?? "new"}`} id={route.id} no={route.no} /> : null}
+      {route.name === "stories" ? <StoryViewer key={route.alias.toLowerCase()} alias={route.alias} /> : null}
+      {route.name === "storyNew" ? <StoryCompose /> : null}
+      {route.name === "burst" ? <main className="screen"><Header title="Burst" onBack={back} /><BurstList id={route.id} scope={route.scope} /></main> : null}
+      {tab ? (
         <nav className="tabbar" aria-label="Main">
-          <button className="tab on" aria-current="page" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Feed</button>
+          <button className={`tab tab-icon${tab === "feed" ? " on" : ""}`} aria-current={tab === "feed" ? "page" : undefined} aria-label="Feed"
+                  onClick={() => (tab === "feed" ? window.scrollTo({ top: 0, behavior: "smooth" }) : switchTab("feed"))}><HomeIcon /></button>
+          <button className={`tab tab-icon${tab === "books" ? " on" : ""}`} aria-current={tab === "books" ? "page" : undefined}
+                  aria-label="Books" onClick={() => switchTab("books")}><BookIcon /></button>
           <button className="write-fab" aria-label="Write a confession" onClick={() => navigate({ name: "write" })}><Feather /></button>
-          <button className="tab" onClick={() => setSettings(true)}>Me</button>
+          <button className={`tab tab-icon${tab === "activity" ? " on" : ""}`} aria-current={tab === "activity" ? "page" : undefined}
+                  aria-label={unread ? `Activity, ${unread} new` : "Activity"} onClick={() => switchTab("activity")}>
+            <Bell />{unread ? <span className="badge" aria-hidden>{unread > 99 ? "99+" : unread}</span> : null}
+          </button>
+          <button className={`tab tab-icon tab-me${tab === "me" ? " on" : ""}`} aria-current={tab === "me" ? "page" : undefined} aria-label="Me"
+                  onClick={() => switchTab("me")}><Aura value={me?.avatar} size={26} /></button>
         </nav>
       ) : null}
-      {settings ? <Settings onClose={() => setSettings(false)} /> : null}
     </>
-  );
-}
-
-interface Passkey {
-  id: string;
-  device: string;
-  syncs: boolean;
-  createdAt: string | null;
-  lastUsedAt: string | null;
-}
-
-function when(iso: string | null): string {
-  if (!iso) return "never";
-  return new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-}
-
-export function Settings({ onClose }: { onClose: () => void }) {
-  const { me, enableFaceId, signOut, canUseFaceId } = useSession();
-  const [keys, setKeys] = useState<Passkey[] | null>(null);
-  const [busy, setBusy] = useState<string | null>(null);
-  const [error, setError] = useState<string>();
-  const [guidelines, setGuidelines] = useState(false);
-
-  const load = useCallback(async () => {
-    try {
-      const { passkeys } = await api<{ passkeys: Passkey[] }>("/auth/passkey");
-      setKeys(passkeys);
-      if (!passkeys.length) prefs.faceId = false;
-    } catch (e) {
-      setError(errorMessage(e));
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
-  async function turnOn() {
-    setError(undefined);
-    setBusy("add");
-    try {
-      await enableFaceId();
-      await load();
-    } catch (e) {
-      if (!(e instanceof FaceIdError && e.kind === "cancelled")) setError(errorMessage(e));
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  async function remove(id: string) {
-    setError(undefined);
-    setBusy(id);
-    try {
-      await api(`/auth/passkey/${encodeURIComponent(id)}`, { method: "DELETE" });
-      await load();
-    } catch (e) {
-      setError(errorMessage(e));
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  return (
-    <Portal><div className="overlay" onClick={onClose}>
-      <section className="sheet" role="dialog" aria-modal="true" aria-label="Settings" onClick={(e) => e.stopPropagation()}>
-        <div className="grabber" />
-        {guidelines ? (
-          <div className="stack">
-            <Button variant="ghost" onClick={() => setGuidelines(false)}>← Back</Button>
-            <h2 className="title">Community guidelines</h2>
-            <GuidelinesList />
-          </div>
-        ) : (
-          <div className="stack">
-            <div className="row">
-              <Aura value={me?.avatar} size={56} />
-              <div className="stack-sm">
-                <span className="title">@{me?.alias}</span>
-                {me?.about ? <span className="small">{me.about}</span> : null}
-              </div>
-            </div>
-
-            <hr className="divider" />
-            <span className="tag">{biometricName}</span>
-            <Notice>{error}</Notice>
-            {keys === null ? <span className="meta">Loading…</span> : null}
-            {keys?.length ? (
-              <div className="list">
-                {keys.map((k) => (
-                  <div className="list-row" key={k.id}>
-                    <div className="grow stack-sm">
-                      <span>{k.device || "This device"}</span>
-                      <span className="meta">Added {when(k.createdAt)} · last used {when(k.lastUsedAt)}{k.syncs ? " · syncs with iCloud" : ""}</span>
-                    </div>
-                    <Button variant="ghost" busy={busy === k.id} onClick={() => void remove(k.id)}>Remove</Button>
-                  </div>
-                ))}
-              </div>
-            ) : keys ? <p className="small">Off. Turn it on to unlock Confess with a glance.</p> : null}
-            {canUseFaceId && keys && !prefs.faceId ? (
-              <Button variant="outline" block busy={busy === "add"} onClick={turnOn}>Turn on {biometricName} on this device</Button>
-            ) : null}
-
-            <hr className="divider" />
-            <Button variant="ghost" block onClick={() => { onClose(); navigate({ name: "drafts" }); }}>Drafts</Button>
-            <Button variant="ghost" block onClick={() => setGuidelines(true)}>Community guidelines</Button>
-            <a className="btn btn-ghost block" href={`${config.websiteUrl}/privacy`} target="_blank" rel="noopener noreferrer">Privacy policy</a>
-            <Button variant="danger" block onClick={() => void signOut()}>Sign out</Button>
-          </div>
-        )}
-      </section>
-    </div></Portal>
   );
 }

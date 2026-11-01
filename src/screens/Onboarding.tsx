@@ -3,6 +3,8 @@ import terms from "../data/terms.json";
 import { api } from "../lib/api.ts";
 import { errorMessage, useSession } from "../lib/session.tsx";
 import { AURAS, Aura, resolveAura } from "../components/Aura.tsx";
+import { isSpec } from "../lib/avatar.ts";
+import { AvatarStudio, startingSpec } from "./AvatarStudio.tsx";
 import { Button, Notice, TopBar } from "../components/ui.tsx";
 
 const TOTAL = 3;
@@ -153,6 +155,8 @@ export function AvatarStep() {
   const { draft, setDraft, goTo, register } = useSession();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
+  const [studio, setStudio] = useState(false);
+  const designed = isSpec(draft.avatar);
   const current = resolveAura(draft.avatar);
   const number = AURAS.findIndex((a) => a.id === current.id) + 1;
 
@@ -176,10 +180,10 @@ export function AvatarStep() {
           <p className="body">An abstract aura to carry your words into the dark.</p>
         </div>
         <div className="row">
-          <Aura value={current.id} size={72} label={current.name} />
+          <Aura value={draft.avatar} size={72} label={designed ? "Your avatar" : current.name} />
           <div className="stack-sm">
-            <span className="tag">Your aura</span>
-            <span className="title">Aura {String(number).padStart(2, "0")} · {current.name}</span>
+            <span className="tag">{designed ? "Your avatar" : "Your aura"}</span>
+            <span className="title">{designed ? "Designed by you" : `Aura ${String(number).padStart(2, "0")} · ${current.name}`}</span>
             <span className="meta">@{draft.alias}</span>
           </div>
         </div>
@@ -191,9 +195,12 @@ export function AvatarStep() {
             </button>
           ))}
         </div>
-        <Button variant="ghost" onClick={() => setDraft({ avatar: AURAS[Math.floor(Math.random() * AURAS.length)]!.id })}>
-          Random aura
-        </Button>
+        <div className="row avatar-choices">
+          <Button variant="outline" className="grow" onClick={() => setStudio(true)}>{designed ? "Edit your avatar" : "Design your avatar"}</Button>
+          <Button variant="ghost" onClick={() => setDraft({ avatar: AURAS[Math.floor(Math.random() * AURAS.length)]!.id })}>
+            Random aura
+          </Button>
+        </div>
         <div className="field">
           <label htmlFor="about">A line about you · optional</label>
           <input id="about" className="input" maxLength={50} value={draft.about}
@@ -203,6 +210,10 @@ export function AvatarStep() {
         <Notice>{error}</Notice>
       </div>
       <Button block busy={busy} onClick={enter}>{busy ? "Creating your space…" : "Enter Confess"}</Button>
+      {studio ? (
+        <AvatarStudio initial={startingSpec(draft.avatar)} cta="Use this avatar" onCancel={() => setStudio(false)}
+                      onUse={(v) => { setDraft({ avatar: v }); setStudio(false); }} />
+      ) : null}
     </main>
   );
 }

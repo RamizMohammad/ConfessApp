@@ -5,9 +5,10 @@ import type { Comment, Gif, Mood, Post, Reaction } from "./types.ts";
 export type Sort = "latest" | "top";
 export type Scope = "all" | "following";
 
-export const feed = (q: { sort: Sort; scope: Scope; mood?: Mood | null; cursor?: string | null }) =>
+export const feed = (q: { sort: Sort; scope: Scope; mood?: Mood | null; cursor?: string | null; bursts?: boolean }) =>
   api<{ posts: Post[]; nextCursor: string | null }>("/posts/feed", {
-    query: { sort: q.sort, scope: q.scope, mood: q.mood ?? undefined, cursor: q.cursor ?? undefined },
+    query: { sort: q.sort, scope: q.scope, mood: q.mood ?? undefined, cursor: q.cursor ?? undefined,
+             bursts: q.bursts && q.sort === "latest" ? "true" : undefined },
   });
 
 export const getPost = (id: string) => api<Post>(`/posts/${encodeURIComponent(id)}`);

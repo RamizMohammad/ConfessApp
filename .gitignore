@@ -7,3 +7,7 @@ dist
 .DS_Store
 *.tsbuildinfo
 deploy
+
+# hand-offs from Claude, never committed
+.deliveries/
+*.rdb

@@ -45,6 +45,8 @@ export interface Post {
   createdAt: string;
   chapter: { bookId: string; chapterNo: number; title: string | null } | null;
   riskScore: number | null;
+  /** Posted while the safety check was down: only I see it until it's checked. */
+  pendingReview?: boolean;
   sensitive: boolean;
   burst: { id: string; count: number } | null;
 }

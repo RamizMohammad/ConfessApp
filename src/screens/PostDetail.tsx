@@ -9,7 +9,7 @@ import { LIMITS, type Comment, type Gif, type Post } from "../lib/types.ts";
 import { Aura } from "../components/Aura.tsx";
 import { GifPicker } from "../components/GifPicker.tsx";
 import { Close, Flag, GifIcon, More, Send, Trash } from "../components/icons.tsx";
-import { Confirm, GifView, PostCard, ReportSheet, Sheet } from "../components/post.tsx";
+import { Confirm, GifView, PostCard, ReportSheet, Sheet, openProfile } from "../components/post.tsx";
 import { useToast } from "../components/toast.tsx";
 import { Button, Notice, TopBar } from "../components/ui.tsx";
 
@@ -113,10 +113,12 @@ function Response({ c, onPost, onRemoved }: { c: Comment; onPost: Post; onRemove
   const canDelete = c.isMine || onPost.isMine;
   return (
     <div className="response">
-      <Aura value={c.author.avatar} size={30} />
+      <button className="avatar-btn" onClick={() => openProfile(c.author.alias, c.isMine)} aria-label={`Open @${c.author.alias}'s profile`}>
+        <Aura value={c.author.avatar} size={30} />
+      </button>
       <div className="grow stack-sm">
         <div className="row resp-head">
-          <span className="alias">@{c.author.alias}</span>
+          <button className="alias link-plain" onClick={() => openProfile(c.author.alias, c.isMine)}>@{c.author.alias}</button>
           {c.isPostAuthor ? <span className="author-tag">Author</span> : null}
           <span className="meta">{ago(c.createdAt)}</span>
         </div>
