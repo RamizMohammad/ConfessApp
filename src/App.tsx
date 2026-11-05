@@ -14,6 +14,8 @@ import { Button } from "./components/ui.tsx";
 
 /** /dev/design: every token and component on one page (no account needed). Loaded only when opened. */
 const DesignCheck = lazy(() => import("./screens/DesignCheck.tsx"));
+/** /dev/screen: what the screen map measured on this device (no account needed). */
+const ScreenCheck = lazy(() => import("./screens/ScreenCheck.tsx"));
 
 function Screens() {
   const { phase } = useSession();
@@ -24,6 +26,7 @@ function Screens() {
   const splashGone = useCallback(() => setSplash(false), []);
 
   if (route.name === "design") return <Suspense fallback={null}><DesignCheck /></Suspense>;
+  if (route.name === "screen") return <Suspense fallback={null}><ScreenCheck /></Suspense>;
 
   // The splash stays up until we know where to go (session checked, server asked).
   const ready = phase.name !== "booting" && server !== "checking";
@@ -36,6 +39,7 @@ function Screens() {
   }
   return (
     <>
+      <div className="statusbar-shim" aria-hidden />
       {screen ? <div className="routed">{screen}</div> : null}
       {splash ? <Splash ready={ready} onGone={splashGone} /> : null}
     </>

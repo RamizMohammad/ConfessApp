@@ -39,7 +39,7 @@ export function apply(list: Post[], e: PostEvent): Post[] {
   }
 }
 
-export const cardActions = (open?: (p: Post) => void) => ({
+export const cardActions = (open?: (p: Post, toResponses?: boolean) => void) => ({
   onChange: (post: Post) => emit({ type: "update", post }),
   onRemove: (postId: string) => emit({ type: "remove", postId }),
   onBlocked: (alias: string) => emit({ type: "blocked", alias }),

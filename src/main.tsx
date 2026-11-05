@@ -8,8 +8,13 @@ import "./android/tokens.css";
 import "./styles/app.css";
 import "./ui/kit.css";
 import "./ui/screens.css";
+import "./ui/home.css";
+import "./lib/appearance.ts";
+import "./ui/screen.css";
+import { installScreenMap } from "./lib/screenMap.ts";
 
 installShell({ canGoBack, back });
+installScreenMap();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

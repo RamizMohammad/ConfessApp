@@ -51,3 +51,8 @@ export function spanLabel(first: string, last: string): string {
   if (min < 48 * 60) return `Over ${Math.max(1, Math.round(min / 60))} h · oldest first`;
   return `Over ${Math.round(min / 1440)} days · oldest first`;
 }
+
+/** Closed the chooser without picking: the default stays, and it isn't asked again (Bursts.markAsked). */
+export function markBurstAsked(): void {
+  try { if (localStorage.getItem(KEY) === null) localStorage.setItem(KEY, burstMode()); } catch { /* ignore */ }
+}

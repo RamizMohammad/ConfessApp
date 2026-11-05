@@ -1,0 +1,69 @@
+/*
+ * The screen map (lib/screenMap.ts) at work. Loaded last.
+ *   --app-h  the real height of this window (the measured screen when iOS shortens the viewport)
+ *   --gap    how much iOS cut off at the bottom (0 when all is well): every layer pinned to the
+ *            bottom is pulled down by it, so nothing stops above a black bar
+ *   --ui-scale  the iPad UI scale (the viewport meta does the drawing; this is for reference)
+ */
+:root { --app-h: 100dvh; --gap: 0px; --ui-scale: 1; }
+
+/* Reads env() safe areas for the measurement. */
+.screen-probe {
+  position: fixed; left: 0; top: 0; width: 0; height: 0; visibility: hidden; pointer-events: none;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+
+/* The canvas below the viewport (if iOS leaves one) is the app's own colour, never black. */
+html { background: var(--c-ink); }
+
+/*
+ * A solid strip under the status bar. iOS 26 draws a soft blur over whatever sits just below the
+ * status bar of a Home Screen app unless a pinned, opaque bar is there — that blur is what made
+ * the top half of the logo soft. Screens draw their own top colour under it.
+ */
+.statusbar-shim {
+  position: fixed; z-index: 89; left: 0; right: 0; top: 0; height: var(--safe-top); pointer-events: none;
+  background: var(--c-ink);
+}
+html:not(.standalone) .statusbar-shim { display: none; }
+/* Screens with their own colour up there (stories, the paper / sepia reader) keep it. */
+html:has(.story-viewer, .reader, .screen.studio) .statusbar-shim { display: none; }
+
+/* ── Full-screen layers: to the real bottom ── */
+.k-dialog-scrim, .k-sheet-scrim, .k-menu-scrim, .k-dialog-wrap, .splash, .welcome::before, .unlock::before,
+.rx-scrim, .compose-guidelines, .overlay, .picker-scrim, .screen.studio, .story-viewer, .reader, .tour {
+  bottom: calc(0px - var(--gap));
+}
+@media (min-width: 600px) { .sheet-layer { bottom: calc(0px - var(--gap)); } }
+html.split .tab-feed, .split-empty { bottom: calc(0px - var(--gap)); }
+
+/* ── Bars and sheets pinned to the bottom ── */
+.k-sheet, .nav-bar, .composer { bottom: calc(0px - var(--gap)); }
+.detail-bottom { bottom: calc(var(--kb) - var(--gap)); }
+html.kb-open .detail-bottom { bottom: var(--kb); }
+.compose-bottom, .a-bottombar { bottom: calc(var(--kb) - var(--gap)); }
+html.kb-open .compose-bottom, html.kb-open .a-bottombar { bottom: var(--kb); }
+.k-snackbar { bottom: calc(max(var(--safe-bottom), var(--kb)) + var(--d-bottom-nav-height) + 12px - var(--gap)); }
+.install-arrow { bottom: calc(var(--safe-bottom) + 4px - var(--gap)); }
+
+/* ── /dev/screen ── */
+html.no-shim .statusbar-shim { display: none; }
+.screen-check { padding-bottom: calc(var(--safe-bottom) + 80px); }
+.sc-logo-top { justify-content: flex-start; gap: 12px; color: var(--c-text-muted); }
+.sc-logo-mid { display: flex; align-items: center; gap: 12px; margin: var(--d-space-lg) 0; color: var(--c-text-muted); }
+.sc-logo-mid svg { display: block; }
+.sc-table { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.sc-table > div { display: flex; flex-direction: column; gap: 2px; }
+.sc-table dt { color: var(--c-text-muted); }
+.sc-table dd { margin: 0; color: var(--c-text-primary); overflow-wrap: anywhere; }
+.sc-switch { display: flex; align-items: center; gap: 12px; margin-bottom: var(--d-space-md); }
+.sc-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.sc-raw { margin-top: var(--d-space-lg); }
+.sc-raw summary { color: var(--c-amber); margin-bottom: 10px; cursor: pointer; }
+.sc-home { display: inline-block; margin-top: var(--d-space-lg); color: var(--c-amber); }
+.sc-marker { position: fixed; left: 0; right: 0; height: 2px; z-index: 5; pointer-events: none; }
+.sc-marker span { position: absolute; right: 12px; bottom: 4px; }
+.sc-marker.real { bottom: calc(0px - var(--gap)); background: var(--c-amber); color: var(--c-amber); }
+.sc-marker.real span { bottom: 4px; }
+.sc-marker.view { bottom: 0; background: var(--c-brick); color: var(--c-brick); }
+.sc-marker.view span { left: 12px; right: auto; }

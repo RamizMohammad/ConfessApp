@@ -157,7 +157,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     wipePlaces();                                        // nor where I was reading
     clearTray();
     // Signed out: no deep link survives (it could name someone's letter) — except the design page.
-    if (window.location.pathname !== "/" && window.location.pathname !== "/dev/design") window.history.replaceState(null, "", "/");
+    if (window.location.pathname !== "/" && !window.location.pathname.startsWith("/dev/")) window.history.replaceState(null, "", "/");
     idToken.current = null;
     setMe(null);
     setDraftState(EMPTY_DRAFT);
