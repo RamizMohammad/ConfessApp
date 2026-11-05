@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { refreshUnread, useUnread } from "../lib/activity.ts";
 import { navigate, parse, switchTab, useRoute, type Tab } from "../lib/router.ts";
 import { useSession } from "../lib/session.tsx";
@@ -21,6 +21,8 @@ import { StoryCompose, StoryViewer } from "./Stories.tsx";
 import { BurstList } from "../components/bursts.tsx";
 import { back } from "../lib/router.ts";
 import { Header } from "../components/ui.tsx";
+import { lockScroll } from "../lib/shell.ts";
+import { Tour, tourDue } from "./Tour.tsx";
 
 /**
  * Inside Confess. The feed stays mounted (keeps its place) while other screens open on top;
@@ -28,6 +30,14 @@ import { Header } from "../components/ui.tsx";
  */
 export function Main() {
   const { me } = useSession();
+  // The feature tour: once after sign-in (or when a version adds pages), and from Settings.
+  const [tour, setTour] = useState<"full" | "new" | null>(() => tourDue());
+  useEffect(() => {
+    const open = () => setTour("full");
+    window.addEventListener("confess:tour", open);
+    return () => window.removeEventListener("confess:tour", open);
+  }, []);
+  useEffect(() => (tour ? lockScroll() : undefined), [tour]);
   const route = useRoute();
   const unread = useUnread();
   const onFeed = route.name === "feed";
@@ -54,6 +64,7 @@ export function Main() {
 
   return (
     <>
+      {tour ? <Tour mode={tour} onDone={() => setTour(null)} /> : null}
       <main className="screen main" hidden={!onFeed}>
         <div className="topbar">
           <button className="icon-btn" aria-label="Find people" onClick={() => navigate({ name: "search" })}><SearchIcon /></button>

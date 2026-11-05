@@ -104,6 +104,24 @@ src/
   components/        post.tsx (card, reactions, poll, report/block/delete), art.tsx (avatar, banner, graph),
                      people.tsx (follow), GifPicker, Aura, toast
   data/terms.json    community guidelines (same file as the Android app)
+  android/           GENERATED from the Android app's res/ (scripts/android_sync.py) — don't edit:
+                     tokens.css/.ts (colours, dimens, text styles, motion), strings.ts, icons.ts,
+                     fonts.css, splash + launcher SVGs
+  ui/kit.tsx         the Android components at Android sizes: buttons, chips, switch, setting row,
+                     step bar, toolbar, scope / glide toggles, text field, ConfessDialog, sheets,
+                     ChoiceSheet, PopMenu, skeleton, paper note, plate, snackbar (+ kit.css)
+  ui/Icon.tsx        <Icon name="bell" /> — the app's own ic_*.xml vectors
+  lib/strings.ts     S("key", …) / P("plural", n) / A("array") — the app's English strings
+  lib/shell.ts       iPhone / iPad shell: keyboard height, edge swipe-back, scroll lock, useWide()
+  screens/DesignCheck.tsx  /dev/design — every token and component (twin of DesignCheckActivity)
+  ui/Art.tsx         <Art> logos / Letty poses, <AnimatedArt> plays Android's animated vectors (splash, tab icons)
+  ui/motion.ts       tween(): View.animate() with Android interpolators (Web Animations, CSP-safe)
+  ui/screens.css     the Android layouts, one block per layout file
+  screens/Launch.tsx splash (Letty's opening, zoom-out) + maintenance (GET /api/v2/ready ≠ 200)
+  screens/Welcome.tsx welcome, "A glimpse inside", the sign-in sheet
+  screens/Onboarding.tsx guidelines (also read-only), alias (+ password lock), avatar
+  screens/Secure.tsx unlock (Face ID where Android has the fingerprint), Face ID offer, "Confirm it's you"
+  screens/Tour.tsx   the feature tour with its live samples (once after sign-in, Settings → Take the tour)
 sw.template.js       service worker (build fills in the file list)
 vercel.json          hosting + security headers (source of truth for Docker's too)
 Dockerfile           test + build, then non-root nginx
@@ -112,4 +130,26 @@ docker-compose.yml   hardened VPS run (proxy_network, like the API)
 deploy/              central-nginx site for web.confessapp.in (app + /api → confess-api)
 ```
 
-Phase 4a (feed, responses, compose, drafts, report/block), 4b (profiles, avatar studio, banners, confession graph, follow, activity, settings) 4c (stories, books + reader + writer's desk, bursts) and 5 (notifications on the Home Screen app) are in. Next: 6 — hardening and soft launch.
+## Looking exactly like the Android app
+
+The Android res/ folder is the source of truth. After changing colours, sizes, text styles,
+animations, strings, icons or fonts there:
+
+```
+npm run android:sync -- ../ConfessMain/app/src/main/res     # rewrites src/android/ + public/fonts
+npm run android:check                                       # CI: fails if src/android/ is stale
+node scripts/make_app_images.mjs                            # only if the launcher icon / splash changed
+```
+
+1 dp on Android = 1 CSS px = 1 pt on iPhone. The reference phone is 393 dp wide (Pixel 7/8 at 1080 px,
+or any phone after `adb shell wm density 440`), the same width as iPhone 14 Pro–16.
+
+Checking a screen against the phone (needs `npm i --no-save playwright` and adb):
+
+```
+scripts/replica/capture_android.sh design settings          # phone → replica/android/*.png
+node scripts/replica/shoot.mjs /dev/design /settings         # web → replica/web/<device>/*.png
+python3 scripts/replica/compare.py design=dev_design         # side by side, overlay, diff → replica/report
+```
+
+Phase 4a (feed, responses, compose, drafts, report/block), 4b (profiles, avatar studio, banners, confession graph, follow, activity, settings) 4c (stories, books + reader + writer's desk, bursts) and 5 (notifications on the Home Screen app) are in. The Android look-alike pass (R0–R8, see the replica plan) runs before 6 — hardening and soft launch; R0 (tokens, kit, iPhone/iPad shell, /dev/design, replica harness) and R1 (splash, maintenance, welcome, sign-in, guidelines, alias, avatar, unlock, feature tour) are in.

@@ -9,6 +9,7 @@ import { Button } from "../components/ui.tsx";
 import { BurstCard, BurstChooser } from "../components/bursts.tsx";
 import { StoryTray } from "../components/stories.tsx";
 import { burstAsked, burstMode, onBurstMode, type BurstMode } from "../lib/bursts.ts";
+import { tourOpen } from "./Tour.tsx";
 
 type Load = "idle" | "loading" | "more" | "error" | "moreError";
 
@@ -45,9 +46,17 @@ export function Feed({ active }: { active: boolean }) {
 
   useEffect(() => onBurstMode(setBursts), []);
   const anyBurst = posts.some((p) => (p.burst?.count ?? 1) > 1);
+  // Other prompts wait while the feature tour is up (Tour.maybeShow on Android).
+  const [tourUp, setTourUp] = useState(tourOpen);
   useEffect(() => {
-    if (active && anyBurst && !burstAsked()) setChooser(true);
-  }, [active, anyBurst]);
+    const on = () => setTourUp(tourOpen());
+    window.addEventListener("confess:tour-state", on);
+    on();
+    return () => window.removeEventListener("confess:tour-state", on);
+  }, []);
+  useEffect(() => {
+    if (active && anyBurst && !tourUp && !burstAsked()) setChooser(true);
+  }, [active, anyBurst, tourUp]);
 
   useEffect(() => {
     void load(false, null);

@@ -1,43 +1,35 @@
-/* Midnight Letters — the Confess design system (see ConfessMain new_ui/midnight_letters/DESIGN.md). */
+/* Midnight Letters — the Confess design system. Colours and sizes come from src/android/tokens.css (see ConfessMain new_ui/midnight_letters/DESIGN.md). */
 
-@font-face { font-family: "Manrope"; src: url("/fonts/manrope-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "Manrope"; src: url("/fonts/manrope-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
-@font-face { font-family: "Manrope"; src: url("/fonts/manrope-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
-@font-face { font-family: "Manrope"; src: url("/fonts/manrope-700.woff2") format("woff2"); font-weight: 700; font-display: swap; }
-@font-face { font-family: "Newsreader Display"; src: url("/fonts/newsreader-display.woff2") format("woff2"); font-display: swap; }
-@font-face { font-family: "Newsreader Display"; src: url("/fonts/newsreader-display-italic.woff2") format("woff2"); font-style: italic; font-display: swap; }
-@font-face { font-family: "Newsreader"; src: url("/fonts/newsreader-400.woff2") format("woff2"); font-display: swap; }
-@font-face { font-family: "Newsreader"; src: url("/fonts/newsreader-400-italic.woff2") format("woff2"); font-style: italic; font-display: swap; }
-@font-face { font-family: "JetBrains Mono"; src: url("/fonts/jetbrainsmono-400.woff2") format("woff2"); font-display: swap; }
+/* Fonts: src/android/fonts.css (generated from the Android res/font folder). */
 
 :root {
-  --ink: #0F0E13;
-  --raised: #17161D;
-  --high: #201F27;
-  --hairline: #2A2832;
-  --paper: #EDE6DA;
-  --paper-ink: #1B1A20;
-  --paper-meta: rgba(27, 26, 32, 0.65);
-  --paper-rule: rgba(27, 26, 32, 0.15);
-  --text: #ECE8E1;
-  --text-2: #8E8A96;
-  --text-3: #5A5763;
-  --amber: #E8A04C;
-  --amber-pressed: #D08A38;
-  --amber-tint: rgba(232, 160, 76, 0.08);
-  --brick: #D2553F;
-  --brick-tint: rgba(210, 85, 63, 0.12);
-  --sage: #8FB39A;
-  --sage-tint: rgba(143, 179, 154, 0.12);
-  --scrim: rgba(15, 14, 19, 0.7);
+  --ink: var(--c-ink);
+  --raised: var(--c-surface-raised);
+  --high: var(--c-surface-high);
+  --hairline: var(--c-hairline);
+  --paper: var(--c-paper);
+  --paper-ink: var(--c-paper-ink);
+  --paper-meta: var(--c-paper-meta);
+  --paper-rule: var(--c-paper-rule);
+  --text: var(--c-text-primary);
+  --text-2: var(--c-text-secondary);
+  --text-3: var(--c-text-muted);
+  --amber: var(--c-amber);
+  --amber-pressed: var(--c-amber-pressed);
+  --amber-tint: var(--c-amber-tint);
+  --brick: var(--c-brick);
+  --brick-tint: var(--c-brick-tint);
+  --sage: var(--c-sage);
+  --sage-tint: var(--c-sage-tint);
+  --scrim: var(--c-scrim);
 
   --serif: "Newsreader", Georgia, serif;
   --display: "Newsreader Display", "Newsreader", Georgia, serif;
   --sans: "Manrope", -apple-system, system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, monospace;
 
-  --margin: 20px;
-  --max: 640px;
+  --margin: var(--d-margin-screen);
+  --max: 600px;  /* iPad / wide: one Android-phone-sized column (sw600dp) until the two-pane screens land */
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 

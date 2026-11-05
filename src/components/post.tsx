@@ -135,7 +135,11 @@ export interface CardActions {
   onOpen?: (p: Post) => void;
 }
 
-export function PostCard({ post, detail, actions }: { post: Post; detail?: boolean; actions: CardActions }) {
+/**
+ * One confession card. `sample`: a made-up card (Welcome → "A glimpse inside"): every tap only
+ * calls it (the screen says "Join to feel and respond"), nothing reaches the server.
+ */
+export function PostCard({ post, detail, actions, sample }: { post: Post; detail?: boolean; actions: CardActions; sample?: () => void }) {
   const toast = useToast();
   const [revealed, setRevealed] = useState(!post.sensitive || post.isMine);
   const [picker, setPicker] = useState(false);
@@ -145,6 +149,7 @@ export function PostCard({ post, detail, actions }: { post: Post; detail?: boole
   const lastTap = useRef(0);
 
   async function setReaction(next: Reaction | null) {
+    if (sample) { sample(); return; }
     const before = post;
     const counts = { ...post.reactions };
     if (mine) counts[mine] = Math.max(0, (counts[mine] ?? 1) - 1);
@@ -162,11 +167,12 @@ export function PostCard({ post, detail, actions }: { post: Post; detail?: boole
     }
   }
 
-  const press = useLongPress(() => setPicker(true));
+  const press = useLongPress(() => (sample ? sample() : setPicker(true)));
   const others = topReactions(post, 3).filter((k) => k !== mine && k !== "felt");
   const mood = MOODS.find((m) => m.key === post.mood);
 
   function onCardClick() {
+    if (sample) { sample(); return; }
     const now = Date.now();
     if (now - lastTap.current < 300) {
       lastTap.current = 0;
@@ -184,17 +190,17 @@ export function PostCard({ post, detail, actions }: { post: Post; detail?: boole
     <article className={`paper card${detail ? " detail" : ""}`} aria-label={`Confession by ${post.author.alias}, ${ago(post.createdAt)}`}>
       <header className="card-head">
         <span className="card-author">
-          <button className="avatar-btn" onClick={() => (hasStory(post.author.alias) ? navigate({ name: "stories", alias: post.author.alias }) : openProfile(post.author.alias, post.isMine))}
+          <button className="avatar-btn" onClick={() => sample ? sample() : (hasStory(post.author.alias) ? navigate({ name: "stories", alias: post.author.alias }) : openProfile(post.author.alias, post.isMine))}
                   aria-label={hasStory(post.author.alias) ? `@${post.author.alias}'s story` : `Open ${post.isMine ? "your" : `@${post.author.alias}'s`} profile`}>
             <RingAvatar alias={post.author.alias} avatar={post.author.avatar} size={32} />
           </button>
-          <button className="card-who link-plain" onClick={() => openProfile(post.author.alias, post.isMine)}
+          <button className="card-who link-plain" onClick={() => (sample ? sample() : openProfile(post.author.alias, post.isMine))}
                   aria-label={`Open ${post.isMine ? "your" : `@${post.author.alias}'s`} profile`}>
             <span className="alias">@{post.author.alias}{post.isMine ? <em> · you</em> : null}</span>
             <span className="meta">{ago(post.createdAt)}{mood ? ` · ${mood.label}` : ""}{post.chapter ? ` · Chapter ${post.chapter.chapterNo}` : ""}</span>
           </button>
         </span>
-        <button className="icon-btn" aria-label={post.isMine ? "More options" : "Report or more"} onClick={() => setMenu(true)}>
+        <button className="icon-btn" aria-label={post.isMine ? "More options" : "Report or more"} onClick={() => (sample ? sample() : setMenu(true))}>
           <More />
         </button>
       </header>
@@ -229,7 +235,7 @@ export function PostCard({ post, detail, actions }: { post: Post; detail?: boole
           {others.length ? <span className="emoji small">{others.map(emojiOf).join("")}</span> : null}
           {post.likeCount ? <span>{count(post.likeCount)}</span> : null}
         </button>
-        <button className="react-btn" onClick={() => actions.onOpen?.(post)} disabled={detail}
+        <button className="react-btn" onClick={() => (sample ? sample() : actions.onOpen?.(post))} disabled={detail}
                 aria-label={post.commentsEnabled ? `Responses, ${post.commentCount}` : "Responses closed"}>
           {post.commentsEnabled ? <Message /> : <MessageOff />}
           {post.commentCount ? <span>{count(post.commentCount)}</span> : null}
