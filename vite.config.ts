@@ -11,7 +11,7 @@ function serviceWorker(api: string): Plugin {
     generateBundle(_, bundle) {
       const files = Object.keys(bundle).filter((f) => !f.endsWith(".map")).map((f) => `/${f}`);
       const fonts = ["manrope-400", "manrope-500", "manrope-600", "manrope-700", "newsreader-display",
-        "newsreader-display-italic", "newsreader-400", "newsreader-400-italic", "jetbrainsmono-400"].map((f) => `/fonts/${f}.woff2`);
+        "newsreader-display-italic", "newsreader-400", "newsreader-400-italic", "jetbrainsmono-400", "jetbrainsmono-500"].map((f) => `/fonts/${f}.woff2`);
       const shell = ["/index.html", "/manifest.webmanifest", "/icons/apple-touch-icon.png", "/icons/icon-192.png",
         ...fonts, ...files.filter((f) => f !== "/index.html")];
       const build = createHash("sha256").update(shell.join("|")).digest("hex").slice(0, 12);

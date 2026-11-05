@@ -13,6 +13,7 @@
  *   /burst/<id>[/following]  one writer's burst, oldest first
  */
 import { useEffect, useState } from "react";
+import { setNavDirection } from "./shell.ts";
 
 export type SettingsPage = "security" | "notifications" | "devices" | "blocked" | "profile" | "feature" | "guidelines" | "appearance";
 export const SETTINGS_PAGES: SettingsPage[] = ["security", "notifications", "devices", "blocked", "profile", "feature", "guidelines", "appearance"];
@@ -40,7 +41,8 @@ export type Route =
   | { name: "chapter"; id: string; no?: number }
   | { name: "stories"; alias: string }
   | { name: "storyNew" }
-  | { name: "burst"; id: string; scope: "all" | "following" };
+  | { name: "burst"; id: string; scope: "all" | "following" }
+  | { name: "design" };
 
 /** The screens with the tab bar (each keeps its own place). */
 export const TABS = ["feed", "books", "activity", "me"] as const;
@@ -86,6 +88,7 @@ export function parse(path: string): Route {
     case "/books/new": return { name: "bookSetup" };
     case "/me/books": return { name: "myBooks" };
     case "/story": return { name: "storyNew" };
+    case "/dev/design": return { name: "design" };
     default: return { name: "feed" };
   }
 }
@@ -113,6 +116,7 @@ export function href(r: Route): string {
     case "chapter": return r.no ? `/b/${r.id}/write/${r.no}` : `/b/${r.id}/write`;
     case "stories": return `/s/${r.alias}`;
     case "storyNew": return "/story";
+    case "design": return "/dev/design";
     case "burst": return r.scope === "following" ? `/burst/${r.id}/following` : `/burst/${r.id}`;
     default: return "/";
   }
@@ -127,8 +131,9 @@ function emit(): void {
   listeners.forEach((l) => l(current));
 }
 
-export function navigate(r: Route, replace = false): void {
+export function navigate(r: Route, replace = false, direction?: "push" | "pop" | "replace"): void {
   const st = { draftId: r.name === "write" ? r.draftId : undefined, depth: replace ? depth : depth + 1 };
+  setNavDirection(direction ?? (replace ? "replace" : "push"));
   if (replace) history.replaceState(st, "", href(r));
   else {
     depth += 1;
@@ -147,7 +152,12 @@ export function switchTab(t: Tab): void {
 /** Back within the app; from a deep link straight to a screen, back goes to the feed. */
 export function back(): void {
   if (depth > 0) history.back();
-  else navigate({ name: "feed" }, true);
+  else navigate({ name: "feed" }, true, "pop");
+}
+
+/** Is there somewhere to go back to (the edge swipe uses this)? Tabs are roots. */
+export function canGoBack(): boolean {
+  return !(TABS as readonly string[]).includes(current.name);
 }
 
 export function currentRoute(): Route {
@@ -157,6 +167,7 @@ export function currentRoute(): Route {
 if (typeof window !== "undefined") {
   window.addEventListener("popstate", (e) => {
     const st = (e.state ?? {}) as { draftId?: string; depth?: number };
+    setNavDirection((st.depth ?? 0) < depth ? "pop" : "push");
     depth = st.depth ?? 0;
     const r = parse(location.pathname);
     current = r.name === "write" && st.draftId ? { ...r, draftId: st.draftId } : r;

@@ -21,6 +21,7 @@ import { PersonRow } from "../components/people.tsx";
 import { Sheet } from "../components/post.tsx";
 import { useToast } from "../components/toast.tsx";
 import { Button, FaceIdGlyph, Header, NavRow, Notice, Portal, Toggle } from "../components/ui.tsx";
+import { S } from "../lib/strings.ts";
 import { GuidelinesList } from "./Onboarding.tsx";
 
 export function SettingsScreen({ page }: { page?: SettingsPage }) {
@@ -75,6 +76,8 @@ function SettingsHome() {
       </section>
       <section className="settings-group" aria-label="Support">
         <span className="tag group-tag">Support</span>
+        <NavRow icon={<Lightbulb />} label={S("settings_tour")} sub={S("settings_tour_sub")}
+                onClick={() => window.dispatchEvent(new CustomEvent("confess:tour"))} />
         <NavRow icon={<Lightbulb />} label="Request a feature" sub="Tell us what would make Confess better" onClick={() => go("feature")} />
         <NavRow icon={<Pencil />} label="Community guidelines" onClick={() => go("guidelines")} />
         <a className="setting-row nav-row" href={`${config.websiteUrl}/privacy`} target="_blank" rel="noopener noreferrer">

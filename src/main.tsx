@@ -1,7 +1,15 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
+import { back, canGoBack } from "./lib/router.ts";
+import { installShell } from "./lib/shell.ts";
+import "./android/fonts.css";
+import "./android/tokens.css";
 import "./styles/app.css";
+import "./ui/kit.css";
+import "./ui/screens.css";
+
+installShell({ canGoBack, back });
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

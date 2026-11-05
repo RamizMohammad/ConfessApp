@@ -11,3 +11,6 @@ deploy
 # hand-offs from Claude, never committed
 .deliveries/
 *.rdb
+
+# replica screenshots and reports (scripts/replica)
+replica/

@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
+import { Snackbar } from "../ui/kit.tsx";
 
 type ToastFn = (text: string, action?: { label: string; run: () => void }) => void;
 const Ctx = createContext<ToastFn>(() => {});
@@ -16,12 +17,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <Ctx.Provider value={show}>
       {children}
       {t ? (
-        <div className="toast" role="status" key={t.key}>
-          <span>{t.text}</span>
-          {t.action ? (
-            <button className="btn btn-primary" onClick={() => { t.action!.run(); setT(null); }}>{t.action.label}</button>
-          ) : null}
-        </div>
+        <Snackbar key={t.key} text={t.text} action={t.action?.label}
+                  onAction={() => { t.action?.run(); setT(null); }} />
       ) : null}
     </Ctx.Provider>
   );

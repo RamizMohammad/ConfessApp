@@ -45,8 +45,11 @@ export interface Me {
 
 export interface Draft {
   alias: string;
+  /** "" until the avatar step picks one (a random aura first, like Android). */
   avatar: string;
   about: string;
+  /** Optional password lock chosen on the alias step (8–64), sent with the sign-up. */
+  password: string | null;
 }
 
 export type Phase =
@@ -73,8 +76,10 @@ interface SessionApi {
   register: () => Promise<void>;
   enableFaceId: () => Promise<void>;
   skipFaceId: () => void;
-  unlockWithFaceId: () => Promise<void>;
-  unlockWithPassword: (password: string) => Promise<boolean>;
+  /** open=false: check only; the lock screen plays its "unlocked" moment, then calls finishUnlock(). */
+  unlockWithFaceId: (open?: boolean) => Promise<void>;
+  unlockWithPassword: (password: string, open?: boolean) => Promise<boolean>;
+  finishUnlock: () => void;
   signOut: () => Promise<void>;
   cancelOnboarding: () => void;
   setMe: (m: Me) => void;
@@ -115,7 +120,9 @@ export function errorMessage(e: unknown): string {
   return "Something went wrong. Try again.";
 }
 
-const EMPTY_DRAFT: Draft = { alias: "", avatar: "aura_04", about: "" };
+// A random aura to start from, like AvatarActivity (SecureRandom over the 12).
+const randomAura = () => `aura_${String(1 + (crypto.getRandomValues(new Uint32Array(1))[0]! % 12)).padStart(2, "0")}`;
+const EMPTY_DRAFT: Draft = { alias: "", avatar: "", about: "", password: null };
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<Phase>({ name: "booting" });
@@ -149,7 +156,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     void wipeDrafts();                                   // unsent confessions never outlive the session
     wipePlaces();                                        // nor where I was reading
     clearTray();
-    if (window.location.pathname !== "/") window.history.replaceState(null, "", "/");
+    // Signed out: no deep link survives (it could name someone's letter) — except the design page.
+    if (window.location.pathname !== "/" && window.location.pathname !== "/dev/design") window.history.replaceState(null, "", "/");
     idToken.current = null;
     setMe(null);
     setDraftState(EMPTY_DRAFT);
@@ -264,8 +272,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       return;
     }
     const ts = await turnstileToken().catch(() => undefined);
-    const body = { idToken: idToken.current, turnstileToken: ts, alias: draft.alias.trim(), avatar: draft.avatar,
-                   about: draft.about.trim() };
+    const body = { idToken: idToken.current, turnstileToken: ts, alias: draft.alias.trim(), avatar: draft.avatar || randomAura(),
+                   about: draft.about.trim().replace(/\s+/g, " "), password: draft.password || undefined };
     try {
       const p = await api<AuthPayload>("/auth/web/register", { method: "POST", body, raw: true });
       setDraftState(EMPTY_DRAFT);
@@ -275,12 +283,17 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         toSignedOut("Your sign-in timed out. Please continue with Google again.");
         return;
       }
+      if (e instanceof ApiError && e.code === "ACCOUNT_EXISTS") {
+        // This Google account already signed up (another tab, the Android app): just sign in.
+        await loginWithIdToken(idToken.current);
+        return;
+      }
       if (e instanceof ApiError && (e.code === "ALIAS_TAKEN" || e.code === "ALIAS_NOT_ALLOWED")) {
         setPhase({ name: "onboarding", step: "alias" });
       }
       throw e;
     }
-  }, [draft, afterSignIn, toSignedOut]);
+  }, [draft, afterSignIn, toSignedOut, loginWithIdToken]);
 
   const enableFaceId = useCallback(async () => {
     const { publicKey } = await api<{ publicKey: Record<string, unknown> }>("/auth/passkey/register/options", { method: "POST" });
@@ -296,12 +309,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setPhase({ name: "ready" });
   }, []);
 
-  const unlockWithFaceId = useCallback(async () => {
+  const unlockWithFaceId = useCallback(async (open = true) => {
     try {
       const { publicKey } = await api<{ publicKey: Record<string, unknown> }>("/auth/passkey/verify-me/options", { method: "POST" });
       const credential = await getCredential(publicKey);
       await api("/auth/passkey/verify-me", { method: "POST", body: { credential } });
-      setPhase({ name: "ready" });
+      if (open) setPhase({ name: "ready" });
     } catch (e) {
       if (e instanceof ApiError && e.code === "NOT_FOUND") {
         // Face ID was turned off from another device.
@@ -312,11 +325,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const unlockWithPassword = useCallback(async (password: string) => {
+  const unlockWithPassword = useCallback(async (password: string, open = true) => {
     const { match } = await api<{ match: boolean }>("/users/me/password/verify", { method: "POST", body: { password } });
-    if (match) setPhase({ name: "ready" });
+    if (match && open) setPhase({ name: "ready" });
     return match;
   }, []);
+
+  const finishUnlock = useCallback(() => setPhase({ name: "ready" }), []);
 
   // Notifications on this iPhone follow the session: re-linked on every start once inside.
   useEffect(() => {
@@ -361,6 +376,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     skipFaceId,
     unlockWithFaceId,
     unlockWithPassword,
+    finishUnlock,
     signOut,
     cancelOnboarding: () => toSignedOut(),
     setMe,
@@ -370,7 +386,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     reauth,
     canUseFaceId,
   }), [phase, me, draft, signInWithGoogle, signInWithFaceId, register, enableFaceId, skipFaceId, unlockWithFaceId,
-       unlockWithPassword, signOut, toSignedOut, reauth, canUseFaceId, patchMe, refreshMe, accountDeleted]);
+       unlockWithPassword, finishUnlock, signOut, toSignedOut, reauth, canUseFaceId, patchMe, refreshMe, accountDeleted]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
