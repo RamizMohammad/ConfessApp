@@ -34,3 +34,20 @@ export function moderationReason(message: string): string {
     self_harm_promotion: "It encourages self-harm. If you're struggling, Tele-MANAS is free and open 24×7 on 14416.",
   } as Record<string, string>)[label] ?? "It breaks our community guidelines.";
 }
+
+/** Formats.relative (Android): "Just now", "4m ago", "3h ago", "Yesterday", "Tuesday", "2w ago", "3mo ago", "1y ago". */
+export function relative(iso: string | null | undefined, now = Date.now()): string {
+  if (!iso) return "";
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return "";
+  const s = Math.max(0, Math.floor((now - t) / 1000));
+  const m = Math.floor(s / 60), h = Math.floor(m / 60), d = Math.floor(h / 24);
+  if (s < 60) return "Just now";
+  if (m < 60) return `${m}m ago`;
+  if (h < 24) return `${h}h ago`;
+  if (d === 1) return "Yesterday";
+  if (d < 7) return new Date(t).toLocaleDateString(undefined, { weekday: "long" });
+  if (d < 30) return `${Math.floor(d / 7)}w ago`;
+  if (d < 365) return `${Math.floor(d / 30)}mo ago`;
+  return `${Math.floor(d / 365)}y ago`;
+}

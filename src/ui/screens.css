@@ -6,7 +6,7 @@
 /* A full-height Android screen: edge-to-edge, content padded clear of the notch and home bar
    (EdgeInsets.padSystemBars), 20 dp side margin, one phone-wide column on iPad. */
 .a-screen {
-  position: relative; display: flex; flex-direction: column; min-height: 100%; min-height: 100dvh;
+  position: relative; display: flex; flex-direction: column; min-height: 100%; min-height: var(--app-h);
   width: 100%; max-width: var(--max); margin: 0 auto;
   padding: var(--safe-top) var(--d-margin-screen) var(--safe-bottom);
   background: var(--c-ink); color: var(--c-text-primary);
@@ -29,7 +29,7 @@
 
 /* ── Column screens: sticky top bar, page scroll, sticky bottom bar (above the keyboard) ── */
 .a-col {
-  display: flex; flex-direction: column; min-height: 100dvh; width: 100%; max-width: var(--max); margin: 0 auto;
+  display: flex; flex-direction: column; min-height: var(--app-h); width: 100%; max-width: var(--max); margin: 0 auto;
   background: var(--c-ink); color: var(--c-text-primary);
 }
 .a-topbar { position: sticky; top: 0; z-index: 5; padding-top: var(--safe-top); background: var(--c-ink); }
@@ -50,7 +50,7 @@ html.kb-open .a-bottombar { padding-bottom: var(--d-space-md); }
   content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background: radial-gradient(420px 420px at 50% 62%, rgba(232, 160, 76, 0.133), rgba(15, 14, 19, 0) 100%), var(--c-ink);
 }
-.welcome { min-height: 100dvh; }
+.welcome { min-height: var(--app-h); }
 .welcome-top { display: flex; align-items: center; justify-content: space-between; height: 26px; margin-top: var(--d-space-md); flex: none; }
 .welcome-top svg { display: block; }
 .welcome-clock { color: var(--c-text-primary); padding: 6px var(--d-space-12); }
@@ -235,7 +235,7 @@ html.kb-open .a-bottombar { padding-bottom: var(--d-space-md); }
 .av-privacy p { margin: 0 0 0 var(--d-space-12); color: var(--c-text-secondary); }
 
 /* ── S0 · Add to Home Screen (web only, in the same set) ── */
-.install { min-height: 100dvh; }
+.install { min-height: var(--app-h); }
 .install-body { flex: 1 1 auto; display: flex; flex-direction: column; align-items: flex-start; padding-top: var(--d-space-xl); }
 .install-h { margin: var(--d-space-md) 0 0; }
 .install-h em { color: var(--c-amber); }
@@ -257,7 +257,7 @@ html.kb-open .a-bottombar { padding-bottom: var(--d-space-md); }
 @keyframes k-bob { 50% { bottom: calc(var(--safe-bottom) + 12px); } }
 
 /* ── activity_unlock.xml ── */
-.unlock { min-height: 100dvh; padding-bottom: calc(var(--safe-bottom) + var(--d-space-lg)); }
+.unlock { min-height: var(--app-h); padding-bottom: calc(var(--safe-bottom) + var(--d-space-lg)); }
 .unlock-top { display: flex; align-items: center; justify-content: space-between; margin-top: var(--d-space-md); }
 .unlock-top .k-tag { gap: 6px; }
 .unlock-clock { color: var(--c-text-primary); }

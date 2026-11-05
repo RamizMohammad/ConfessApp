@@ -5,7 +5,7 @@ import { count } from "../lib/format.ts";
 import { parseStyle, type GraphData } from "../lib/graph.ts";
 import * as P from "../lib/posts.ts";
 import { apply, cardActions, remember, subscribe } from "../lib/postStore.ts";
-import { back, navigate } from "../lib/router.ts";
+import { back, navigate, openPost } from "../lib/router.ts";
 import { errorMessage } from "../lib/session.tsx";
 import type { Post } from "../lib/types.ts";
 import { usePaged } from "../lib/usePaged.ts";
@@ -198,7 +198,7 @@ export function PostList({ title, fetch, empty, onBlocked }:
     setItems((cur) => apply(cur, e));
     if (e.type === "blocked") onBlocked?.(e.alias);
   }), [setItems, onBlocked]);
-  const actions = cardActions((x) => navigate({ name: "post", id: x.postId }));
+  const actions = cardActions((x, r) => openPost(x.postId, r));
   return (
     <section className="post-list" aria-label={title ?? "Letters"}>
       {title && list.items.length ? <span className="tag list-title">{title}</span> : null}

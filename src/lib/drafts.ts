@@ -16,6 +16,8 @@ export interface Draft {
   poll: { options: string[]; durationHours: 24 | 72 | 168 } | null;
   gif: Gif | null;
   updatedAt: number;
+  /** Left the composer by going back (Drafts.markLeft): the next fresh composer picks it up again. */
+  left?: boolean;
 }
 
 const DB = "confess-drafts";
@@ -111,4 +113,11 @@ export async function wipeDrafts(): Promise<void> {
 
 export function newDraftId(): string {
   return crypto.randomUUID();
+}
+
+/** Drafts.takeResumable: the latest draft left by going back — opened again, and no longer "left". */
+export async function takeResumable(): Promise<Draft | undefined> {
+  const d = (await listDrafts()).find((x) => x.left);
+  if (d) await saveDraft({ ...d, left: false });
+  return d ? { ...d, left: false } : undefined;
 }

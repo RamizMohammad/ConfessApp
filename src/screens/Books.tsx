@@ -1,3 +1,4 @@
+import { useOnResume } from "../lib/screen.ts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ApiError } from "../lib/api.ts";
 import * as B from "../lib/books.ts";
@@ -28,10 +29,13 @@ const TABS: { key: B.ShelfTab; label: string }[] = [
 
 export function BooksShelf() {
   const [tab, setTab] = useState<B.ShelfTab>("updated");
+  // The tab stays mounted: coming back to it reloads (BooksFragment.onResume).
+  const [resumed, setResumed] = useState(0);
+  useOnResume(() => setResumed((n) => n + 1));
   const list = usePaged<B.Book>(async (c) => {
     const r = await B.list(tab, c);
     return { items: r.books, next: r.nextCursor };
-  }, (b) => b.bookId, [tab]);
+  }, (b) => b.bookId, [tab, resumed]);
 
   return (
     <section className="books" aria-label="Books">
@@ -42,7 +46,7 @@ export function BooksShelf() {
         </div>
         <Button variant="outline" className="btn-small" onClick={() => navigate({ name: "myBooks" })}><Pencil width={16} height={16} /> Your books</Button>
       </div>
-      <ContinueRow />
+      <ContinueRow key={resumed} />
       <div className="segmented three" role="tablist">
         {TABS.map((t) => <button key={t.key} role="tab" aria-selected={tab === t.key} onClick={() => setTab(t.key)}>{t.label}</button>)}
       </div>
@@ -109,11 +113,13 @@ export function BookPage({ id }: { id: string }) {
   const [menu, setMenu] = useState(false);
   const toast = useToast();
 
-  useEffect(() => {
+  const loadBook = useCallback(() => {
     B.get(id).then(setData).catch((e) => {
       if (e instanceof ApiError && e.status === 404) { setGone(true); B.forgetPlace(id); } else setError(errorMessage(e));
     });
   }, [id]);
+  useEffect(loadBook, [loadBook]);
+  useOnResume(loadBook);
 
   if (gone || error || !data) {
     return (
@@ -239,7 +245,9 @@ function BookMenu({ book, onClose }: { book: B.Book; onClose: () => void }) {
 export function MyBooks() {
   const [books, setBooks] = useState<B.Book[] | null>(null);
   const [error, setError] = useState<string>();
-  useEffect(() => { B.mine().then((r) => setBooks(r.books)).catch((e) => setError(errorMessage(e))); }, []);
+  const loadMine = useCallback(() => { B.mine().then((r) => setBooks(r.books)).catch((e) => setError(errorMessage(e))); }, []);
+  useEffect(loadMine, [loadMine]);
+  useOnResume(loadMine);
   return (
     <main className="screen">
       <Header title="Your books" onBack={back} />
@@ -351,6 +359,7 @@ export function Desk({ id }: { id: string }) {
 
   const load = useCallback(() => B.get(id).then(setData).catch((e) => setError(errorMessage(e))), [id]);
   useEffect(() => { void load(); }, [load]);
+  useOnResume(() => void load());
 
   if (!data) {
     return (

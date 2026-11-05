@@ -7,7 +7,7 @@
  */
 import {
   useCallback, useEffect, useId, useLayoutEffect, useRef, useState,
-  type ButtonHTMLAttributes, type InputHTMLAttributes, type PointerEvent as RPointerEvent, type ReactNode, type RefObject,
+  type ButtonHTMLAttributes, type InputHTMLAttributes, type PointerEvent as RPointerEvent, type ReactNode, type Ref, type RefObject,
 } from "react";
 import { createPortal } from "react-dom";
 import { Icon, type IconName } from "./Icon.tsx";
@@ -56,7 +56,7 @@ export function Btn({ kind = "primary", icon, busy, block, brick, className, chi
 }
 
 /** Widget.Confess.IconButton: 48 touch target, 24 icon. */
-export function IconBtn({ icon, label, className, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { icon: IconName; label: string }) {
+export function IconBtn({ icon, label, className, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { icon: IconName; label: string; ref?: Ref<HTMLButtonElement> }) {
   return (
     <button type="button" aria-label={label} {...rest} className={cx("k-icon-btn", className)}>
       <Icon name={icon} />
@@ -67,9 +67,9 @@ export function IconBtn({ icon, label, className, ...rest }: ButtonHTMLAttribute
 // ── Chips, tag, section label ──
 
 /** Widget.Confess.Chip: 36 tall, Meta text; checked = amber tint + amber edge and text. */
-export function Chip({ on, onClick, children, icon }: { on?: boolean; onClick?: () => void; children: ReactNode; icon?: IconName }) {
+export function Chip({ on, onClick, children, icon, disabled }: { on?: boolean; onClick?: () => void; children: ReactNode; icon?: IconName; disabled?: boolean }) {
   return (
-    <button type="button" className={cx("k-chip", "t-meta", on && "on")} aria-pressed={on} onClick={onClick}>
+    <button type="button" className={cx("k-chip", "t-meta", on && "on")} aria-pressed={on} onClick={onClick} disabled={disabled}>
       {icon ? <Icon name={icon} size={16} /> : null}{children}
     </button>
   );
@@ -171,8 +171,10 @@ export function ScopeToggle<T extends string>({ options, value, onChange, label 
 
 // ── Glide toggle ── GlideToggleGroup.java: an amber pill glides between segments
 
-export function GlideToggle<T extends string>({ options, value, onChange, label }:
-  { options: { key: T; label: string }[]; value: T | null; onChange: (v: T) => void; label?: string }) {
+export function GlideToggle<T extends string>({ options, value, onChange, label, onClear, disabled }:
+  { options: { key: T; label: string; wide?: boolean }[]; value: T | null; onChange: (v: T) => void; label?: string;
+    /** selectionRequired=false: tapping the selected one unselects it (the pill fades away). */
+    onClear?: () => void; disabled?: boolean }) {
   const track = useRef<HTMLDivElement>(null);
   const pill = useRef<HTMLSpanElement>(null);
   const prev = useRef<{ l: number; r: number } | null>(null);
@@ -206,8 +208,10 @@ export function GlideToggle<T extends string>({ options, value, onChange, label 
       <span className="k-glide-pill off" ref={pill} aria-hidden />
       {options.map((o) => (
         <button key={o.key} type="button" role="radio" aria-checked={o.key === value}
-                className={cx("k-glide-opt", "t-button", o.key === value && "on")}
-                onClick={() => { if (o.key !== value) { haptic("tick"); onChange(o.key); } }}>{o.label}</button>
+                className={cx("k-glide-opt", "t-button", o.key === value && "on", o.wide && "wide")} disabled={disabled}
+                onClick={() => {
+                  if (o.key !== value) { haptic("tick"); onChange(o.key); } else if (onClear) { haptic("tick"); onClear(); }
+                }}>{o.label}</button>
       ))}
     </div>
   );

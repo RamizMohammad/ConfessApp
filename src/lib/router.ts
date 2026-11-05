@@ -42,10 +42,12 @@ export type Route =
   | { name: "stories"; alias: string }
   | { name: "storyNew" }
   | { name: "burst"; id: string; scope: "all" | "following" }
-  | { name: "design" };
+  | { name: "design" }
+  | { name: "screen" };
 
-/** The screens with the tab bar (each keeps its own place). */
-export const TABS = ["feed", "books", "activity", "me"] as const;
+/** The screens with the bottom bar (HomeActivity's fragments: each stays mounted and keeps its place).
+ *  Search is on the bar too, but it opens a screen; Activity opens from the feed's bell. */
+export const TABS = ["feed", "books", "me"] as const;
 export type Tab = (typeof TABS)[number];
 
 export function parse(path: string): Route {
@@ -89,6 +91,7 @@ export function parse(path: string): Route {
     case "/me/books": return { name: "myBooks" };
     case "/story": return { name: "storyNew" };
     case "/dev/design": return { name: "design" };
+    case "/dev/screen": return { name: "screen" };
     default: return { name: "feed" };
   }
 }
@@ -117,28 +120,49 @@ export function href(r: Route): string {
     case "stories": return `/s/${r.alias}`;
     case "storyNew": return "/story";
     case "design": return "/dev/design";
+    case "screen": return "/dev/screen";
     case "burst": return r.scope === "following" ? `/burst/${r.id}/following` : `/burst/${r.id}`;
     default: return "/";
   }
 }
 
+/** One screen on the back stack. `key` stays the same while it's on the stack, so it stays mounted. */
+export interface Entry { route: Route; key: number }
+
 let listeners: ((r: Route) => void)[] = [];
+let stackListeners: (() => void)[] = [];
 let current: Route = parse(typeof location !== "undefined" ? location.pathname : "/");
+let seq = 1;
 /** How many screens we pushed on top of the first one (so back() never leaves the app). */
 let depth = 0;
+/** The back stack, index = depth (Android's activity stack). Gaps are entries from before a reload. */
+let stack: (Entry | undefined)[] = [];
+
+if (typeof history !== "undefined") {
+  const st = (history.state ?? {}) as { depth?: number; key?: number };
+  depth = typeof st.depth === "number" && st.depth >= 0 && st.depth < 200 ? st.depth : 0;
+  const key = typeof st.key === "number" ? st.key : seq++;
+  seq = Math.max(seq, key + 1);
+  stack[depth] = { route: current, key };
+  if (current.name === "write" && (st as { draftId?: string }).draftId) current = stack[depth]!.route = { ...current, draftId: (st as { draftId?: string }).draftId };
+}
 
 function emit(): void {
   listeners.forEach((l) => l(current));
+  stackListeners.forEach((l) => l());
 }
 
 export function navigate(r: Route, replace = false, direction?: "push" | "pop" | "replace"): void {
-  const st = { draftId: r.name === "write" ? r.draftId : undefined, depth: replace ? depth : depth + 1 };
+  const key = seq++;
+  const st = { draftId: r.name === "write" ? r.draftId : undefined, depth: replace ? depth : depth + 1, key };
   setNavDirection(direction ?? (replace ? "replace" : "push"));
   if (replace) history.replaceState(st, "", href(r));
   else {
     depth += 1;
     history.pushState(st, "", href(r));
   }
+  stack = stack.slice(0, depth);
+  stack[depth] = { route: r, key };
   current = r;
   emit();
 }
@@ -147,6 +171,17 @@ export function navigate(r: Route, replace = false, direction?: "push" | "pop" |
 export function switchTab(t: Tab): void {
   if (current.name === t) return;
   navigate({ name: t } as Route, true);
+}
+
+/** Pending reset: once history has walked back to the first entry, show this there. */
+let resetTarget: Route | null = null;
+
+/** Close everything on top and show `r` at the bottom of the stack (compose → released → feed). */
+export function resetTo(r: Route): void {
+  if (depth > 0) {
+    resetTarget = r;
+    history.go(-depth);
+  } else navigate(r, true, "pop");
 }
 
 /** Back within the app; from a deep link straight to a screen, back goes to the feed. */
@@ -164,13 +199,26 @@ export function currentRoute(): Route {
   return current;
 }
 
+export function isTab(r: Route): r is { name: Tab } {
+  return (TABS as readonly string[]).includes(r.name);
+}
+
 if (typeof window !== "undefined") {
   window.addEventListener("popstate", (e) => {
-    const st = (e.state ?? {}) as { draftId?: string; depth?: number };
-    setNavDirection((st.depth ?? 0) < depth ? "pop" : "push");
-    depth = st.depth ?? 0;
+    const st = (e.state ?? {}) as { draftId?: string; depth?: number; key?: number };
+    const to = typeof st.depth === "number" ? st.depth : 0;
+    setNavDirection(to < depth ? "pop" : "push");
+    depth = to;
     const r = parse(location.pathname);
     current = r.name === "write" && st.draftId ? { ...r, draftId: st.draftId } : r;
+    const had = stack[depth];
+    stack = stack.slice(0, depth);
+    stack[depth] = had && had.key === st.key ? had : { route: current, key: typeof st.key === "number" ? st.key : seq++ };
+    if (resetTarget && depth === 0) {
+      const r2 = resetTarget;
+      resetTarget = null;
+      if (r2.name !== current.name) { navigate(r2, true, "pop"); return; }
+    }
     emit();
   });
 }
@@ -185,4 +233,36 @@ export function useRoute(): Route {
     };
   }, []);
   return r;
+}
+
+/** The whole back stack (bottom → top) and the top's index, for keeping screens mounted. */
+export function useStack(): { entries: { entry: Entry; index: number }[]; top: number } {
+  const snap = () => ({ entries: stack.flatMap((e, i) => (e ? [{ entry: e, index: i }] : [])), top: depth });
+  const [s, setS] = useState(snap);
+  useEffect(() => {
+    const l = () => setS(snap());
+    stackListeners.push(l);
+    l();
+    return () => { stackListeners = stackListeners.filter((x) => x !== l); };
+  }, []);
+  return s;
+}
+
+/** Open a confession. iPad split view: replaces the one open on the right instead of stacking. */
+let jumpTo: string | null = null;
+export function openPost(id: string, toResponses = false): void {
+  jumpTo = toResponses ? id : null;
+  const split = typeof document !== "undefined" && document.documentElement.classList.contains("split");
+  if (split && current.name === "post") {
+    if (current.id !== id) navigate({ name: "post", id }, true, "replace");
+    else if (toResponses) window.dispatchEvent(new CustomEvent("confess:jump-responses", { detail: id }));
+    return;
+  }
+  navigate({ name: "post", id });
+}
+/** PostDetail asks once: was it opened from the responses button (jump there, keyboard up)? */
+export function takeJump(id: string): boolean {
+  const yes = jumpTo === id;
+  if (yes) jumpTo = null;
+  return yes;
 }

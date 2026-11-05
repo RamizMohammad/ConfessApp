@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useOnResume } from "../lib/screen.ts";
 import { count } from "../lib/format.ts";
 import { DEFAULT_STYLE, PALETTES, parseStyle, SHAPES, styleSpec, type GraphData, type GraphStyle } from "../lib/graph.ts";
 import { listDrafts } from "../lib/drafts.ts";
@@ -26,6 +27,11 @@ export function MePage() {
     U.myGraph().then(setGraph).catch(() => setGraphError(true));
     listDrafts().then((d) => setDrafts(d.length)).catch(() => setDrafts(null));
   }, [refreshMe]);
+
+  useOnResume(() => {
+    void refreshMe();
+    listDrafts().then((d) => setDrafts(d.length)).catch(() => setDrafts(null));
+  });
 
   // Following someone elsewhere moves my "following" count here too.
   useEffect(() => onFollowChange(() => void refreshMe()), [refreshMe]);
